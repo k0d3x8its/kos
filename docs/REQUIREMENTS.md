@@ -65,7 +65,7 @@ The agent config is the brain of the system. It tells the LLM exactly how to beh
 - **Operations** — step-by-step workflows for ingest, query, and lint
 - **Rules** — 10 rules governing the LLM's behavior (never modify raw, always update index, etc.)
 
-You can write this by hand (see `llm-wiki.md` for the conceptual foundation) or let our onboarding wizard generate it. The canonical rules live in `skills/second-brain/references/wiki-schema.md`.
+You can write this by hand (see `llm-wiki.md` for the conceptual foundation) or let our onboarding wizard generate it. The canonical rules live in `skills/kos/references/wiki-schema.md`.
 
 ---
 
