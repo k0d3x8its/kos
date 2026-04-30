@@ -96,8 +96,8 @@ After every 10 ingests or monthly — whichever comes first. Also run it before 
 
 - [Andrej Karpathy's LLM Wiki pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)
 - [Agent Skills open standard](https://agentskills.io)
-- [Blueprint & origin story](docs/REQUIREMENTS.md) — the founding document for this project
+- [Blueprint & origin story](https://github.com/NicholasSpisak/second-brain/blob/main/docs/REQUIREMENTS.md) — the founding document for the second-brain project
 
 ---
 
-<p align="center">Want to learn how to build projects like this with AI? Join the <a href="https://www.skool.com/buildwithai/about">Build With AI</a> community.</p>
+
