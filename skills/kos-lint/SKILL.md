@@ -64,16 +64,21 @@ For each raw file, derive the expected wiki source path. If the wiki source page
 
 ### Check 2: Memo book → wiki/books/ sync (Error)
 
-Every folder under `raw/` matching `^F[LRS]-vol-\d{3}$` must have a corresponding page at `wiki/books/<volume>.md` with a `book-type` in frontmatter that matches the prefix per SCHEMA.md Section 3.3.
+Every folder under `raw/` matching `^F[LRS]-vol-\d{3}$` must have a corresponding book page at EITHER `wiki/books/<volume>.md` OR `wiki/books/_archived/<volume>.md`, per SCHEMA.md Section 3.3 (including the archiving subsection). The `book-type` in frontmatter MUST match the volume prefix.
 
 ```bash
+# List all memo book folders under raw/
 find raw -maxdepth 1 -type d -regex '.*F[LRS]-vol-[0-9][0-9][0-9]'
+
+# Look for the corresponding book page in EITHER location
+find wiki/books -type f -name '<volume>.md'
 ```
 
 For each memo book folder:
 
-- If `wiki/books/<volume>.md` is missing → **Error**, fix: run `/kos-ingest` on a page from this book to trigger book page creation
-- If `book-type` in frontmatter doesn't match the prefix mapping → **Error**, fix: correct the frontmatter
+- If neither `wiki/books/<volume>.md` nor `wiki/books/_archived/<volume>.md` exists → **Error**, fix: run `/kos-ingest` on a page from this book to trigger book page creation
+- If the book page exists in either location but `book-type` in frontmatter doesn't match the prefix mapping → **Error**, fix: correct the frontmatter
+- If a volume has book pages in BOTH locations (active and archived) → **Error**, fix: delete the duplicate; a book is either active or archived, not both
 
 Prefix → expected `book-type`:
 
@@ -82,6 +87,16 @@ Prefix → expected `book-type`:
 | `FL-vol-` | `field-log` |
 | `FR-vol-` | `field-research` |
 | `FS-vol-` | `field-study` |
+
+**Cross-check archived-book metadata.** For any book page found under `wiki/books/_archived/`, verify:
+
+- `status: archived` is set in frontmatter → **Error** if missing
+- `archived-on:` is set and is a valid `YYYY-MM-DD` date → **Error** if missing or malformed
+- `envelope-number:` is set → **Warning** if missing (envelope number is recommended but not strictly required)
+
+For any book page under `wiki/books/` (top level, not `_archived/`):
+
+- If `status: archived` is set → **Error**: an archived book should be in `wiki/books/_archived/`, not the top level. Fix: move the file to `_archived/`, OR change `status:` back to `active` if archiving was a mistake.
 
 ### Check 3: Broken wikilinks (Error)
 
@@ -102,9 +117,20 @@ For each match:
 
 Verify `wiki/index.md` reflects reality:
 
-- Every page in `wiki/{sources,books,entities,concepts,synthesis,questions}/` must have an entry in `index.md` under the matching section header → **Error** if missing
+- Every page in `wiki/{sources,entities,concepts,synthesis,questions}/` must have an entry in `index.md` under the matching section header → **Error** if missing
+- Every page in `wiki/books/` (top level, active) must have an entry under the `## Books` section header → **Error** if missing
+- Every page in `wiki/books/_archived/` must have an entry under the `## Archived Books` section header → **Error** if missing
 - No entry in `index.md` should point to a page that doesn't exist → **Error**
+- An archived book listed under `## Books` (or vice versa) is misplaced → **Error**, fix: move the entry to the correct section
 - Entries should be alphabetized within each section → **Warning** (cosmetic)
+
+Use recursive scan when looking for book pages:
+
+```bash
+find wiki/books -type f -name '*.md'
+```
+
+This picks up both `wiki/books/<volume>.md` and `wiki/books/_archived/<volume>.md`.
 
 ### Check 5: Frontmatter validation (Error)
 
@@ -113,7 +139,7 @@ For each wiki page, verify frontmatter against SCHEMA.md Section 4 and the type-
 | Page directory | Required fields |
 |----------------|-----------------|
 | `wiki/sources/` | `type: source`, `raw-path`, `source-type`, `tags`, `created`, `updated` |
-| `wiki/books/` | `type: book`, `volume`, `book-type`, `date-start`, `date-end`, `status`, `tags`, `created`, `updated`. Plus `subject` if `book-type: field-study` |
+| `wiki/books/` | `type: book`, `volume`, `book-type`, `date-start`, `date-end`, `status`, `tags`, `created`, `updated`. Plus `subject` if `book-type: field-study`. Plus `archived-on` and `envelope-number` if `status: archived` (per SCHEMA.md Section 3.3 archiving subsection) |
 | `wiki/entities/` | `type: entity`, `entity-kind`, `aliases`, `tags`, `created`, `updated` |
 | `wiki/concepts/` | `type: concept`, `aliases`, `tags`, `created`, `updated` |
 | `wiki/synthesis/` | `type: synthesis`, `tags`, `sources`, `created`, `updated` |
@@ -121,8 +147,10 @@ For each wiki page, verify frontmatter against SCHEMA.md Section 4 and the type-
 
 Also verify:
 - `created` and `updated` are valid ISO 8601 timestamps (`YYYY-MM-DDTHH:MM:SSZ`)
-- `type:` matches the directory the page is in
-- `book-type:` for `wiki/books/` matches the volume prefix per Check 2's mapping
+- `type:` matches the directory the page is in (book pages in `_archived/` still use `type: book`)
+- `book-type:` for `wiki/books/` (any subdirectory) matches the volume prefix per Check 2's mapping
+- `status:` for book pages must be either `active` or `archived` — anything else is an **Error**
+- For archived book pages, `archived-on:` must be a valid `YYYY-MM-DD` date
 
 Each violation: **Error**, with the specific missing or malformed field named.
 
@@ -152,7 +180,7 @@ Compare `schema-version` in the vault's SCHEMA.md against the canonical version 
 A page is an orphan if no other page links to it via `[[wikilink]]`. Orphan checks **exclude**:
 
 - `wiki/sources/` (sources are leaf nodes; many have no inbound links)
-- `wiki/books/` (books are top-level containers, often only linked from index.md)
+- `wiki/books/` and its `_archived/` subdirectory recursively (books are top-level containers, often only linked from index.md)
 - `wiki/index.md` and `wiki/log.md` (special files)
 
 For each remaining page (entities, concepts, synthesis, questions):
