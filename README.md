@@ -54,7 +54,9 @@ This installs four skills into your AI agent:
 ```text
 your-vault/
 ├── raw/                    # Your inbox — drop sources here (immutable)
-│   ├── FN-vol-001/         # One folder per Field Notes memo book
+│   ├── FL-vol-001/         # Field Log: daily log memo books
+│   ├── FR-vol-XXX/         # Field Research: catchall research memo books
+│   ├── FS-vol-XXX/         # Field Study: dedicated subject memo books│
 │   └── assets/             # Images and attachments
 ├── wiki/                   # LLM-maintained (do not edit by hand)
 │   ├── sources/            # One summary per ingested source
