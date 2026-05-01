@@ -1,6 +1,6 @@
 ---
 name: kos-query
-description: Use this skill when the user wants to ask a question, search, or retrieve information from their existing Kodex OS Layer 1 LLM Wiki. Triggers include "ask kos", "what does my wiki say about X", "find notes on Y", "search my wiki", "what's open on Z", or any retrieval-style question that should be answered from the user's own captured knowledge rather than general world knowledge. The skill searches across all six wiki directories (sources, books, entities, concepts, synthesis, questions), follows wikilinks, and synthesizes an answer with citations to specific wiki pages. Refuses to fabricate when the wiki doesn't contain the answer. Do not use this skill to add new content (use kos-ingest) or to validate wiki structure (use kos-lint).
+description: Use this skill when the user wants to ask a question, search, or retrieve information from their existing Kodex OS Layer 1 LLM Wiki. Triggers include "ask kos", "what does my wiki say about X", "find notes on Y", "search my wiki", "what's open on Z", or any retrieval-style question that should be answered from the user's own captured knowledge rather than general world knowledge. The skill searches across all six wiki directories (sources, books including the _archived/ subfolder, entities, concepts, synthesis, questions), follows wikilinks, and synthesizes an answer with citations to specific wiki pages. Refuses to fabricate when the wiki doesn't contain the answer. Do not use this skill to add new content (use kos-ingest) or to validate wiki structure (use kos-lint).
 allowed-tools:
   - Bash
   - Read
@@ -55,7 +55,17 @@ If the query type is ambiguous, ask the user before searching.
 
 ### 1. Start with the index
 
-Read `wiki/index.md`. Scan all six section headers (Books, Sources, Entities, Concepts, Synthesis, Questions) for entries that match the query. The index is the cheapest source of structured signal in the wiki.
+Read `wiki/index.md`. Scan all section headers for entries that match the query:
+
+- `## Books` (active books)
+- `## Archived Books` (completed books, by envelope number)
+- `## Sources`
+- `## Entities`
+- `## Concepts`
+- `## Synthesis`
+- `## Questions (open)`
+
+The index is the cheapest source of structured signal in the wiki. For time-scoped or "where is this book now" queries, the `## Archived Books` section is often where the answer lives.
 
 ### 2. Use qmd if available
 
@@ -89,13 +99,28 @@ Read the wiki pages identified by index, qmd, or grep. Follow `[[wikilinks]]` **
 Match search behavior to the query type from classification:
 
 | Query type | Primary directories | Filter on |
-|------------|--------------------|-----------| 
+|------------|--------------------|-----------|
 | Factual lookup | `entities/`, `concepts/`, `synthesis/`, `sources/` | topic match |
-| Time-scoped | `books/`, `sources/` | `date-start`, `date-end`, `created` |
+| Time-scoped | `books/` (incl. `_archived/`), `sources/` | `date-start`, `date-end`, `created` |
 | Status-scoped (open questions) | `questions/` | `status: open` |
 | Comparison | `entities/`, `concepts/` | both topics |
 | Exploration | `synthesis/`, `index.md` | broad |
 | Source-tracing | `sources/` | mention of topic |
+| Archive lookup | `books/_archived/` | `envelope-number`, `archived-on` |
+
+**Important: book pages live in two locations.** When searching `wiki/books/`, scan recursively to include `wiki/books/_archived/`:
+
+```bash
+# Find all book pages, active and archived
+find wiki/books -type f -name '*.md'
+
+# Search book content recursively
+grep -rn "search terms" wiki/books/
+```
+
+For time-scoped queries ("what was I working on in March 2026?"), older time ranges are more likely to hit archived books than active ones. Don't filter `_archived/` out — that's where most historical answers live.
+
+For archive-lookup queries ("what's in envelope 7?", "find my notes from the book I archived last year"), search `wiki/books/_archived/` filtered by `envelope-number` or `archived-on` in the frontmatter.
 
 ### 6. Last resort: read raw sources
 
@@ -137,6 +162,14 @@ Every factual claim should link to the wiki page it came from. Untraced claims a
 If a cited source contains a bit.ly slug or external URL, include it in the citation when relevant:
 
 > [[fl-vol-001-page-007]] notes this, with reference to [<F13LdN0t3>](https://bit.ly/F13LdN0t3).
+
+### Cite archived books with their physical location
+
+When citing a source from an archived book, optionally include the envelope number so the user knows where to find the physical book if needed:
+
+> Your earliest notes on this topic are in [[fl-vol-001-page-007]] (archived in envelope 7), where you wrote that...
+
+This is purely a convenience — wikilinks resolve the same way whether a book is active or archived. But for queries that lead to an archived source, the envelope number turns "I want to revisit my original handwritten notes" from a search problem into a single physical reach.
 
 ### Acknowledge gaps
 
