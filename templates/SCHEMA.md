@@ -129,6 +129,36 @@ created: YYYY-MM-DDTHH:MM:SSZ
 updated: YYYY-MM-DDTHH:MM:SSZ
 ---
 ```
+**Archiving a book.** When the physical memo book is full and moved to a Layer 3 archive envelope, the user updates the corresponding `wiki/books/` page to reflect the archive. The `raw/<volume>/` folder is NEVER moved or deleted — raw transcriptions remain immutable per Section 6.1 rule 1, even after the book is archived. This preserves re-ingest capability and protects the integrity of all `raw-path:` pointers in `wiki/sources/`.
+
+The archiving workflow:
+
+1. Set `status: archived` in the book page's frontmatter
+2. Set `archived-on: YYYY-MM-DD` (the date the physical book was placed in its envelope)
+3. Set `envelope-number: <N>` (the Layer 3 archive envelope number)
+4. **Optional but recommended:** move the book page from `wiki/books/<volume>.md` to `wiki/books/_archived/<volume>.md`. This is a purely visual organization aid that mirrors the physical archive (active books at the top, completed books tucked away). Wikilinks to the book continue to resolve because Obsidian matches by filename, not path.
+
+Updated frontmatter for an archived book:
+
+```yaml
+---
+type: book
+volume: FL-vol-001
+book-type: field-log
+date-start: 2026-01-15
+date-end: 2026-03-15
+status: archived
+archived-on: 2026-04-02
+envelope-number: 7
+tags: [...]
+created: 2026-05-01T14:32:00Z
+updated: 2026-04-02T10:15:00Z
+---
+```
+
+When a book has `status: archived`, its entry in `wiki/index.md` MUST appear under the `## Archived Books` section header, not `## Books`. The LLM moves the entry on the next ingest or lint pass after the status change.
+
+If new pages are added to `raw/<volume>/` after the book has been marked archived, ingest MUST warn the user: archiving signals the book is complete, and adding pages later is usually a mistake. The user can override the warning to extend the book's date range and re-open the archive.
 
 ### 3.4 `wiki/entities/` — People, orgs, products, tools, places
 
@@ -174,8 +204,10 @@ The catalog of every page in the wiki, grouped by directory, sorted alphabetical
 _Last updated: YYYY-MM-DD HH:MM_
 
 ## Books
-- [[FL-vol-001]] — Daily log, Jan–Mar 2026
 - [[FR-vol-001]] — KOS architecture research
+
+## Archived Books
+- [[FL-vol-001]] — Daily log, Jan–Mar 2026 (envelope 7)
 
 ## Sources
 - [[FN-vol-001-page-007]]
@@ -322,7 +354,7 @@ The LLM MUST report (not fix, unless explicitly approved) the following:
 
 - **Broken wikilinks** — links to pages that don't exist
 - **Orphan pages** — pages with no incoming wikilinks (except books, sources, and the index/log)
-- **Raw/wiki sync** — every file under `raw/` must have a corresponding `wiki/sources/` page; every folder matching `^F[LRS]-vol-\d{3}$` under `raw/` must have a corresponding `wiki/books/` page with the matching `book-type` in frontmatter
+- **Raw/wiki sync** — every file under `raw/` must have a corresponding `wiki/sources/` page; every folder matching `^F[LRS]-vol-\d{3}$` under `raw/` must have a corresponding book page at EITHER `wiki/books/<volume>.md` OR `wiki/books/_archived/<volume>.md`, with the matching `book-type` in frontmatter. Lint scans `wiki/books/` recursively to find both active and archived book pages.
 - **Unresolved slugs** — `unresolved-slug:` entries in `log.md` that haven't been resolved
 - **Schema-version mismatch** — vaults whose `schema-version` is older than the KOS-shipped schema
 - **Frontmatter violations** — pages missing required frontmatter fields per Section 4
