@@ -1,13 +1,11 @@
 ---
-name: second-brain-lint
+name: kos-lint
 description: >
-  Health-check the wiki for contradictions, orphan pages, stale claims,
-  and missing cross-references. Use when the user says "audit",
-  "health check", "lint", "find problems", or wants to improve wiki quality.
+  Use this skill when the user wants to health-check their Kodex OS Layer 1 LLM Wiki for structural issues. Triggers include "lint kos", "check my wiki", "audit the wiki", "find broken links", or any explicit request for a wiki integrity report. The skill verifies that wiki/index.md is in sync with actual files, that wikilinks resolve, that pages conform to SCHEMA.md, that every raw/ source has a corresponding wiki/sources/ entry, and that wiki/log.md is current. Reports findings without making destructive changes unless the user explicitly approves a fix. Do not use this skill for routine ingest (use kos-ingest) or content questions (use kos-query).
 allowed-tools: Bash Read Write Edit Glob Grep
 ---
 
-# Second Brain — Lint
+# KOS — Lint
 
 Health-check the wiki and report issues with actionable fixes.
 
@@ -119,5 +117,5 @@ Append to `wiki/log.md`:
 
 ## Related Skills
 
-- `/second-brain-ingest` — process new sources into wiki pages
-- `/second-brain-query` — ask questions against the wiki
+- `/kos-ingest` — process new sources into wiki pages
+- `/kos-query` — ask questions against the wiki

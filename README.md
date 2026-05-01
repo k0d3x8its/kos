@@ -99,5 +99,4 @@ After every 10 ingests or monthly — whichever comes first. Also run it before 
 - [Blueprint & origin story](https://github.com/NicholasSpisak/second-brain/blob/main/docs/REQUIREMENTS.md) — the founding document for the second-brain project
 
 ---
-
-
+Forked from [NicholasSpisak/second-brain](https://github.com/NicholasSpisak/second-brain). Renamed and adapted as the Layer 1 toolkit for [Kodex OS](https://github.com/k0d3x8its/kodex-os).

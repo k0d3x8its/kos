@@ -1,14 +1,11 @@
 ---
-name: second-brain-query
+name: kos-query
 description: >
-  Answer questions against the knowledge base wiki. Use when the user
-  asks a question about their collected knowledge, wants to explore
-  connections between topics, says "what do I know about X", or wants
-  to search their wiki.
+    Use this skill when the user wants to ask a question, search, or retrieve information from their existing Kodex OS Layer 1 LLM Wiki. Triggers include "ask kos", "what does my wiki say about X", "find notes on Y", "search my wiki", or any retrieval-style question that should be answered from the user's own captured knowledge rather than general world knowledge. The skill searches across wiki/sources/, wiki/entities/, wiki/concepts/, and wiki/synthesis/, follows wikilinks, and synthesizes an answer with citations back to specific wiki pages. Do not use this skill to add new content (use kos-ingest) or to validate wiki structure (use kos-lint).
 allowed-tools: Bash Read Write Edit Glob Grep
 ---
 
-# Second Brain — Query
+# KOS — Query
 
 Answer questions by searching and synthesizing knowledge from the wiki.
 
@@ -72,5 +69,5 @@ If the user agrees:
 
 ## Related Skills
 
-- `/second-brain-ingest` — process new sources into wiki pages
-- `/second-brain-lint` — health-check the wiki for issues
+- `/kos-ingest` — process new sources into wiki pages
+- `/kos-lint` — health-check the wiki for issues

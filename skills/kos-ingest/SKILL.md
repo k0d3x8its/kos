@@ -1,14 +1,11 @@
 ---
-name: second-brain-ingest
+name: kos-ingest
 description: >
-  Process raw source documents into wiki pages. Use when the user adds
-  files to raw/ and wants them ingested, says "process this source",
-  "ingest this article", "I added something to raw/", or wants to
-  incorporate new material into their knowledge base.
+  Use this skill when the user wants to process raw sources into their Kodex OS Layer 1 LLM Wiki. Triggers include "ingest", "process my raw notes", "update the wiki", "add this to kos", or dropping new files into the vault's raw/ folder (scanned Field Notes pages, transcribed memo book pages, clipped articles, papers, transcripts). The skill reads from raw/, writes structured pages to wiki/, creates wikilinks and cross-references, and updates wiki/index.md and wiki/log.md. Never modifies content in raw/ — that sub-layer is immutable per the Kodex OS schema. Do not use this skill to answer questions about existing wiki content (use kos-query) or to check wiki health (use kos-lint).
 allowed-tools: Bash Read Write Edit Glob Grep
 ---
 
-# Second Brain — Ingest
+# KOS — Ingest
 
 Process raw source documents into structured, interlinked wiki pages.
 
@@ -127,6 +124,6 @@ Tell the user what was done:
 ## What's Next
 
 After ingesting sources, the user can:
-- **Ask questions** with `/second-brain-query` to explore what was ingested
-- **Ingest more sources** — clip another article and run `/second-brain-ingest` again
-- **Health-check** with `/second-brain-lint` after every 10 ingests to catch gaps
+- **Ask questions** with `/kos-query` to explore what was ingested
+- **Ingest more sources** — clip another article and run `/kos-ingest` again
+- **Health-check** with `/kos-lint` after every 10 ingests to catch gaps

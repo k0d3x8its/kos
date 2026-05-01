@@ -1,9 +1,9 @@
 # Cursor Agent Config Template
 
-This template generates a `.cursor/rules/second-brain.mdc` file in the vault.
+This template generates a `.cursor/rules/kos.mdc` file in the vault.
 
 ## Output File
-- **Filename:** `second-brain.mdc`
+- **Filename:** `kos.mdc`
 - **Location:** `.cursor/rules/` (relative to vault root)
 
 ## Template

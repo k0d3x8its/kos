@@ -1,14 +1,11 @@
 ---
-name: second-brain
-description: >
-  Set up a new Obsidian knowledge base with the LLM Wiki pattern. Use when
-  the user wants to create a second brain, initialize a vault, set up a
-  personal knowledge base, or says "onboard". Guides through an interactive
-  wizard to configure vault name, location, domain, agent support, and tooling.
+name: kos
+description: > 
+    Use this skill when the user wants to set up a new Kodex OS Layer 1 vault (the LLM Wiki layer) from scratch. Triggers include phrases like "set up kos", "create a new kos vault", "initialize my Kodex Wiki", or any first-time setup request. This skill walks the user through naming the vault, choosing a location, configuring the raw/ and wiki/ directory structure, generating SCHEMA.md, and wiring up their AI agent. Do not use this skill if a vault already exists — use kos-ingest, kos-query, or kos-lint instead. Do not use for Layer 0 (Field Notes), Layer 2 (Notion), Layer 3 (Archive), or Layer 4 (Trello) setup.
 allowed-tools: Bash Read Write Glob Grep
 ---
 
-# Second Brain — Onboarding Wizard
+# KOS — Onboarding Wizard
 
 Set up a new Obsidian knowledge base using the LLM Wiki pattern. The LLM acts as librarian — reading raw sources, compiling them into a structured interlinked wiki, and maintaining it over time.
 
@@ -20,7 +17,7 @@ Guide the user through these 5 steps. Ask ONE question at a time. Each step has 
 
 Ask:
 > "What would you like to name your knowledge base? This will be the folder name."
-> Default: `second-brain`
+> Default: `Kodex-wiki`
 
 Accept any user-provided name. This becomes the folder name and the title in the agent config.
 
@@ -37,7 +34,7 @@ Accept any absolute or relative path. Resolve `~` to the user's home directory. 
 Ask:
 > "What's this knowledge base about? This helps me set up relevant tags and describe the vault's purpose."
 >
-> Examples: "AI research", "competitive intelligence on fintech startups", "personal health and fitness"
+> Examples: "AI research", "General research", "personal health and fitness", "business/company"
 
 Accept free text. Use this to:
 - Write a one-line domain description for the agent config
@@ -93,7 +90,7 @@ For each selected agent, read the corresponding template from `<skill-directory>
 |---|---|---|---|
 | Claude Code | `claude-code.md` | `CLAUDE.md` | Vault root |
 | Codex | `codex.md` | `AGENTS.md` | Vault root |
-| Cursor | `cursor.md` | `second-brain.mdc` | `<vault>/.cursor/rules/` |
+| Cursor | `cursor.md` | `kos.mdc` | `<vault>/.cursor/rules/` |
 | Gemini CLI | `gemini.md` | `GEMINI.md` | Vault root |
 
 For each template, replace the placeholders:
@@ -133,7 +130,7 @@ Show the user:
 2. **Required next step** — install the Obsidian Web Clipper browser extension:
    > Install the Obsidian Web Clipper to easily save web articles into your vault:
    > https://chromewebstore.google.com/detail/obsidian-web-clipper/cnjifjpddelmedmihgijeibhnjfabmlf
-3. **How to start** — open the vault folder in Obsidian, clip an article to `raw/`, then run `/second-brain-ingest`
+3. **How to start** — open the vault folder in Obsidian, clip an article to `raw/`, then run `/kos-ingest`
 
 ## Reference Files
 
@@ -151,6 +148,6 @@ These files are bundled with this skill and available at `<skill-directory>/refe
 After setup is complete, the user's workflow is:
 
 1. **Clip articles** to `raw/` using the Obsidian Web Clipper
-2. **Ingest sources** with `/second-brain-ingest` — processes raw files into wiki pages
-3. **Ask questions** with `/second-brain-query` — searches and synthesizes from the wiki
-4. **Health-check** with `/second-brain-lint` — run after every 10 ingests or monthly
+2. **Ingest sources** with `/kos-ingest` — processes raw files into wiki pages
+3. **Ask questions** with `/kos-query` — searches and synthesizes from the wiki
+4. **Health-check** with `/kos-lint` — run after every 10 ingests or monthly

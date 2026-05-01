@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# Second Brain — Onboarding Script
+# KOS — Onboarding Script
 # Scaffolds vault directory structure and verifies CLI tooling.
 #
 # Usage: bash onboarding.sh <vault-path>
@@ -9,7 +9,7 @@ set -e
 
 VAULT_ROOT="${1:-.}"
 
-echo "=== Second Brain Onboarding ===" >&2
+echo "=== KOS Onboarding ===" >&2
 
 # 1. Create directory structure
 echo "Creating directory structure..." >&2

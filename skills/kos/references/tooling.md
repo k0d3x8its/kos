@@ -1,6 +1,6 @@
 # Tooling Reference
 
-CLI tools that extend the LLM's capabilities when working with a second-brain vault.
+CLI tools that extend the LLM's capabilities when working with a kos vault.
 
 ## Required
 
