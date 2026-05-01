@@ -39,14 +39,23 @@ Accept any absolute or relative path. Resolve `~` to the user's home directory. 
 
 Do NOT proceed with scaffolding if a vault is detected.
 
-### Step 3: Domain / Topic
+**3. How to start** — the Field Notes-aware workflow:
 
-Ask:
-> "What's this knowledge base for? One line is fine."
+> Open the vault folder in Obsidian (File → Open Vault as Folder).
 >
-> Examples: "AI research and personal notes", "general knowledge management", "my Kodex OS implementation"
-
-Accept free text. Use this only for the agent config's domain description. Do NOT generate domain-specific tags — KOS uses a structural taxonomy (book type, page type) rather than domain tags. Tag conventions emerge from real ingest data, not at setup.
+> When you're ready to add your first sources, create a folder under `raw/` for each Field Notes book you start transcribing:
+>
+> ```bash
+> mkdir raw/FL-vol-001    # First Field Log book (daily log)
+> mkdir raw/FR-vol-001    # First Field Research book (catchall)
+> mkdir raw/FS-vol-001    # First Field Study book (only when a subject earns one)
+> ```
+>
+> Drop transcribed pages in as `page-001.md`, `page-002.md`, etc. Web clippings go anywhere under `raw/` — `raw/clippings/` is a common choice.
+>
+> Then run `/kos-ingest` and the LLM will process them into your wiki, creating matching `wiki/books/` pages automatically the first time it sees a new volume folder.
+>
+> **About archiving:** when a memo book is full and you place it in a Layer 3 archive envelope, mark its `wiki/books/<volume>.md` page with `status: archived` and optionally move it into `wiki/books/_archived/`. The `raw/<volume>/` folder is never moved or deleted — it stays as the immutable source. See SCHEMA.md Section 3.3 for the full archiving workflow.
 
 ### Step 4: Agent Config
 
@@ -67,6 +76,19 @@ Then ask:
 > "Do you use any other AI agents you'd like config files for? Options: Claude Code, Codex, Cursor, Gemini CLI — or skip."
 
 Skip the agent that was auto-detected. Generate configs for all selected agents.
+
+### Step 4.5: Existing or Fresh?
+
+Ask:
+> "Are you starting a fresh KOS vault, or do you already have an archive of Field Notes books with their own volume numbers?"
+> 1. **Fresh** — I'm starting from scratch today
+> 2. **Archived** — I have existing books with established volume numbers
+
+If **Fresh**: the scaffolding script will pre-create `raw/FL-vol-001/` and `raw/FR-vol-001/` so the user has somewhere obvious to drop their first transcribed page. Skip `FS-vol-001/` since Field Study books only appear during Phase II — Data Extraction when a subject earns its own book.
+
+If **Archived**: the scaffolding script will not pre-create any volume folders. The user already knows their volume numbers (e.g., they may be starting at `FL-vol-047`) and will create folders matching their existing books.
+
+Pass the answer to `onboarding.sh` as a `--starter-mode=fresh` or `--starter-mode=archived` flag.
 
 ### Step 5: Optional CLI Tools
 
@@ -197,7 +219,7 @@ These files are bundled with this skill at `<skill-directory>/`:
 - `references/agent-configs/cursor.md` — Cursor rules template
 - `references/agent-configs/gemini.md` — GEMINI.md template
 
-Note: SCHEMA.md is NOT in this skill's references — it's at the repo root in `templates/SCHEMA.md`. There is one canonical schema, and it lives in `templates/`.
+Note: SCHEMA.md is NOT in this skill's references — it's at the repo root in `templates/SCHEMA.md`. There is one canonical schema, and it lives in `templates/`. The wizard copies it into each new vault during scaffolding (Post-Wizard Step 2).
 
 ---
 
