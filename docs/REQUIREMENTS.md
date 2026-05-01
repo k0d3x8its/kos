@@ -4,7 +4,7 @@
 
 ## ORIGIN
 
-kos is a fork of [NicholasSpisak/second-brain](https://github.com/NicholasSpisak/second-brain), itself an implementation of the LLM Wiki pattern Andrej Karpathy described in late 2025: dump raw source material into a folder, let an LLM compile it into a structured wiki, browse the whole thing in Obsidian.
+KOS is a fork of [NicholasSpisak/second-brain](https://github.com/NicholasSpisak/second-brain), itself an implementation of the LLM Wiki pattern Andrej Karpathy described in late 2025: dump raw source material into a folder, let an LLM compile it into a structured wiki, browse the whole thing in Obsidian.
 
 - Karpathy's original thread: <https://x.com/karpathy/status/2039805659525644595>
 - Karpathy's idea file: <https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f>
@@ -102,7 +102,7 @@ The Layer 1 pattern is agent-agnostic — it's just markdown files and conventio
 
 ## RELATIONSHIP TO THE REST OF KODEX OS
 
-kos is one tool in a five-layer stack. It only owns Layer 1. The other layers are out of scope:
+KOS is one tool in a five-layer stack. It only owns Layer 1. The other layers are out of scope:
 
 | Layer | Owned by | kos involvement |
 | --- | --- | --- |
