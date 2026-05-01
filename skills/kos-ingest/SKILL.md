@@ -143,15 +143,55 @@ The source summary is **factual only**. Save interpretation for `wiki/concepts/`
 
 ### 5. Create or update the book page (memo book sources only)
 
-If the source came from a folder matching `^F[LRS]-vol-\d{3}$`, the book has a corresponding page in `wiki/books/`.
+If the source came from a folder matching `^F[LRS]-vol-\d{3}$`, the book has a corresponding page in `wiki/books/`. Per SCHEMA.md Section 3.3, archived books may live at `wiki/books/_archived/<volume>.md` instead of `wiki/books/<volume>.md`.
 
-**If the book page exists:**
+**Step 5a: Find the book page (recursive lookup).**
+
+Search for the book page in both possible locations:
+
+```bash
+# Returns the path if the book page exists in either location
+find wiki/books -name "<volume>.md" -type f
+```
+
+Possible outcomes:
+- One match at `wiki/books/<volume>.md` → active book
+- One match at `wiki/books/_archived/<volume>.md` → archived book
+- No matches → first ingest from this book
+
+**Step 5b: Handle the three cases.**
+
+**Case 1: Active book page exists** (`wiki/books/<volume>.md`)
+
 - Append a wikilink to the new source page under the source list
 - Update `date-end` in frontmatter if this page extends the book's date range
 - Update the `updated:` timestamp
+- **Preserve all other frontmatter fields exactly as they are** — never rewrite frontmatter from scratch; merge changes into existing fields
 
-**If the book page does not exist** (first ingest from this book):
-- Create `wiki/books/<volume>.md` (e.g., `wiki/books/FL-vol-001.md`)
+**Case 2: Archived book page exists** (`wiki/books/_archived/<volume>.md`)
+
+This is unusual — adding pages to an archived book typically signals one of:
+- A late-arriving page from a book the user thought was complete
+- A scanning/transcription mistake (page got dropped into the wrong volume folder)
+- The user is intentionally re-opening the archive
+
+**Stop and ask the user before proceeding:**
+
+> "FL-vol-001 is marked as archived (envelope 7, archived 2026-04-02). I found a new page being ingested for it. What would you like to do?
+>
+> 1. **Add silently** — keep the book archived; just add this page to its source list and update `date-end`. (Use this for late-arriving transcriptions.)
+> 2. **Re-open the archive** — set `status: active`, clear `archived-on` and `envelope-number`, move the book page back to `wiki/books/<volume>.md`. (Use this if you're genuinely extending the book.)
+> 3. **Cancel ingest** — this page might be in the wrong volume folder; let me check before adding it."
+
+Wait for the user's choice. If they pick:
+
+- **Add silently** → update the archived page in place at `wiki/books/_archived/<volume>.md`. Append the source wikilink, update `date-end` and `updated:`. Preserve `status: archived`, `archived-on:`, and `envelope-number:` exactly as they are.
+- **Re-open the archive** → move the file from `wiki/books/_archived/<volume>.md` to `wiki/books/<volume>.md`. Update frontmatter: `status: active`, remove `archived-on:` and `envelope-number:` lines entirely. Then proceed as Case 1. Note the re-open in step 9's log entry.
+- **Cancel ingest** → skip this source. Tell the user the source file is unchanged in `raw/` and they can re-run ingest after confirming the volume.
+
+**Case 3: No book page exists** (first ingest from this book)
+
+- Create `wiki/books/<volume>.md` (new books are always created at the active path, not in `_archived/`)
 - Use this frontmatter, with `book-type` mapped from the prefix per SCHEMA.md Section 3.3:
 
 ```yaml
@@ -170,6 +210,8 @@ updated: 2026-05-01T14:32:00Z
 ```
 
 For `FS-vol-XXX` (field-study) books, ask the user for the subject if it isn't obvious from context.
+
+**Frontmatter merge rule (applies to all cases that update an existing book page):** Read the existing frontmatter. Update only the fields that need to change (`date-end`, `updated`, source list, and — for Case 2 re-open — `status`, `archived-on`, `envelope-number`). Leave every other field exactly as found. Do not "normalize" or reorder fields. Do not strip fields you don't recognize — they may be user customizations.
 
 ### 6. Update entity and concept pages
 
@@ -222,6 +264,8 @@ Ensure all related pages link to each other using `[[wikilink]]` syntax. Every m
 
 Append (per SCHEMA.md Section 3.9 — append-only, never rewrite):
 
+If Step 5b triggered an archived-book interaction (silent-add or re-open), include a `**Notes:**` line that records what happened, e.g., `Late-arriving page added to archived book FL-vol-001` or `Re-opened archive: FL-vol-001 returned to active status`. This keeps log.md as a complete audit trail of state changes.
+
 ```markdown
 ## 2026-05-01 14:32 — ingest
 
@@ -236,7 +280,19 @@ Omit the `Unresolved:` line if there's nothing unresolved.
 
 ### 10. Update `wiki/index.md`
 
-Add an entry for each new page created, under the matching section header (Books, Sources, Entities, Concepts, Synthesis, Questions). Update the "Last updated" timestamp at the top of the file.
+Add an entry for each new page created, under the matching section header. The six section headers per SCHEMA.md Section 3.8 are:
+
+- `## Books` — for active books (any with `status: active`)
+- `## Archived Books` — for books with `status: archived`. Include the envelope number in the entry, e.g., `[[FL-vol-001]] — Daily log, Jan–Mar 2026 (envelope 7)`
+- `## Sources`
+- `## Entities`
+- `## Concepts`
+- `## Synthesis`
+- `## Questions (open)` — only entries with `status: open`. Closed/dismissed questions are not indexed.
+
+**On status change for a book** (Case 2 re-open in Step 5b, or future archiving via a separate workflow): move the book's index entry between `## Books` and `## Archived Books` sections to match the new status. The entry text stays the same; only the section it sits under changes.
+
+Update the `_Last updated:_` timestamp at the top of the file.
 
 ### 11. Report results
 
