@@ -226,7 +226,7 @@ Append (per SCHEMA.md Section 3.9 — append-only, never rewrite):
 ## 2026-05-01 14:32 — ingest
 
 - **Operation:** ingest
-- **Source(s):** raw/FL-vol-001/page-007.md
+- **Source(s):** raw/FL-vol-001/page-007.md (source-type: field-log-page)
 - **Pages affected:** 1 created (sources), 1 updated (books), 2 created + 1 updated (entities), 1 created (concepts), 2 created (questions)
 - **Notes:** First ingest from FL-vol-001.
 - **Unresolved:** unresolved-slug: <F13LdN0t3> in [[FL-vol-001-page-007]]
