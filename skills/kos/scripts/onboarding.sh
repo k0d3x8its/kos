@@ -11,7 +11,12 @@ VAULT_ROOT="${1:-}"
 
 if [ -z "$VAULT_ROOT" ]; then
   echo "ERROR: vault path required" >&2
-  echo "Usage: bash onboarding.sh <vault-path>" >&2
+  echo "Usage: bash onboarding.sh <vault-path> [fresh|archived]" >&2
+  exit 1
+fi
+
+if [ "$STARTER_MODE" != "fresh" ] && [ "$STARTER_MODE" != "archived" ]; then
+  echo "ERROR: starter mode must be 'fresh' or 'archived', got: $STARTER_MODE" >&2
   exit 1
 fi
 
@@ -50,6 +55,17 @@ for dir in "${DIRS[@]}"; do
   echo "  created $dir/" >&2
 done
 
+# 1b. If fresh mode, pre-create the first FL and FR volume folders
+if [ "$STARTER_MODE" = "fresh" ]; then
+  echo "" >&2
+  echo "Fresh start — pre-creating first volume folders..." >&2
+  mkdir -p "$VAULT_ROOT/raw/FL-vol-001"
+  mkdir -p "$VAULT_ROOT/raw/FR-vol-001"
+  echo "  created raw/FL-vol-001/  (your first Field Log)" >&2
+  echo "  created raw/FR-vol-001/  (your first Field Research)" >&2
+  echo "  (FS-vol-001 not pre-created — Field Study books appear during Phase II)" >&2
+fi
+
 # 2. Create wiki/index.md if it doesn't exist
 if [ ! -f "$VAULT_ROOT/wiki/index.md" ]; then
   cat > "$VAULT_ROOT/wiki/index.md" << 'EOF'
@@ -58,6 +74,8 @@ if [ ! -f "$VAULT_ROOT/wiki/index.md" ]; then
 _Last updated: (none yet — run /kos-ingest to populate)_
 
 ## Books
+
+## Archived Books
 
 ## Sources
 
