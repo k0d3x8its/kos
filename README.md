@@ -1,20 +1,27 @@
 # KOS
 
-An LLM-maintained personal knowledge base built on the [LLM Wiki pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f). Drop raw sources into a folder, let the LLM compile them into a structured wiki, and browse it all in Obsidian.
+> The Layer 1 toolkit for [Kodex OS](https://github.com/k0d3x8its/kodex-os) — a set of Agent Skills that turn an Obsidian vault into an LLM-maintained knowledge base.
 
-![KOS Overview](docs/assets/overview.png)
+KOS is what you install when you want to add the LLM Wiki layer to your Kodex OS stack. It handles vault setup, ingest from `raw/`, querying, and integrity checks — everything the [Layer 1 spec](https://github.com/k0d3x8its/kodex-os#layer-1--knowledge-base) calls for.
+
+Forked from [NicholasSpisak/second-brain](https://github.com/NicholasSpisak/second-brain) and based on [Karpathy's LLM Wiki pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).
+
+---
 
 ## How It Works
 
-You feed raw material (articles, papers, notes, transcripts) into a `raw/` folder. The LLM reads everything, writes structured wiki pages, creates cross-references, and maintains an index. You browse the results in Obsidian — following links, exploring the graph view, and asking questions.
+You feed raw material into a `raw/` folder — scanned or mere photographed Field Notes pages, transcribed memo book entries, clipped articles, papers, transcripts. The LLM reads everything, writes structured wiki pages into `wiki/`, creates cross-references, and maintains an index. You browse the results in Obsidian — following links, exploring the graph view, and asking questions.
 
-The LLM is the librarian. You're the curator.
+The LLM is the librarian. You're the curator. `raw/` is immutable. `wiki/` is owned by the LLM. The contract between you and the LLM lives in `SCHEMA.md` at the vault root.
+
+This is Layer 1 of a [larger system](https://github.com/k0d3x8its/kodex-os). Layer 0 (Field Notes) feeds it. Layer 2 (Notion) reads from it. KOS does not cross those boundaries — it owns `wiki/` and nothing else.
 
 ## Prerequisites
 
 - **[Obsidian](https://obsidian.md)** — the markdown editor you'll browse your wiki in
 - **An AI coding agent** — [Claude Code](https://claude.ai/code), [Codex](https://openai.com/codex), [Cursor](https://cursor.com), [Gemini CLI](https://github.com/google-gemini/gemini-cli), or any agent that supports [Agent Skills](https://agentskills.io)
 - **[Node.js](https://nodejs.org)** — required for installing the skills via npm
+- **A Layer 0 capture practice** — recommended: [Field Notes memo books](https://fieldnotesbrand.com) per the Kodex OS spec, but any source of raw material works
 
 ## Install
 
@@ -22,11 +29,11 @@ The LLM is the librarian. You're the curator.
 npx skills add k0d3x8its/kos
 ```
 
-This installs four skills into your AI agent (Claude Code, Codex, Cursor, Gemini CLI, and 40+ others):
+This installs four skills into your AI agent:
 
 | Skill | What it does |
-|---|---|
-| `/kos` | Set up a new vault (guided wizard) |
+| --- | --- |
+| `/kos` | Set up a new Layer 1 vault (guided wizard) |
 | `/kos-ingest` | Process raw sources into wiki pages |
 | `/kos-query` | Ask questions against your wiki |
 | `/kos-lint` | Health-check the wiki |
@@ -34,29 +41,44 @@ This installs four skills into your AI agent (Claude Code, Codex, Cursor, Gemini
 ## Quick Start
 
 1. **Install the skills** (see above)
-2. **Run the wizard:** type `/kos` in your AI agent — it walks you through naming, location, domain, and tooling
+2. **Run the wizard:** type `/kos` in your AI agent — it walks you through naming, location, and tooling, and installs `SCHEMA.md` from the KOS default template
 3. **Install Web Clipper:** [Obsidian Web Clipper](https://chromewebstore.google.com/detail/obsidian-web-clipper/cnjifjpddelmedmihgijeibhnjfabmlf) — configure it to save to your vault's `raw/` folder
-4. **Open in Obsidian** — launch Obsidian, choose "Open folder as vault", select your vault folder
-5. **Clip your first article** to `raw/`, then run `/kos-ingest` — the LLM will discuss key takeaways and build wiki pages
-6. **Browse your wiki** in Obsidian — follow `[[wikilinks]]`, explore the graph view, check `wiki/index.md`
-7. **Keep going** — `/kos-query` to ask questions, `/kos-lint` to health-check
+4. **Open in Obsidian** — launch Obsidian, choose "Open folder as vault," select your vault folder
+5. **Add a source to `raw/`** — clip an article, drop in a scan or photograph of a Field Notes page, or paste in a transcript
+6. **Run `/kos-ingest`** — the LLM will discuss key takeaways and build wiki pages
+7. **Browse your wiki** in Obsidian — follow `[[wikilinks]]`, explore the graph view, check `wiki/index.md`
+8. **Keep going** — `/kos-query` to ask questions, `/kos-lint` to health-check
 
 ## What You Get
 
-```
+```text
 your-vault/
-├── raw/                    # Your inbox — drop sources here
+├── raw/                    # Your inbox — drop sources here (immutable)
+│   ├── FN-vol-001/         # One folder per Field Notes memo book
 │   └── assets/             # Images and attachments
-├── wiki/                   # LLM-maintained wiki
+├── wiki/                   # LLM-maintained (do not edit by hand)
 │   ├── sources/            # One summary per ingested source
+│   ├── books/              # one page per Field Notes memo book
 │   ├── entities/           # People, orgs, products, tools
 │   ├── concepts/           # Ideas, frameworks, theories
 │   ├── synthesis/          # Comparisons, analyses, themes
+│   ├── questions/          # open questions extracted from raw/
 │   ├── index.md            # Master catalog of all pages
 │   └── log.md              # Chronological operation record
 ├── output/                 # Reports and generated artifacts
-└── CLAUDE.md               # Agent config (varies by agent)
+├── SCHEMA.md               # Rules the LLM follows
+└── CLAUDE.md               # Agent config (filename varies by agent)
 ```
+
+## Where KOS Fits in Kodex OS
+
+KOS is the reference implementation of [Kodex OS Layer 1](https://github.com/k0d3x8its/kodex-os#layer-1--knowledge-base). It sits between two layers it does not own:
+
+```text
+Layer 0: Raw Capture (Field Notes)  →  Layer 1: KOS (this repo)  →  Layer 2: Project Intelligence (Notion)
+```
+
+If you don't use Kodex OS, KOS still works fine as a standalone LLM Wiki tool — the layer model is the recommended context, not a requirement. If you do use Kodex OS, KOS is what makes Layer 1 real.
 
 ## Optional Tools
 
@@ -66,37 +88,13 @@ The wizard offers to install these. All optional but recommended:
 - **[qmd](https://github.com/tobi/qmd)** — local search engine for markdown files (useful as wiki grows)
 - **[agent-browser](https://github.com/vercel-labs/agent-browser)** — browser automation for web research
 
-## FAQ
-
-**The wizard failed or I need to re-run setup.**
-Run `/kos` again — the onboarding script is idempotent. It won't overwrite existing files, so your data is safe. If you need a fresh start, delete the vault folder and re-run.
-
-**I accidentally modified a file in `raw/`.**
-That's OK. The wiki was built from the original content. If you need the original back, check your git history (if the vault is a git repo) or re-clip the source. The wiki pages are unaffected.
-
-**`wiki/index.md` is out of sync with actual pages.**
-Run `/kos-lint` — it checks index consistency and offers to fix mismatches.
-
-**Wikilinks are broken after renaming a page.**
-Run `/kos-lint` — it scans for broken `[[wikilinks]]` and reports which files need updating.
-
-**The wiki is getting large and queries are slow.**
-Install `qmd` (`npm i -g @tobilu/qmd`). The query skill uses it automatically when available. It provides fast hybrid search across your wiki files.
-
-**Can I use this with multiple AI agents?**
-Yes. The wizard generates config files for each agent you select. They all follow the same wiki schema, so multiple agents can work on the same vault.
-
-**How do I handle images in clipped articles?**
-In Obsidian, set Settings → Files and links → Attachment folder path to `raw/assets/`. After clipping an article, use "Download attachments for current file" to save images locally.
-
-**How often should I lint?**
-After every 10 ingests or monthly — whichever comes first. Also run it before any major query or synthesis work.
-
 ## Based On
 
 - [Andrej Karpathy's LLM Wiki pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)
 - [Agent Skills open standard](https://agentskills.io)
-- [Blueprint & origin story](https://github.com/NicholasSpisak/second-brain/blob/main/docs/REQUIREMENTS.md) — the founding document for the second-brain project
+- [NicholasSpisak/second-brain](https://github.com/NicholasSpisak/second-brain) — the upstream fork
+- [Blueprint & full requirements](docs/REQUIREMENTS.md) — the design document for KOS
 
 ---
-Forked from [NicholasSpisak/second-brain](https://github.com/NicholasSpisak/second-brain). Renamed and adapted as the Layer 1 toolkit for [Kodex OS](https://github.com/k0d3x8its/kodex-os).
+
+Part of [Kodex OS](https://github.com/k0d3x8its/kodex-os) — a layered personal knowledge management system.
