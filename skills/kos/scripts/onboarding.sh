@@ -2,10 +2,10 @@
 # KOS — Onboarding Script
 # Scaffolds vault directory structure and verifies CLI tooling.
 #
-# Usage: bash onboarding.sh <vault-path>
+# Usage: STARTER_MODE=fresh bash onboarding.sh <vault-path>
 # Output: Plain-text status to stderr. Exit code 0 on success, non-zero on failure.
 
-set -u  # error on undefined vars
+set -u # error on undefined vars
 
 VAULT_ROOT="${1:-}"
 
@@ -40,6 +40,7 @@ DIRS=(
   "wiki"
   "wiki/sources"
   "wiki/books"
+  "wiki/_archived"   # stores completed/retired Field Notes books
   "wiki/entities"
   "wiki/concepts"
   "wiki/synthesis"
@@ -61,8 +62,8 @@ if [ "$STARTER_MODE" = "fresh" ]; then
   echo "Fresh start — pre-creating first volume folders..." >&2
   mkdir -p "$VAULT_ROOT/raw/FL-vol-001"
   mkdir -p "$VAULT_ROOT/raw/FR-vol-001"
-  echo "  created raw/FL-vol-001/  (your first Field Log)" >&2
-  echo "  created raw/FR-vol-001/  (your first Field Research)" >&2
+  echo "  created raw/FL-vol-001/ (your first Field Log)" >&2
+  echo "  created raw/FR-vol-001/ (your first Field Research)" >&2
   echo "  (FS-vol-001 not pre-created — Field Study books appear during Phase II)" >&2
 fi
 
@@ -86,7 +87,6 @@ _Last updated: (none yet — run /kos-ingest to populate)_
 ## Synthesis
 
 ## Questions (open)
-
 EOF
   echo "  created wiki/index.md" >&2
 else
@@ -100,7 +100,6 @@ if [ ! -f "$VAULT_ROOT/wiki/log.md" ]; then
 
 Append-only chronological record of all KOS operations on this vault.
 Format defined in SCHEMA.md Section 3.9. Do not edit by hand.
-
 EOF
   echo "  created wiki/log.md" >&2
 else
@@ -115,7 +114,6 @@ check_tool() {
   local name="$1"
   local cmd="$2"
   local install_cmd="$3"
-
   if command -v "$cmd" > /dev/null 2>&1; then
     echo "  [installed] $name" >&2
   else
