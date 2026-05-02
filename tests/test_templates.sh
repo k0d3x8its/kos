@@ -58,7 +58,7 @@ echo "▸ Checking all templates are non-empty..."
 template_count=0
 for tpl in "$TEMPLATES_DIR"/*.md; do
   [ -e "$tpl" ] || continue
-  ((template_count++))
+  template_count=$((template_count + 1))
   name=$(basename "$tpl")
   size=$(wc -c < "$tpl")
   if [ "$size" -gt 0 ]; then
