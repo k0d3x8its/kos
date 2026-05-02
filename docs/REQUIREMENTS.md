@@ -19,14 +19,16 @@ That dependency direction is fixed. `raw/` feeds `wiki/`. `wiki/` feeds Notion. 
 
 A KOS vault contains four top-level locations:
 
-- **`raw/`** — the immutable input sub-layer. Scanned and transcribed Field Notes pages, clipped articles, papers, transcripts. Each Field Notes memo book maps 1:1 to a folder under `raw/` (e.g. `FN-vol-001/`, `R-vol-001/`). The LLM **never modifies** anything here.
-- **`wiki/`** — the LLM-generated, LLM-maintained output sub-layer. Subdivided into `sources/`, `entities/`, `concepts/`, and `synthesis/`, plus two special files: `index.md` (the master catalog) and `log.md` (the chronological operation record).
+- **`raw/`** — the immutable input sub-layer. Scanned and transcribed Field Notes pages, clipped articles, papers, transcripts. Each Field Notes memo book maps 1:1 to a folder under `raw/`, named by purpose: `FL-vol-XXX/` for daily logs (Field Log), `FR-vol-XXX/` for catchall research (Field Research), `FS-vol-XXX/` for dedicated subject study (Field Study). The LLM **never modifies** anything under `raw/`.
+- **`wiki/`** — the LLM-generated, LLM-maintained output sub-layer. Subdivided into six purposeful directories — `sources/` (one summary per ingested raw file), `books/` (one page per memo book), `entities/` (people, orgs, products, tools, places), `concepts/` (ideas, frameworks, theories), `synthesis/` (cross-cutting analyses), and `questions/` (open questions extracted from sources) — plus two special files: `index.md` (the master catalog) and `log.md` (the chronological operation record).
 - **`output/`** — generated reports, query results, and synthesis artifacts.
 - **`SCHEMA.md`** — the rules the LLM follows when maintaining the wiki. This is the contract.
 
 The system runs entirely on markdown. No vector store, no embedding pipeline, no fancy RAG. Just files, conventions, and a librarian (the LLM) that follows `SCHEMA.md`.
 
 The agent config file at the vault root (`CLAUDE.md`, `AGENTS.md`, etc.) tells the LLM how to behave as that librarian — the architecture, operations, page format, and rules.
+
+**One inline convention worth knowing:** the user can reference websites in raw sources using a bit.ly slug encoded in angle brackets (e.g., `<F13LdN0t3>` becomes `https://bit.ly/F13LdN0t3`). The LLM expands these on ingest. See SCHEMA.md Section 5 for the full convention.
 
 ---
 
@@ -45,7 +47,7 @@ The agent config file at the vault root (`CLAUDE.md`, `AGENTS.md`, etc.) tells t
 
 **[Obsidian Web Clipper](https://chromewebstore.google.com/detail/obsidian-web-clipper/cnjifjpddelmedmihgijeibhnjfabmlf)** — for web sources. Saves clipped articles as clean markdown directly into `raw/`.
 
-**A scanner or scanning app** — for Field Notes pages. Anything that produces legible images the LLM can transcribe. Scans go into the appropriate `raw/FN-vol-XXX/` folder.
+**A scanner or scanning app** — for Field Notes pages. Anything that produces legible images the LLM can transcribe. Scans go into the appropriate `raw/F[LRS]-vol-XXX/` folder, depending on which kind of memo book they came from (log, research, or study).
 
 ---
 
@@ -53,40 +55,46 @@ The agent config file at the vault root (`CLAUDE.md`, `AGENTS.md`, etc.) tells t
 
 KOS exposes four Agent Skills, one per operation:
 
-**`/kos` — Onboarding.** Scaffolds a new Layer 1 vault. Creates `raw/`, `wiki/` (with `sources/`, `entities/`, `concepts/`, `synthesis/`), and `output/`. Bootstraps `wiki/index.md` and `wiki/log.md`. Generates the agent config file. Installs `SCHEMA.md` from the kos template.
+**`/kos` — Onboarding.** Scaffolds a new Layer 1 vault. Creates `raw/` (with `assets/`), `wiki/` (with all six subdirectories: `sources/`, `books/`, `entities/`, `concepts/`, `synthesis/`, `questions/`), and `output/`. Bootstraps `wiki/index.md` (with section headers for all six) and `wiki/log.md`. Installs `SCHEMA.md` from the canonical template at `templates/SCHEMA.md` in the KOS repo. Generates the agent config file (`CLAUDE.md`, `AGENTS.md`, etc.) tailored to the user's agent. Refuses to overwrite an existing vault.
 
-**`/kos-ingest` — Ingest.** Processes a raw source into wiki pages. Reads from `raw/`, creates a summary in `wiki/sources/`, creates or updates entity and concept pages, adds wikilinks between related pages, updates `index.md` and `log.md`. A single source typically touches 10–15 wiki pages. Never modifies `raw/`.
+**`/kos-ingest` — Ingest.** Processes a raw source into wiki pages. Reads from `raw/` without modification, creates a summary in `wiki/sources/`, creates or updates the corresponding `wiki/books/` page (for sources from memo books), extracts entities and concepts into their respective directories, extracts open questions into `wiki/questions/`, and expands inline bit.ly slugs (per SCHEMA.md Section 5). A single source typically touches 5–15 wiki pages. Always updates `wiki/index.md` and appends an entry to `wiki/log.md`. Has two modes: discussion (confirms takeaways with the user before writing) and quick (batch ingest without check-ins).
 
-**`/kos-query` — Query.** Answers questions against the wiki. Reads `index.md` to find relevant pages, follows wikilinks, synthesizes an answer with citations back to specific wiki pages, offers to save valuable results as `synthesis/` pages.
+**`/kos-query` — Query.** Answers questions against the wiki. Classifies the query (factual lookup, time-scoped, status-scoped, comparison, exploration, source-tracing, archive-lookup), searches the matching directories, follows wikilinks one hop for context, and synthesizes an answer with kebab-case wikilink citations to specific wiki pages. **Refuses to fabricate** — when the wiki doesn't contain an answer, the skill says so explicitly rather than falling back on training data. Optionally saves valuable answers as new `wiki/synthesis/` pages. Always logs the query, including whether the wiki could answer it (`yes` / `partial` / `no`), so gaps in coverage are visible over time.
 
-**`/kos-lint` — Lint.** Health-checks the wiki. Scans for broken wikilinks, orphan pages, contradictions, stale claims, missing cross-references between `raw/` sources and `wiki/sources/` entries, and data gaps. Reports findings by severity. Does not make destructive changes without explicit approval.
+**`/kos-lint` — Lint.** Health-checks the wiki against SCHEMA.md. Runs eight checks at minimum (raw/sources sync, books/raw sync, broken wikilinks, index consistency, frontmatter validation, unresolved bit.ly slugs, schema version, orphan pages) plus optional deep-audit checks (duplicate entities, stale claims, contradictions). Findings are grouped by severity (Error / Warning / Info). Reports per-finding rather than batch — the user approves each fix individually, since some findings have ambiguous correct answers (orphan pages: link or delete? duplicate entities: which page survives?). Does not migrate schemas automatically.
 
 ---
 
 ## THE AGENT CONFIG FILE
 
-The agent config is the brain of Layer 1. It tells the LLM exactly how to behave. The key sections:
+The agent config is the entry point of Layer 1. It tells the LLM where it's operating and points to the contract. The key sections:
 
-- **Architecture** — four locations (`raw/`, `wiki/`, `output/`, `SCHEMA.md`), wiki subdirectories (`sources/`, `entities/`, `concepts/`, `synthesis/`), two special files (`index.md`, `log.md`)
-- **Page format** — YAML frontmatter (tags, sources, created, updated) + wikilink syntax
-- **Operations** — step-by-step workflows for ingest, query, and lint
-- **Rules** — the constraints governing the LLM's behavior (never modify `raw/`, always update `index.md`, every `raw/` source must have a `wiki/sources/` entry, etc.)
+- **Vault location** — the path to the KOS vault and its purpose (filled in by the `/kos` wizard from the user's domain description)
+- **Schema reference** — a pointer to `./SCHEMA.md` at the vault root, which is the canonical contract for the vault
+- **Skills available** — the four (eventually five) KOS commands the agent can invoke against the vault
+- **Operating rules** — a brief restatement of the most important constraints (raw is immutable, do not fabricate during query, follow SCHEMA.md when in doubt)
 
-The `/kos` onboarding skill generates this file from the canonical rules in `skills/kos/references/wiki-schema.md`. You can edit it after generation — but if you change the rules, run `/kos-lint` afterward to confirm the existing wiki still conforms.
+The agent config does **not** embed SCHEMA.md's contents. It references the schema file at the vault root. This way, if the user edits `SCHEMA.md` (to add a directory, change a convention, soften a rule), every agent picks up the change without the config drifting.
+
+The `/kos` onboarding skill generates the config from a template in `skills/kos/references/agent-configs/` — one template per supported agent (Claude Code, Codex, Cursor, Gemini CLI). You can edit the generated file after onboarding; if you change the rules, run `/kos-lint` afterward to confirm the existing wiki still conforms.
 
 ---
 
 ## SCHEMA OWNERSHIP
 
-`SCHEMA.md` is the contract between you and the LLM. KOS ships a default `SCHEMA.md` template that aligns with the Kodex OS Layer 1 specification. The default schema is opinionated:
+`SCHEMA.md` is the contract between you and the LLM. KOS ships a canonical `SCHEMA.md` template at `templates/SCHEMA.md` in the repo root, and the `/kos` wizard installs it into every new vault. The default schema is opinionated:
 
-- Each Field Notes memo book maps 1:1 to a folder under `raw/`
-- Each `raw/` source must have exactly one `wiki/sources/` summary page
-- Wiki pages use Obsidian wikilinks (`[[double-bracket]]`), not markdown links
-- `index.md` is updated on every ingest
-- `log.md` records every ingest, query, and lint with a timestamp
+- Memo books are typed by purpose: `FL-vol-XXX` (Field Log), `FR-vol-XXX` (Field Research), `FS-vol-XXX` (Field Study). Each maps 1:1 to a folder under `raw/`.
+- Each `raw/` source has exactly one `wiki/sources/` summary page; each memo book has exactly one `wiki/books/` page.
+- Open questions extracted from sources become first-class pages in `wiki/questions/`, with a `status:` field (open / answered / dismissed) for filtering.
+- The user can encode a shortened bit.ly URL inline using angle brackets (`<slug>`); the LLM expands these to full URLs on ingest, with case-sensitivity preserved.
+- Wiki pages use Obsidian wikilinks (`[[double-bracket]]`) for internal references and markdown links for external URLs.
+- `wiki/index.md` is updated on every ingest. `wiki/log.md` records every ingest, query, lint, and archive with a structured entry.
+- Filenames are kebab-case, ASCII only. Frontmatter is mandatory.
 
-You can override any of this in your vault's `SCHEMA.md`. KOS will follow whatever is there. But the defaults are what make a KOS vault interoperate with the rest of the Kodex OS stack.
+You can override any of this in your vault's `SCHEMA.md`. KOS will follow whatever is there. But the defaults are what make a KOS vault interoperate with the rest of the Kodex OS stack — particularly Layer 2 (Notion), which reads from a stable `wiki/` directory.
+
+The schema is versioned (`schema-version:` field in the YAML header). When KOS ships a schema update, `/kos-lint` detects the version mismatch and surfaces it; migrations are user-driven, never automatic.
 
 ---
 
@@ -140,12 +148,12 @@ Karpathy's pattern, restated in Kodex OS terms: capture freely (Layer 0), let th
 
 | Concept | Implementation in KOS |
 | --- | --- |
-| "Dump raw sources" | `raw/` directory + Field Notes scans + Obsidian Web Clipper |
-| "LLM compiles a wiki" | `/kos-ingest` — reads sources, creates/updates wiki pages, maintains `index.md` and `log.md` |
+| "Dump raw sources" | `raw/` directory + Field Notes transcriptions (FL/FR/FS volumes) + Obsidian Web Clipper |
+| "LLM compiles a wiki" | `/kos-ingest` — reads sources, creates/updates pages across six wiki directories, expands bit.ly slugs, extracts open questions, maintains `index.md` and `log.md` |
 | "Browse in Obsidian" | Obsidian reads `wiki/` with backlinks and graph view |
-| "Ask questions" | `/kos-query` — searches wiki, synthesizes answers with citations |
-| "Maintain quality" | `/kos-lint` — audits for contradictions, orphans, stale claims, raw/wiki sync |
-| "Set it up" | `/kos` — interactive wizard scaffolds everything |
-| "The contract" | `SCHEMA.md` at the vault root, generated from KOS defaults |
+| "Ask questions" | `/kos-query` — searches wiki, synthesizes answers with citations, refuses to fabricate when the wiki is silent |
+| "Maintain quality" | `/kos-lint` — runs eight schema-validation checks plus optional deep audits, reports per-finding |
+| "Set it up" | `/kos` — interactive wizard scaffolds the vault, installs SCHEMA.md, generates the agent config |
+| "The contract" | `SCHEMA.md` at the vault root, copied from `templates/SCHEMA.md` by the wizard |
 
 The idea is Karpathy's. The blueprint for KOS is this document. The architecture is [Kodex OS](https://github.com/k0d3x8its/kodex-os). The `skills/` directory is the executable implementation — but you could build your own Layer 1 from this blueprint using any LLM and any tooling you prefer, as long as it respects the `raw/` → `wiki/` → Layer 2 dependency direction.
