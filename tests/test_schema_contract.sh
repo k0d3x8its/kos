@@ -12,8 +12,8 @@ FAIL=0
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SCHEMA="$REPO_ROOT/templates/SCHEMA.md"
 
-pass() { echo "  ✅ $1"; ((PASS++)); }
-fail() { echo "  ❌ $1"; ((FAIL++)); }
+pass() { echo "  ✅ $1"; PASS=$((PASS + 1)); }
+fail() { echo "  ❌ $1"; FAIL=$((FAIL + 1)); }
 
 echo ""
 echo "═══════════════════════════════════════"
