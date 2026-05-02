@@ -91,7 +91,7 @@ while IFS= read -r skill_file; do
   else
     fail "$name: 'description' field is empty"
   fi
-done < <(find "$SKILLS_DIR" -name "*.md")
+done < <(find "$SKILLS_DIR" -name "SKILL.md")
 
 # --- Summary ---
 echo ""
