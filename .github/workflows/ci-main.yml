@@ -63,7 +63,7 @@ jobs:
   # ── Job 3: PR gate — both jobs must pass before merge ─────────────
   # This is what you set as a required status check in GitHub branch rules.
   gate:
-    name: Gate (All Clear)
+    name: Gate (All Clear) ⛩️
     runs-on: ubuntu-latest
     needs: [test, spellcheck]
 
