@@ -14,15 +14,15 @@ on:
 jobs:
   # ── Job 1: Run all structural and contract tests ───────────────────
   test:
-    name: Run Tests
+    name: Run Tests 🧪
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository 🗄️
         uses: actions/checkout@v4
 
       # Make all test scripts executable
-      - name: Make test scripts executable
+      - name: Make test scripts executable 📜
         run: chmod +x tests/*.sh
 
       - name: "Test 1/5 — Repository Structure"
@@ -44,11 +44,11 @@ jobs:
   # Uses `typos` — a fast, zero-config Rust spell checker.
   # Custom exceptions live in .typos.toml at the repo root.
   spellcheck:
-    name: Spellcheck
+    name: Spellcheck 🔤
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository 🗄️
         uses: actions/checkout@v4
 
       - name: Install typos
