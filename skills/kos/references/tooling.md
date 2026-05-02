@@ -1,18 +1,18 @@
 # Tooling Reference
 
-CLI tools that extend the LLM's capabilities when working with a kos vault.
+CLI tools that extend the LLM's capabilities when working with a KOS vault.
 
-## Required
+## Recommended
 
 ### Obsidian Web Clipper
 
-Browser extension that saves web articles as clean markdown files directly into your vault's `raw/` directory.
+Browser extension that saves web articles as clean markdown files directly into your vault's `raw/` directory. Recommended if you ingest web content into your KOS vault. Not required if your sources are exclusively Field Notes scans, transcripts, or other non-web material.
 
-- **Install:** Chrome Web Store — https://chromewebstore.google.com/detail/obsidian-web-clipper/cnjifjpddelmedmihgijeibhnjfabmlf
-- **Setup:** After installing, configure the default vault location to point to your vault's `raw/` directory
-- **Why required:** This is the primary way to feed source material into the vault without manual copy-paste
+* **Install:** Chrome Web Store — <https://chromewebstore.google.com/detail/obsidian-web-clipper/cnjifjpddelmedmihgijeibhnjfabmlf>
+* **Setup:** After installing, configure the default vault location to point to your vault's `raw/` directory (a `raw/clippings/` subfolder is a common target)
+* **When to use:** Saving articles, papers, blog posts, and any web-native source material into your vault for later ingestion
 
-## Optional (Recommended)
+## Optional
 
 ### summarize
 
