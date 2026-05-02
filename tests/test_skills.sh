@@ -28,24 +28,25 @@ if [ ! -d "$SKILLS_DIR" ]; then
   exit 1
 fi
 
-SKILL_FILES=("$SKILLS_DIR"/*.md)
-if [ ! -e "${SKILL_FILES[0]}" ]; then
-  echo "  ❌ No .md files found in skills/ — aborting"
+# Skills live in subdirectories — search recursively for .md files
+SKILL_FILES=$(find "$SKILLS_DIR" -name "*.md" | head -1)
+if [ -z "$SKILL_FILES" ]; then
+  echo "  ❌ No .md files found anywhere in skills/ — aborting"
   exit 1
 fi
 
 pass "skills/ directory exists and contains .md files"
 
 # --- Required skill files ---
+# Skills live at skills/<name>/SKILL.md per the Agent Skills spec
 echo ""
 echo "▸ Checking required skill files exist..."
 
-# These are the four core KOS skills defined in the README
-for skill in kos.md kos-ingest.md kos-query.md kos-lint.md; do
-  if [ -f "$SKILLS_DIR/$skill" ]; then
-    pass "Skill file exists: $skill"
+for skill in kos kos-ingest kos-query kos-lint; do
+  if [ -f "$SKILLS_DIR/$skill/SKILL.md" ]; then
+    pass "Skill file exists: $skill/SKILL.md"
   else
-    fail "Missing skill file: $skill"
+    fail "Missing skill file: $skill/SKILL.md"
   fi
 done
 
@@ -55,8 +56,9 @@ done
 echo ""
 echo "▸ Validating YAML frontmatter in all skill files..."
 
-for skill_file in "$SKILLS_DIR"/*.md; do
-  name=$(basename "$skill_file")
+while IFS= read -r skill_file; do
+  # Show path relative to skills/ for readability
+  name=$(realpath --relative-to="$SKILLS_DIR" "$skill_file")
 
   # Check frontmatter opening delimiter exists on line 1
   first_line=$(head -1 "$skill_file")
@@ -89,7 +91,7 @@ for skill_file in "$SKILLS_DIR"/*.md; do
   else
     fail "$name: 'description' field is empty"
   fi
-done
+done < <(find "$SKILLS_DIR" -name "*.md")
 
 # --- Summary ---
 echo ""
