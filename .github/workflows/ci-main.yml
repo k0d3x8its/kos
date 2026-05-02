@@ -25,19 +25,19 @@ jobs:
       - name: Make test scripts executable 📜
         run: chmod +x tests/*.sh
 
-      - name: "Test 1/5 — Repository Structure"
+      - name: "Test 1/5 — Repository Structure 🗃️"
         run: ./tests/test_structure.sh
 
-      - name: "Test 2/5 — Skill File Compliance"
+      - name: "Test 2/5 — Skill File Compliance 🥷"
         run: ./tests/test_skills.sh
 
-      - name: "Test 3/5 — Template Integrity"
+      - name: "Test 3/5 — Template Integrity 🗂️"
         run: ./tests/test_templates.sh
 
-      - name: "Test 4/5 — Schema Contract"
+      - name: "Test 4/5 — Schema Contract 📃"
         run: ./tests/test_schema_contract.sh
 
-      - name: "Test 5/5 — Lint Rules Dry Run"
+      - name: "Test 5/5 — Lint Rules Dry Run 🏃‍➡️"
         run: ./tests/test_lint_rules.sh
 
   # ── Job 2: Spellcheck all markdown files ──────────────────────────
