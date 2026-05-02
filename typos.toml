@@ -1,0 +1,28 @@
+# .typos.toml
+# Configuration for the `typos` spellchecker.
+# Add KOS-specific terms here so they don't get flagged as typos.
+# Docs: https://github.com/crate-ci/typos
+
+[default]
+# These are intentional non-dictionary words used throughout KOS.
+# Without this list, typos would flag them as spelling errors.
+[default.extend-words]
+kos       = "kos"        # the project name
+wikilinks = "wikilinks"  # Obsidian link syntax
+ingest    = "ingest"     # /kos-ingest command
+wikis     = "wikis"      # plural of wiki
+memos     = "memos"      # Field Notes memo books
+LLM       = "LLM"        # Large Language Model
+LLMs      = "LLMs"       # plural
+frontmatter = "frontmatter" # YAML frontmatter (one word in this context)
+karpathy  = "karpathy"   # Andrej Karpathy (referenced in README)
+obsidian  = "obsidian"   # Obsidian app
+
+[files]
+# Never spellcheck generated or binary files
+extend-exclude = [
+  "*.sh",      # shell scripts — variable names would false-positive constantly
+  "*.yml",     # workflow files — GitHub Actions syntax trips the checker
+  "*.toml",    # this file and any other toml configs
+  ".gitignore",
+]
