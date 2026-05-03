@@ -25,6 +25,18 @@ jobs:
       - name: Make test scripts executable 📜
         run: chmod +x tests/*.sh
 
+      - name: "Verify expected skills exist 🗂️"
+        run: |
+          EXPECTED="kos kos-ingest kos-query kos-lint kos-archive"
+          for skill in $EXPECTED; do
+            if [ ! -f "skills/$skill/SKILL.md" ]; then
+              echo "❌ Missing: skills/$skill/SKILL.md"
+              exit 1
+            else
+              echo "✅ Found: skills/$skill/SKILL.md"
+            fi
+          done
+
       - name: "Test 1/5 — Repository Structure 🗃️"
         run: ./tests/test_structure.sh
 
@@ -58,10 +70,9 @@ jobs:
 
       # Spellcheck all markdown files across skills/, templates/, docs/, and root
       - name: Run spellcheck
-        run: typos skills/ templates/ docs/ README.md
+        run: typos skills/ templates/ docs/ tests/ README.md
 
   # ── Job 3: PR gate — both jobs must pass before merge ─────────────
-  # This is what you set as a required status check in GitHub branch rules.
   gate:
     name: Gate (All Clear) ⛩️
     runs-on: ubuntu-latest
