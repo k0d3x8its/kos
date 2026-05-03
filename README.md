@@ -37,7 +37,7 @@ This is Layer 1 of a [larger system](https://github.com/k0d3x8its/kodex-os). Lay
 npx skills add k0d3x8its/kos
 ```
 
-This installs four skills into your AI agent:
+This installs five skills into your AI agent:
 
 | Skill | What it does |
 | --- | --- |
@@ -45,6 +45,7 @@ This installs four skills into your AI agent:
 | `/kos-ingest` | Process raw sources into wiki pages |
 | `/kos-query` | Ask questions against your wiki, with citations and no fabrication |
 | `/kos-lint` | Health-check the wiki against SCHEMA.md |
+| `/kos-archive` | Archive a completed memo book to a Layer 3 envelope |
 
 ## Quick Start
 
@@ -57,7 +58,7 @@ This installs four skills into your AI agent:
         mkdir raw/FL-vol-001    # First Field Log book
         echo "your transcribed page content" > raw/FL-vol-001/page-001.md
     ```
-   Or clip an article anywhere under `raw/` (`raw/assets/` is a common choice).
+   Or clip an article anywhere under `raw/` (`raw/clippings/` is a common choice).
 6. **Run `/kos-ingest`** — the LLM will discuss key takeaways and build wiki pages, including a `wiki/books/FL-vol-001.md` summary the first time it sees a new memo book
 7. **Browse your wiki** in Obsidian — follow `[[wikilinks]]`, explore the graph view, check `wiki/index.md`
 8. **Keep going** — `/kos-query` to ask questions, `/kos-lint` to health-check after every ~10 ingests
