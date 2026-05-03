@@ -1,0 +1,88 @@
+# .github/workflows/ci.yml
+# Unified CI pipeline for both main and dev branches.
+# Spellcheck blocks on main; advisory only on dev.
+
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  test:
+    name: Run Tests 🧪
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository 🗄️
+        uses: actions/checkout@v4
+
+      - name: Make test scripts executable 📜
+        run: chmod +x tests/*.sh
+
+      - name: Verify expected skills exist 🗂️
+        run: |
+          EXPECTED="kos kos-ingest kos-query kos-lint kos-archive"
+          for skill in $EXPECTED; do
+            if [ ! -f "skills/$skill/SKILL.md" ]; then
+              echo "❌ Missing: skills/$skill/SKILL.md"
+              exit 1
+            else
+              echo "✅ Found: skills/$skill/SKILL.md"
+            fi
+          done
+
+      - name: "Test 1/5 — Repository Structure 🗃️"
+        run: ./tests/test_structure.sh
+
+      - name: "Test 2/5 — Skill File Compliance 🥷"
+        run: ./tests/test_skills.sh
+
+      - name: "Test 3/5 — Template Integrity 🗂️"
+        run: ./tests/test_templates.sh
+
+      - name: "Test 4/5 — Schema Contract 📃"
+        run: ./tests/test_schema_contract.sh
+
+      - name: "Test 5/5 — Lint Rules Dry Run 🏃‍➡️"
+        run: ./tests/test_lint_rules.sh
+
+  spellcheck:
+    name: Spellcheck 🔤
+    runs-on: ubuntu-latest
+    # On dev: non-blocking. On main: blocks the gate.
+    continue-on-error: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' }}
+
+    steps:
+      - name: Checkout repository 🗄️
+        uses: actions/checkout@v4
+
+      - name: Install typos
+        uses: taiki-e/install-action@v2
+        with:
+          tool: typos
+
+      - name: Run spellcheck
+        run: typos skills/ templates/ docs/ tests/ README.md
+
+      - name: Spellcheck reminder (dev only) ⚠️
+        if: github.ref == 'refs/heads/dev' || github.base_ref == 'dev'
+        run: |
+          echo "⚠️  Spellcheck is non-blocking on dev."
+          echo "   Fix any typos before opening a PR to main."
+
+  gate:
+    name: Gate (All Clear) ⛩️
+    runs-on: ubuntu-latest
+    needs: [test, spellcheck]
+
+    steps:
+      - name: All checks passed
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ] || [ "${{ github.base_ref }}" = "main" ]; then
+            echo "✅ All tests and spellcheck passed. Safe to merge to main."
+          else
+            echo "✅ All tests passed. Spellcheck is advisory on dev."
+          fi

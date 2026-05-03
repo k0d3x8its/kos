@@ -1,7 +1,0 @@
-cat >> .gitattributes << 'EOF'
-
-# CI config files — each branch owns its own workflow
-# Never overwrite main's CI configs when merging from dev
-.github/workflows/ci-main.yml merge=ours
-.github/workflows/ci-dev.yml merge=ours
-EOF
