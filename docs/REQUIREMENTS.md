@@ -51,9 +51,9 @@ The agent config file at the vault root (`CLAUDE.md`, `AGENTS.md`, etc.) tells t
 
 ---
 
-## FOUR OPERATIONS
+## FIVE OPERATIONS
 
-KOS exposes four Agent Skills, one per operation:
+KOS exposes five Agent Skills, one per operation:
 
 **`/kos` — Onboarding.** Scaffolds a new Layer 1 vault. Creates `raw/` (with `assets/`), `wiki/` (with all six subdirectories: `sources/`, `books/`, `entities/`, `concepts/`, `synthesis/`, `questions/`), and `output/`. Bootstraps `wiki/index.md` (with section headers for all six) and `wiki/log.md`. Installs `SCHEMA.md` from the canonical template at `templates/SCHEMA.md` in the KOS repo. Generates the agent config file (`CLAUDE.md`, `AGENTS.md`, etc.) tailored to the user's agent. Refuses to overwrite an existing vault.
 
@@ -63,6 +63,8 @@ KOS exposes four Agent Skills, one per operation:
 
 **`/kos-lint` — Lint.** Health-checks the wiki against SCHEMA.md. Runs eight checks at minimum (raw/sources sync, books/raw sync, broken wikilinks, index consistency, frontmatter validation, unresolved bit.ly slugs, schema version, orphan pages) plus optional deep-audit checks (duplicate entities, stale claims, contradictions). Findings are grouped by severity (Error / Warning / Info). Reports per-finding rather than batch — the user approves each fix individually, since some findings have ambiguous correct answers (orphan pages: link or delete? duplicate entities: which page survives?). Does not migrate schemas automatically.
 
+**`/kos-archive` — Archive.** Marks a completed Field Notes memo book as archived, tying the digital wiki to the physical Layer 3 archive envelope. Validates the book's wiki representation is complete before sealing it (scoped lint pass: sources sync, broken wikilinks within the book, unresolved slugs). Collects two pieces of metadata from the user: the envelope number and the archive date. Updates the book page's frontmatter (`status: archived`, `archived-on`, `envelope-number`), optionally moves the book page to `wiki/books/_archived/` for visual organization, moves the index.md entry from `## Books` to `## Archived Books`, and logs the operation. Never touches `raw/` — the immutable raw transcriptions remain in place permanently, preserving re-ingest capability and all `raw-path:` pointers. Errors block archiving by default; warnings prompt for confirmation; override requires explicit user instruction.
+
 ---
 
 ## THE AGENT CONFIG FILE
@@ -71,7 +73,7 @@ The agent config is the entry point of Layer 1. It tells the LLM where it's oper
 
 - **Vault location** — the path to the KOS vault and its purpose (filled in by the `/kos` wizard from the user's domain description)
 - **Schema reference** — a pointer to `./SCHEMA.md` at the vault root, which is the canonical contract for the vault
-- **Skills available** — the four (eventually five) KOS commands the agent can invoke against the vault
+* **Skills available** — the five KOS commands the agent can invoke against the vault
 - **Operating rules** — a brief restatement of the most important constraints (raw is immutable, do not fabricate during query, follow SCHEMA.md when in doubt)
 
 The agent config does **not** embed SCHEMA.md's contents. It references the schema file at the vault root. This way, if the user edits `SCHEMA.md` (to add a directory, change a convention, soften a rule), every agent picks up the change without the config drifting.
@@ -117,7 +119,7 @@ KOS is one tool in a five-layer stack. It only owns Layer 1. The other layers ar
 | Layer 0 — Raw Capture (Field Notes) | The physical world | KOS consumes scans/transcriptions of Field Notes into `raw/` |
 | Layer 1 — Knowledge Base (LLM Wiki) | **KOS** | This repo |
 | Layer 2 — Project Intelligence (Notion) | Notion | Layer 2 reads from `wiki/`; KOS does not write to Notion |
-| Layer 3 — The Archive | Physical envelopes | KOS confirms wiki completeness before archiving |
+| Layer 3 — The Archive | Physical envelopes | KOS implements the digital archive workflow via `/kos-archive`: validates wiki completeness, updates book-page metadata, and optionally moves book pages to `wiki/books/_archived/`. Raw transcriptions are never moved — `raw/` remains the immutable foundation. |
 | Layer 4 — Project Management (Trello) | Trello | No direct relationship |
 
 The boundary matters. KOS does not orchestrate the other layers. It implements Layer 1 well and exposes a stable `wiki/` directory that downstream tools can read.
@@ -142,6 +144,35 @@ These extend what the LLM can do. None are required, but all are recommended as 
 
 ---
 
+## THE ARCHIVING WORKFLOW
+
+When a Field Notes memo book is full, it crosses from Layer 0 (active capture) to Layer 3 (physical archive). KOS bridges that transition digitally.
+
+The physical act — placing the book in a numbered envelope and storing it — is owned by the user. KOS owns the digital reflection of that act: updating the wiki to show the book is complete, where it lives, and when it was archived.
+
+**What archiving is not:** a deletion, a compression, or a reorganization of raw content. The `raw/FL-vol-001/` folder stays exactly where it is, unchanged, forever. Archived books remain fully searchable via `/kos-query` and fully re-ingestable if the wiki representation ever needs improvement. The only thing that changes is the book's status in the wiki.
+
+**The archiving workflow:**
+
+1. Ensure every page in the book has been ingested (run `/kos-ingest` on any remaining pages)
+2. Run `/kos-archive FL-vol-001` — the skill handles everything from there
+3. Physically place the book in its envelope, write the envelope number on the outside, and store it
+
+**What `/kos-archive` does under the hood:**
+
+- Runs a scoped lint pass confirming all raw pages have wiki summaries, wikilinks resolve, and slugs are accounted for
+- Asks for the envelope number (defaults to next sequential) and archive date (defaults to today)
+- Updates the book page's frontmatter: `status: archived`, `archived-on: YYYY-MM-DD`, `envelope-number: N`
+- Optionally moves the book page from `wiki/books/FL-vol-001.md` to `wiki/books/_archived/FL-vol-001.md` (visual organization; wikilinks resolve regardless of location)
+- Moves the index.md entry from `## Books` to `## Archived Books` with the envelope number visible
+- Logs the operation to `wiki/log.md`
+
+**Why the `_archived/` subfolder is optional:** wikilinks in Obsidian resolve by filename, not path. `[[FL-vol-001]]` works whether the file lives at `wiki/books/FL-vol-001.md` or `wiki/books/_archived/FL-vol-001.md`. The move is purely cosmetic — it makes active books visually distinct from completed ones when browsing in Obsidian. The `status: archived` frontmatter field is what drives behavior in all five skills.
+
+**The digital-physical correspondence:** each archived book maps to one envelope. The `envelope-number:` field in the book page's frontmatter is the lookup key. "What's in envelope 7?" is a valid `/kos-query` query. The wiki is the index for the physical archive.
+
+---
+
 ## HOW IT ALL FITS TOGETHER
 
 Karpathy's pattern, restated in Kodex OS terms: capture freely (Layer 0), let the LLM compile a wiki (Layer 1, owned by KOS), develop projects from that knowledge (Layer 2), preserve the physical record (Layer 3), execute (Layer 4).
@@ -153,7 +184,9 @@ Karpathy's pattern, restated in Kodex OS terms: capture freely (Layer 0), let th
 | "Browse in Obsidian" | Obsidian reads `wiki/` with backlinks and graph view |
 | "Ask questions" | `/kos-query` — searches wiki, synthesizes answers with citations, refuses to fabricate when the wiki is silent |
 | "Maintain quality" | `/kos-lint` — runs eight schema-validation checks plus optional deep audits, reports per-finding |
+| "Seal a completed book" | `/kos-archive` — validates wiki completeness, collects envelope metadata, updates book-page frontmatter, organizes index, logs the Layer 1 ↔ Layer 3 transition |
 | "Set it up" | `/kos` — interactive wizard scaffolds the vault, installs SCHEMA.md, generates the agent config |
 | "The contract" | `SCHEMA.md` at the vault root, copied from `templates/SCHEMA.md` by the wizard |
 
 The idea is Karpathy's. The blueprint for KOS is this document. The architecture is [Kodex OS](https://github.com/k0d3x8its/kodex-os). The `skills/` directory is the executable implementation — but you could build your own Layer 1 from this blueprint using any LLM and any tooling you prefer, as long as it respects the `raw/` → `wiki/` → Layer 2 dependency direction.
+
