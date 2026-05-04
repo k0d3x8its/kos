@@ -46,9 +46,9 @@ Do NOT proceed with scaffolding if a vault is detected.
 > When you're ready to add your first sources, create a folder under `raw/` for each Field Notes book you start transcribing:
 >
 > ```bash
-> mkdir raw/FL-vol-001    # First Field Log book (daily log)
-> mkdir raw/FR-vol-001    # First Field Research book (catchall)
-> mkdir raw/FS-vol-001    # First Field Study book (only when a subject earns one)
+>   mkdir -p raw/Field-Logs/FL-vol-001    # First Field Log book (daily log)
+    mkdir -p raw/Field-Research/FR-vol-001    # First Field Research book (catchall)
+    mkdir -p raw/Field-Studies/FS-vol-001    # First Field Study book (only when a subject earns one)
 > ```
 >
 > Drop transcribed pages in as `page-001.md`, `page-002.md`, etc. Web clippings go anywhere under `raw/` — `raw/clippings/` is a common choice.
@@ -116,7 +116,7 @@ bash <skill-directory>/scripts/onboarding.sh <vault-path>
 ```
 
 This creates:
-- `raw/` and `raw/assets/`
+- `raw/`, `raw/Field-Logs/`, `raw/Field-Research/`, `raw/Field-Studies/`, and `raw/assets/`
 - `wiki/sources/`, `wiki/books/`, `wiki/entities/`, `wiki/concepts/`, `wiki/synthesis/`, `wiki/questions/`
 - `output/`
 - Stub `wiki/index.md` with all six section headers
@@ -200,9 +200,9 @@ Show the user:
 >
 > When you're ready to add your first sources:
 >
-> - **Daily log pages** (Field Log) go in `raw/FL-vol-001/page-001.md`, etc.
-> - **Research/catchall pages** (Field Research) go in `raw/FR-vol-001/`
-> - **Subject study pages** (Field Study) go in `raw/FS-vol-001/`
+> - **Daily log pages** (Field Log) go in `raw/Field-Logs/FL-vol-001/page-001.md`, etc.
+> - **Research/catchall pages** (Field Research) go in `raw/Field-Research/FR-vol-001/`
+> - **Subject study pages** (Field Study) go in `raw/Field-Studies/FS-vol-001/`
 > - **Web clippings** go anywhere under `raw/` — `raw/clippings/` is a common choice.
 >
 > Then run `/kos-ingest` and the LLM will process them into your wiki.

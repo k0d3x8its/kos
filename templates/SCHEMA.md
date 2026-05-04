@@ -4,7 +4,7 @@
 > The LLM reads this file before every operation. The user owns this file — edit it to adjust the rules KOS follows in this vault.
 
 ```yaml
-schema-version: 1
+schema-version: 2
 schema-source: https://github.com/k0d3x8its/kos
 kos-vault: true
 ```
@@ -30,10 +30,12 @@ This file defines:
 ```text
 <vault-root>/
 ├── raw/                    # Inbox — user-owned, immutable to the LLM
-│   ├── FL-vol-XXX/         # Field Log: daily log memo books
-│   ├── FR-vol-XXX/         # Field Research: catchall research memo books
-│   ├── FS-vol-XXX/         # Field Study: dedicated subject memo books
-│   └── assets/             # Images, scans, attachments
+│   ├── Field-Logs/         # Contains FL-vol-XXX memo book folders
+│   │   └── FL-vol-XXX/     # Field Log: daily log memo books
+│   ├── Field-Research/     # Contains FR-vol-XXX memo book folders
+│   │   └── FR-vol-XXX/     # Field Research: catchall research memo books
+│   ├── Field-Studies/      # Contains FS-vol-XXX memo book folders
+│   │   └── FS-vol-XXX/     # Field Study: dedicated subject memo books
 │
 ├── wiki/                   # LLM-owned, LLM-maintained
 │   ├── sources/            # One summary page per ingested raw source
@@ -75,18 +77,18 @@ Contains source material the user has provided: scanned and transcribed Field No
 
 `XXX` is the zero-padded volume number per type (e.g. `FL-vol-001`, `FR-vol-042`, `FS-vol-007`). Each prefix has its own independent volume sequence — `FL-vol-001`, `FR-vol-001`, and `FS-vol-001` are three different books.
 
-**Folder pattern.** All memo book folders match the regex `^F[LRS]-vol-\d{3}$`. The LLM uses this pattern to identify memo book folders during ingest and lint.
+**Folder pattern.** All memo book folders match the regex `^F[LRS]-vol-\d{3}$` and reside under their respective parent directory (`raw/Field-Logs/`, `raw/Field-Research/`, `raw/Field-Studies/`).
 
 **Other subdirectories:**
 - `raw/assets/` — Binary files (images, scans) referenced by other raw sources.
-- `raw/<topic>/` — Free-form folders for non-Field-Notes input (e.g. `raw/podcasts/`, `raw/papers/`, `raw/clippings/`).
+- `raw/<topic>/` — Free-form folders for non-Field-Notes input (e.g. `raw/podcasts/`, `raw/papers/`, `raw/clippings/`). These live directly under `raw/`, not inside the typed subdirectories.
 
 If the user adds a new memo book folder (any of the three prefixes), the LLM MUST create a corresponding page in `wiki/books/` on the next ingest.
 
 ### 3.2 `wiki/sources/` — One summary per source
 
 One markdown file per ingested raw source. The filename is derived from the source filename:
-- `raw/FL-vol-001/page-007.md` → `wiki/sources/FL-vol-001-page-007.md`
+- `raw/Field-Logs/FL-vol-001/page-007.md` → `wiki/sources/FL-vol-001-page-007.md`
 - `raw/podcasts/2026-04-12-interview.md` → `wiki/sources/podcasts-2026-04-12-interview.md`
 
 Each source page contains: a brief summary, key takeaways, wikilinks to related entities/concepts/questions, and the original source path.
@@ -100,7 +102,7 @@ One markdown file per memo book of any type. Filename matches the `raw/` folder 
 Each book page contains: the book's date range, primary topics or subject (for `FS-` books), a list of all source pages from that book as wikilinks, and any cross-cutting observations the LLM has surfaced.
 
 **The LLM MUST:**
-- Create a `wiki/books/` page the first time it sees a new `raw/F[LRS]-vol-*/` folder
+- Create a `wiki/books/` page the first time it sees a new `raw/Field-Logs/FL-vol-*/`, `raw/Field-Research/FR-vol-*/`, or `raw/Field-Studies/FS-vol-*/` folder
 - Set `book-type` in frontmatter according to the prefix (see mapping below)
 - Append a wikilink to the new source on every ingest from that book
 - Update the date range as new pages are added
@@ -354,7 +356,7 @@ The LLM MUST report (not fix, unless explicitly approved) the following:
 
 - **Broken wikilinks** — links to pages that don't exist
 - **Orphan pages** — pages with no incoming wikilinks (except books, sources, and the index/log)
-- **Raw/wiki sync** — every file under `raw/` must have a corresponding `wiki/sources/` page; every folder matching `^F[LRS]-vol-\d{3}$` under `raw/` must have a corresponding book page at EITHER `wiki/books/<volume>.md` OR `wiki/books/_archived/<volume>.md`, with the matching `book-type` in frontmatter. Lint scans `wiki/books/` recursively to find both active and archived book pages.
+- **Raw/wiki sync** — every file under `raw/` must have a corresponding `wiki/sources/` page; every folder matching `^F[LRS]-vol-\d{3}$` under `raw/Field-Logs/`, `raw/Field-Research/`, or `raw/Field-Studies/` must have a corresponding book page
 - **Unresolved slugs** — `unresolved-slug:` entries in `log.md` that haven't been resolved
 - **Schema-version mismatch** — vaults whose `schema-version` is older than the KOS-shipped schema
 - **Frontmatter violations** — pages missing required frontmatter fields per Section 4
@@ -387,6 +389,7 @@ After editing this file, run `/kos-lint` to confirm the existing wiki still conf
 | Version | Date | Changes |
 |---------|------|---------|
 | 1 | 2026-05 | Initial KOS schema. Defines `raw/` (with `FL/FR/FS-vol-XXX` memo book conventions), `wiki/{sources,books,entities,concepts,synthesis,questions}/`, and `output/`. Establishes bit.ly slug convention (Section 5). Forked from NicholasSpisak/second-brain but versioned independently. |
+| 2 | 2026-05 | Reorganized `raw/` into typed subdirectories: `Field-Logs/`, `Field-Research/`, `Field-Studies/`. Updated all path references and lint rules accordingly. |
 
 ---
 

@@ -19,7 +19,7 @@ That dependency direction is fixed. `raw/` feeds `wiki/`. `wiki/` feeds Notion. 
 
 A KOS vault contains four top-level locations:
 
-- **`raw/`** — the immutable input sub-layer. Scanned and transcribed Field Notes pages, clipped articles, papers, transcripts. Each Field Notes memo book maps 1:1 to a folder under `raw/`, named by purpose: `FL-vol-XXX/` for daily logs (Field Log), `FR-vol-XXX/` for catchall research (Field Research), `FS-vol-XXX/` for dedicated subject study (Field Study). The LLM **never modifies** anything under `raw/`.
+- **`raw/`** — the immutable input sub-layer. Scanned and transcribed Field Notes pages, clipped articles, papers, transcripts. Each Field Notes memo book maps 1:1 to a folder under its typed subdirectory in `raw/`: `Field-Logs/FL-vol-XXX/` for daily logs (Field Log), `Field-Research/FR-vol-XXX/` for catchall research (Field Research), `Field-Studies/FS-vol-XXX/` for dedicated subject study (Field Study). The LLM **never modifies** anything under `raw/`.
 - **`wiki/`** — the LLM-generated, LLM-maintained output sub-layer. Subdivided into six purposeful directories — `sources/` (one summary per ingested raw file), `books/` (one page per memo book), `entities/` (people, orgs, products, tools, places), `concepts/` (ideas, frameworks, theories), `synthesis/` (cross-cutting analyses), and `questions/` (open questions extracted from sources) — plus two special files: `index.md` (the master catalog) and `log.md` (the chronological operation record).
 - **`output/`** — generated reports, query results, and synthesis artifacts.
 - **`SCHEMA.md`** — the rules the LLM follows when maintaining the wiki. This is the contract.
@@ -47,7 +47,7 @@ The agent config file at the vault root (`CLAUDE.md`, `AGENTS.md`, etc.) tells t
 
 **[Obsidian Web Clipper](https://chromewebstore.google.com/detail/obsidian-web-clipper/cnjifjpddelmedmihgijeibhnjfabmlf)** — for web sources. Saves clipped articles as clean markdown directly into `raw/`.
 
-**A scanner or scanning app** — for Field Notes pages. Anything that produces legible images the LLM can transcribe. Scans go into the appropriate `raw/F[LRS]-vol-XXX/` folder, depending on which kind of memo book they came from (log, research, or study).
+**A scanner or scanning app** — for Field Notes pages. Anything that produces legible images the LLM can transcribe. Scans go into the appropriate folder under `raw/Field-Logs/`, `raw/Field-Research/`, or `raw/Field-Studies/`, depending on which kind of memo book they came from.
 
 ---
 
@@ -86,7 +86,7 @@ The `/kos` onboarding skill generates the config from a template in `skills/kos/
 
 `SCHEMA.md` is the contract between you and the LLM. KOS ships a canonical `SCHEMA.md` template at `templates/SCHEMA.md` in the repo root, and the `/kos` wizard installs it into every new vault. The default schema is opinionated:
 
-- Memo books are typed by purpose: `FL-vol-XXX` (Field Log), `FR-vol-XXX` (Field Research), `FS-vol-XXX` (Field Study). Each maps 1:1 to a folder under `raw/`.
+- Memo books are typed by purpose: `FL-vol-XXX` (Field Log), `FR-vol-XXX` (Field Research), `FS-vol-XXX` (Field Study). Each maps 1:1 to a folder under `raw/Field-Logs/`, `raw/Field-Research/`, or `raw/Field-Studies/` respectively.
 - Each `raw/` source has exactly one `wiki/sources/` summary page; each memo book has exactly one `wiki/books/` page.
 - Open questions extracted from sources become first-class pages in `wiki/questions/`, with a `status:` field (open / answered / dismissed) for filtering.
 - The user can encode a shortened bit.ly URL inline using angle brackets (`<slug>`); the LLM expands these to full URLs on ingest, with case-sensitivity preserved.

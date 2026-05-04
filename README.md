@@ -5,7 +5,18 @@
 
 <img alt="TARS" src="https://img.shields.io/badge/TARS-dev-%23E84142.svg?logo=data:image/png;base64,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">
 
-<img alt="CI — Dev" src="https://github.com/k0d3x8its/kos/actions/workflows/ci-dev.yml/badge.svg">
+<a href="https://fieldnotesbrand.com" target="_blank">
+    <img alt="Field Notes" src="https://img.shields.io/badge/Field_Notes-Supported-FFD700?labelColor=555555">
+</a>
+
+<img alt="Claude" src="https://img.shields.io/badge/Claude_Code-Supported-FFA500?labelColor=555555&logo=anthropic&logoColor=white">
+
+  <img alt="Codex" src="https://img.shields.io/badge/Codex-Supported-FFFFFF?labelColor=555555&logo=openai&logoColor=white">
+
+  <img alt="Gemini" src="https://img.shields.io/badge/Gemini-Supported-4DA6FF?labelColor=555555&logo=googlegemini&logoColor=white">
+
+  <img alt="Cursor" src="https://img.shields.io/badge/Cursor-Supported-FFFFFF?labelColor=555555&logo=cursor&logoColor=white">
+
 </div></br>
 
 > The Layer 1 toolkit for [Kodex OS](https://github.com/k0d3x8its/kodex-os) — a set of Agent Skills that turn an Obsidian vault into an LLM-maintained knowledge base.
@@ -55,8 +66,8 @@ This installs five skills into your AI agent:
 4. **Open in Obsidian** — launch Obsidian, choose "Open folder as vault," select your vault folder
 5. **Add your first source.** For Field Notes pages, create a memo-book folder under `raw/` and drop a transcribed page in:
     ```bash
-        mkdir raw/FL-vol-001    # First Field Log book
-        echo "your transcribed page content" > raw/FL-vol-001/page-001.md
+        mkdir -p raw/Field-Logs/FL-vol-001    # First Field Log book
+        echo "your transcribed page content" > raw/Field-Logs/FL-vol-001/page-001.md
     ```
    Or clip an article anywhere under `raw/` (`raw/clippings/` is a common choice).
 6. **Run `/kos-ingest`** — the LLM will discuss key takeaways and build wiki pages, including a `wiki/books/FL-vol-001.md` summary the first time it sees a new memo book
@@ -68,9 +79,12 @@ This installs five skills into your AI agent:
 ```text
 your-vault/
 ├── raw/                    # Your inbox — drop sources here (immutable)
-│   ├── FL-vol-XXX/         # Field Log: daily log memo books
-│   ├── FR-vol-XXX/         # Field Research: catchall research memo books
-│   ├── FS-vol-XXX/         # Field Study: dedicated subject memo books
+│   ├── Field-Logs/         # Field Log memo books
+│   │   └── FL-vol-XXX/     
+│   ├── Field-Research/     # Field Research memo books
+│   │   └── FR-vol-XXX/     
+│   ├── Field-Studies/      # Field Study memo books
+│   │   └── FS-vol-XXX/
 │   └── assets/             # Images and attachments
 ├── wiki/                   # LLM-maintained (do not edit by hand)
 │   ├── sources/            # One summary per ingested source
@@ -91,7 +105,7 @@ your-vault/
 
 After your vault is set up and you've ingested your first sources, here's the rhythm of using KOS:
 
-**Daily.** Capture in your Field Notes memo books (Layer 0). When you're ready to digitize, transcribe pages into the matching `raw/F[LRS]-vol-XXX/` folder and run `/kos-ingest`. The LLM creates wiki pages, extracts entities and open questions, and updates the index.
+**Daily.** Capture in your Field Notes memo books (Layer 0). When you're ready to digitize, transcribe pages into the matching folder under `raw/Field-Logs/`, `raw/Field-Research/`, or `raw/Field-Studies/` and run `/kos-ingest`. The LLM creates wiki pages, extracts entities and open questions, and updates the index.
 
 **Weekly-ish.** Run `/kos-query` against your wiki to find connections, recall things, or ask what you've been thinking about. The skill cites every claim back to specific wiki pages — if it can't cite, it tells you the wiki doesn't have an answer rather than making one up.
 

@@ -68,7 +68,7 @@ Every folder under `raw/` matching `^F[LRS]-vol-\d{3}$` must have a correspondin
 
 ```bash
 # List all memo book folders under raw/
-find raw -maxdepth 1 -type d -regex '.*F[LRS]-vol-[0-9][0-9][0-9]'
+find raw/Field-Logs raw/Field-Research raw/Field-Studies -maxdepth 1 -type d -regex '.*F[LRS]-vol-[0-9][0-9][0-9]'
 
 # Look for the corresponding book page in EITHER location
 find wiki/books -type f -name '<volume>.md'
@@ -225,7 +225,7 @@ Present findings grouped by severity, then by check:
 ## Errors (5)
 
 ### Check 1: Raw → wiki/sources/ sync
-- `raw/FL-vol-003/page-012.md` — no wiki/sources/ page (fix: `/kos-ingest`)
+- `raw/Field-Logs/FL-vol-003/page-012.md` — no wiki/sources/ page (fix: `/kos-ingest`)
 - `raw/clippings/2026-04-20-article.md` — no wiki/sources/ page (fix: `/kos-ingest`)
 
 ### Check 3: Broken wikilinks
@@ -279,7 +279,7 @@ Append to `wiki/log.md` per SCHEMA.md Section 3.9 format:
 - **Scope:** full
 - **Pages scanned:** 247 sources, 12 books, 89 entities, 34 concepts, 18 synthesis, 56 questions
 - **Findings:** 5 errors, 3 warnings, 2 info
-- **Fixes applied:** 2 (re-ingested raw/FL-vol-003/page-012.md, raw/clippings/2026-04-20-article.md)
+- **Fixes applied:** 2 (re-ingested raw/Field-Logs/FL-vol-003/page-012.md, raw/clippings/2026-04-20-article.md)
 - **Notes:** 3 errors deferred per user
 ```
 

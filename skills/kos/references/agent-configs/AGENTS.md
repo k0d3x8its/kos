@@ -43,8 +43,8 @@ If anything in a skill's instructions contradicts SCHEMA.md, follow SCHEMA.md. F
 
 Memo books are physical Field Notes notebooks with a 1:1 mapping to `raw/` folders:
 
-- `raw/FL-vol-XXX/` — Field Log (daily log)
-- `raw/FR-vol-XXX/` — Field Research (catchall)
-- `raw/FS-vol-XXX/` — Field Study (dedicated subject, created in Phase II)
+- `raw/Field-Logs/FL-vol-XXX/` — Field Log (daily log)
+- `raw/Field-Research/FR-vol-XXX/` — Field Research (catchall)
+- `raw/Field-Studies/FS-vol-XXX/` — Field Study (dedicated subject, created in Phase II)
 
 Each active book has a corresponding `wiki/books/<volume>.md`. Archived books have `wiki/books/_archived/<volume>.md` with `status: archived`, `archived-on:`, and `envelope-number:` in frontmatter.

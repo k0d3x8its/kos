@@ -39,7 +39,7 @@ Determine which files need ingestion:
    - Glob all files in `raw/` recursively, excluding `raw/assets/` and any binary files (`.png`, `.jpg`, `.pdf`, etc. — these are referenced by other sources, not ingested directly)
    - For each candidate file, derive its expected wiki source filename per SCHEMA.md Section 3.2:
      - `raw/<path>/<file>.md` → `wiki/sources/<path>-<file>.md` (slashes become hyphens)
-     - Example: `raw/FL-vol-001/page-007.md` → `wiki/sources/FL-vol-001-page-007.md`
+     - Example: `raw/Field-Logs/FL-vol-001/page-007.md` → `wiki/sources/FL-vol-001-page-007.md`
    - A file is **unprocessed** if its derived `wiki/sources/` page does not exist
    - Do NOT rely on parsing `wiki/log.md` to detect unprocessed files — file existence is the source of truth
 
@@ -66,7 +66,7 @@ For each source file, follow this workflow:
 
 Read the entire file. If it references images in `raw/assets/`, read the relevant ones if they contain important information.
 
-For memo book sources (`raw/FL-vol-XXX/`, `raw/FR-vol-XXX/`, `raw/FS-vol-XXX/`), also note:
+For memo book sources (`raw/Field-Logs/FL-vol-XXX/`, `raw/Field-Research/FR-vol-XXX/`, `raw/Field-Studies/FS-vol-XXX/`), also note:
 - The book volume (e.g., `FL-vol-001`)
 - Any date stamps on the page (per Kodex OS convention, format `M/D/YY` or similar)
 - Cross-references to other pages in the same book
@@ -100,7 +100,7 @@ Use this frontmatter (matches SCHEMA.md Section 4):
 ```yaml
 ---
 type: source
-raw-path: raw/FL-vol-001/page-007.md
+raw-path: raw/Field-Logs/FL-vol-001/page-007.md
 source-type: field-log-page    # or article, paper, transcript, podcast, etc.
 tags: [tag1, tag2]
 created: 2026-05-01T14:32:00Z
@@ -143,7 +143,7 @@ The source summary is **factual only**. Save interpretation for `wiki/concepts/`
 
 ### 5. Create or update the book page (memo book sources only)
 
-If the source came from a folder matching `^F[LRS]-vol-\d{3}$`, the book has a corresponding page in `wiki/books/`. Per SCHEMA.md Section 3.3, archived books may live at `wiki/books/_archived/<volume>.md` instead of `wiki/books/<volume>.md`.
+If the source came from a folder matching `^F[LRS]-vol-\d{3}$` under `raw/Field-Logs/`, `raw/Field-Research/`, or `raw/Field-Studies/`, the book has a corresponding page in `wiki/books/`. Per SCHEMA.md Section 3.3, archived books may live at `wiki/books/_archived/<volume>.md` instead of `wiki/books/<volume>.md`.
 
 **Step 5a: Find the book page (recursive lookup).**
 
@@ -270,7 +270,7 @@ If Step 5b triggered an archived-book interaction (silent-add or re-open), inclu
 ## 2026-05-01 14:32 — ingest
 
 - **Operation:** ingest
-- **Source(s):** raw/FL-vol-001/page-007.md (source-type: field-log-page)
+- **Source(s):** raw/Field-Logs/FL-vol-001/page-007.md (source-type: field-log-page)
 - **Pages affected:** 1 created (sources), 1 updated (books), 2 created + 1 updated (entities), 1 created (concepts), 2 created (questions)
 - **Notes:** First ingest from FL-vol-001.
 - **Unresolved:** unresolved-slug: <F13LdN0t3> in [[FL-vol-001-page-007]]

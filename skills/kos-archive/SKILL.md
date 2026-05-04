@@ -78,7 +78,7 @@ Read `wiki/books/<volume>.md`. Confirm:
 Invoke the equivalent of `/kos-lint` filtered to this volume. Specifically check:
 
 **Sources sync (Error if found):**
-- Every file in `raw/<volume>/` must have a corresponding `wiki/sources/<volume>-<page>.md`. Look for unprocessed pages by checking that each `raw/<volume>/page-*.md` has a matching wiki source.
+- Every file in `raw/Field-Logs/<volume>/`, `raw/Field-Research/<volume>/`, or `raw/Field-Studies/<volume>/` must have a corresponding `wiki/sources/<volume>-<page>.md`. Look for unprocessed pages by checking that each `raw/<type-dir>/<volume>/page-*.md` has a matching wiki source.
 
 **Broken wikilinks within this book's pages (Error if found):**
 - Read the book page and every source page from this book. Extract all `[[wikilink]]` references. Verify each target exists.
