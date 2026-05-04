@@ -15,7 +15,7 @@
 
   <img alt="Gemini" src="https://img.shields.io/badge/Gemini-Supported-4DA6FF?labelColor=555555&logo=googlegemini&logoColor=white">
 
-  <img alt="Cursor" src="https://img.shields.io/badge/Cursor-Supported-000000?labelColor=555555&logo=cursor&logoColor=white">
+  <img alt="Cursor" src="https://img.shields.io/badge/Cursor-Supported-A9A9A9?labelColor=555555&logo=cursor&logoColor=white">
 
 </div></br>
 
