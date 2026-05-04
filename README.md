@@ -66,8 +66,8 @@ This installs five skills into your AI agent:
 4. **Open in Obsidian** — launch Obsidian, choose "Open folder as vault," select your vault folder
 5. **Add your first source.** For Field Notes pages, create a memo-book folder under `raw/` and drop a transcribed page in:
     ```bash
-        mkdir raw/FL-vol-001    # First Field Log book
-        echo "your transcribed page content" > raw/FL-vol-001/page-001.md
+        mkdir -p raw/Field-Logs/FL-vol-001    # First Field Log book
+        echo "your transcribed page content" > raw/Field-Logs/FL-vol-001/page-001.md
     ```
    Or clip an article anywhere under `raw/` (`raw/clippings/` is a common choice).
 6. **Run `/kos-ingest`** — the LLM will discuss key takeaways and build wiki pages, including a `wiki/books/FL-vol-001.md` summary the first time it sees a new memo book
@@ -79,9 +79,12 @@ This installs five skills into your AI agent:
 ```text
 your-vault/
 ├── raw/                    # Your inbox — drop sources here (immutable)
-│   ├── FL-vol-XXX/         # Field Log: daily log memo books
-│   ├── FR-vol-XXX/         # Field Research: catchall research memo books
-│   ├── FS-vol-XXX/         # Field Study: dedicated subject memo books
+│   ├── Field-Logs/         # Field Log memo books
+│   │   └── FL-vol-XXX/     
+│   ├── Field-Research/     # Field Research memo books
+│   │   └── FR-vol-XXX/     
+│   ├── Field-Studies/      # Field Study memo books
+│   │   └── FS-vol-XXX/
 │   └── assets/             # Images and attachments
 ├── wiki/                   # LLM-maintained (do not edit by hand)
 │   ├── sources/            # One summary per ingested source
@@ -102,7 +105,7 @@ your-vault/
 
 After your vault is set up and you've ingested your first sources, here's the rhythm of using KOS:
 
-**Daily.** Capture in your Field Notes memo books (Layer 0). When you're ready to digitize, transcribe pages into the matching `raw/F[LRS]-vol-XXX/` folder and run `/kos-ingest`. The LLM creates wiki pages, extracts entities and open questions, and updates the index.
+**Daily.** Capture in your Field Notes memo books (Layer 0). When you're ready to digitize, transcribe pages into the matching folder under `raw/Field-Logs/`, `raw/Field-Research/`, or `raw/Field-Studies/` and run `/kos-ingest`. The LLM creates wiki pages, extracts entities and open questions, and updates the index.
 
 **Weekly-ish.** Run `/kos-query` against your wiki to find connections, recall things, or ask what you've been thinking about. The skill cites every claim back to specific wiki pages — if it can't cite, it tells you the wiki doesn't have an answer rather than making one up.
 
