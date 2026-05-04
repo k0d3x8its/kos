@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.0.0-rc.2 (2026-05-04)
+
+- **♻️:** `raw/` reorganized — FL/FR/FS volumes now live under typed subdirectories (`raw/Field-Logs/`, `raw/Field-Research/`, `raw/Field-Studies/`) instead of directly under `raw/`
+- **⬆️:** `templates/SCHEMA.md` — Section 2 directory tree, Section 3.1 folder pattern and path references, Section 3.2 source filename derivation example, Section 3.3 book page creation rule, Section 6.4 lint rule updated to reflect typed subdirectories; schema-version bumped to 2
+- **⬆️:** `CLAUDE.md` — memo book table and folder pattern sentence updated
+- **⬆️:** `AGENTS.md` — memo book folder paths updated
+- **⬆️:** `.cursor/rules/kos.mdc` — no changes required (paths are injected via `{{WIKI_SCHEMA}}` placeholder at wizard runtime)
+- **⬆️:** `GEMINI.md` — memo book table description and folder paths updated
+- **⬆️:** `README.md` — Quick Start mkdir example, directory tree, and Ongoing Workflow daily section updated
+- **⬆️:** `docs/REQUIREMENTS.md` — THE PATTERN, WHAT YOU NEED, and SCHEMA OWNERSHIP sections updated
+- **⬆️:** `skills/kos` — Step 3 mkdir examples, Post-Wizard Step 1 directory list, and Post-Wizard Step 6 path references updated
+- **⬆️:** `skills/kos-ingest` — source filename derivation example, memo book source paths, frontmatter raw-path example, book page creation condition, and log entry example updated
+- **⬆️:** `skills/kos-lint` — Check 2 bash command and lint report/log examples updated
+- **⬆️:** `skills/kos-archive` — Pre-Archive Validation sources sync check updated
+- **⬆️:** `skills/kos-query` — no changes required (wiki-facing only)
+
 ## v1.0.0-rc.1 (2026-05-02)
 
 - **➕:** `/kos-archive` — archive completed Field Notes memo books to Layer 3 envelopes
