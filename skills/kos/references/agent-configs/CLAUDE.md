@@ -42,12 +42,12 @@ Use these skills for all vault operations. Do not freelance outside them.
 
 ## Memo book conventions
 
-This vault uses typed Field Notes memo books. Each maps 1:1 to a folder under `raw/`:
+This vault uses typed Field Notes memo books. Each maps 1:1 to a folder under its typed subdirectory`raw/`:
 
 | Prefix | Type | Purpose |
 |--------|------|---------|
-| `FL-vol-XXX` | Field Log | Daily log — what the user is doing, what's happening |
-| `FR-vol-XXX` | Field Research | Catchall — research, todos, scratch, anything else |
-| `FS-vol-XXX` | Field Study | Dedicated subject — created in Phase II when a subject earns its own book |
+| `FL-vol-XXX` | Field Log | `raw/Field-Logs/` — Daily log — what the user is doing, what's happening |
+| `FR-vol-XXX` | Field Research | `raw/Field-Research/` — Catchall — research, todos, scratch, anything else |
+| `FS-vol-XXX` | Field Study | `raw/Field-Studies/` — Dedicated subject — created in Phase II when a subject earns its own book |
 
-All memo book folders match `^F[LRS]-vol-\d{3}$`. Each has a corresponding page in `wiki/books/` (or `wiki/books/_archived/` if archived).
+All memo book folders match `^F[LRS]-vol-\d{3}$` and live under `raw/Field-Logs/`, `raw/Field-Research/`, or `raw/Field-Studies/` respectively. Each has a corresponding page in `wiki/books/` (or `wiki/books/_archived/` if archived).
