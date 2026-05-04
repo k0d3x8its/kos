@@ -4,7 +4,7 @@
 > The LLM reads this file before every operation. The user owns this file — edit it to adjust the rules KOS follows in this vault.
 
 ```yaml
-schema-version: 1
+schema-version: 2
 schema-source: https://github.com/k0d3x8its/kos
 kos-vault: true
 ```
