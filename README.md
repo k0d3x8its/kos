@@ -9,13 +9,13 @@
     <img alt="Field Notes" src="https://img.shields.io/badge/Field_Notes-Supported-FFD700?labelColor=555555">
 </a>
 
-<img alt="Claude" src="https://img.shields.io/badge/Claude_Code-Supported-FFD700?labelColor=555555&logo=anthropic&logoColor=white">
+<img alt="Claude" src="https://img.shields.io/badge/Claude_Code-Supported-FFA500?labelColor=555555&logo=anthropic&logoColor=white">
 
-  <img alt="Codex" src="https://img.shields.io/badge/Codex-Supported-FFD700?labelColor=555555&logo=openai&logoColor=white">
+  <img alt="Codex" src="https://img.shields.io/badge/Codex-Supported-FFFFFF?labelColor=555555&logo=openai&logoColor=white">
 
-  <img alt="Gemini" src="https://img.shields.io/badge/Gemini-Supported-FFD700?labelColor=555555&logo=googlegemini&logoColor=white">
+  <img alt="Gemini" src="https://img.shields.io/badge/Gemini-Supported-4DA6FF?labelColor=555555&logo=googlegemini&logoColor=white">
 
-  <img alt="Cursor" src="https://img.shields.io/badge/Cursor-Supported-FFD700?labelColor=555555&logo=cursor&logoColor=white">
+  <img alt="Cursor" src="https://img.shields.io/badge/Cursor-Supported-000000?labelColor=555555&logo=cursor&logoColor=white">
 
 </div></br>
 
