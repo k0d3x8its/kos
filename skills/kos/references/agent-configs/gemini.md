@@ -41,13 +41,13 @@ Do not perform vault operations outside these skills.
 
 ## Memo book structure
 
-Physical Field Notes books map 1:1 to `raw/` folders:
+Physical Field Notes books map 1:1 to folders under their typed subdirectory in `raw/`:
 
 | Prefix | Book type | When created |
 |--------|-----------|--------------|
-| `FL-vol-XXX` | Field Log | Always active — daily capture |
-| `FR-vol-XXX` | Field Research | Always active — catchall |
-| `FS-vol-XXX` | Field Study | Phase II — when a subject earns a dedicated book |
+| `FL-vol-XXX` | Field Log | `raw/Field-Logs/` — Always active — daily capture |
+| `FR-vol-XXX` | Field Research | `raw/Field-Research/` — Always active — catchall |
+| `FS-vol-XXX` | Field Study | `raw/Field-Studies/` — Phase II — when a subject earns a dedicated book |
 
 Active books: `wiki/books/<volume>.md` (`status: active`)
 Archived books: `wiki/books/_archived/<volume>.md` (`status: archived`, `archived-on:`, `envelope-number:`)
