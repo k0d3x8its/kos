@@ -3,6 +3,7 @@
 ## v1.0.0-rc.2 (2026-05-04)
 
 - **♻️:** `raw/` reorganized — FL/FR/FS volumes now live under typed subdirectories (`raw/Field-Logs/`, `raw/Field-Research/`, `raw/Field-Studies/`) instead of directly under `raw/`
+- **🐞:** `scripts/onboarding.sh` — `wiki/_archived/` was being created at vault root level instead of `wiki/books/_archived/`; corrected
 - **⬆️:** `templates/SCHEMA.md` — Section 2 directory tree, Section 3.1 folder pattern and path references, Section 3.2 source filename derivation example, Section 3.3 book page creation rule, Section 6.4 lint rule updated to reflect typed subdirectories; schema-version bumped to 2
 - **⬆️:** `CLAUDE.md` — memo book table and folder pattern sentence updated
 - **⬆️:** `AGENTS.md` — memo book folder paths updated
@@ -15,6 +16,12 @@
 - **⬆️:** `skills/kos-lint` — Check 2 bash command and lint report/log examples updated
 - **⬆️:** `skills/kos-archive` — Pre-Archive Validation sources sync check updated
 - **⬆️:** `skills/kos-query` — no changes required (wiki-facing only)
+- **⬆️:** `scripts/onboarding.sh` — typed subdirectories added to DIRS array, fresh-mode volume folder paths updated, `wiki/_archived/` corrected to `wiki/books/_archived/`
+- **⬆️:** `tests/test_lint_rules.sh` — mock vault setup updated to create typed subdirectories; Rule 1 expanded to check `raw/Field-Logs/`, `raw/Field-Research/`, `raw/Field-Studies/`
+- **⬆️:** `tests/test_schema_contract.sh` — no changes required (grep-based, content-agnostic)
+- **⬆️:** `tests/test_skills.sh` — no changes required (frontmatter validation only)
+- **⬆️:** `tests/test_structure.sh` — no changes required (repo-level structure only)
+- **⬆️:** `tests/test_templates.sh` — no changes required (existence and non-empty checks only)
 
 ## v1.0.0-rc.1 (2026-05-02)
 
