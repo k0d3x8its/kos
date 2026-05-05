@@ -60,12 +60,12 @@ STARTER_MODE=fresh bash "$ONBOARDING" "$TEST_VAULT" 2>/dev/null
 
 assert_dir "$TEST_VAULT/raw"
 assert_dir "$TEST_VAULT/raw/assets"
-assert_dir "$TEST_VAULT/raw/FL-vol-001"     # created in fresh mode
-assert_dir "$TEST_VAULT/raw/FR-vol-001"     # created in fresh mode
+assert_dir "$TEST_VAULT/raw/Field-Logs/FL-vol-001"     # created in fresh mode
+assert_dir "$TEST_VAULT/raw/Field-Research/FR-vol-001" # created in fresh mode
 assert_dir "$TEST_VAULT/wiki"
 assert_dir "$TEST_VAULT/wiki/sources"
 assert_dir "$TEST_VAULT/wiki/books"
-assert_dir "$TEST_VAULT/wiki/_archived"     # stores retired Field Notes books
+assert_dir "$TEST_VAULT/wiki/books/_archived"          # stores retired Field Notes books
 assert_dir "$TEST_VAULT/wiki/entities"
 assert_dir "$TEST_VAULT/wiki/concepts"
 assert_dir "$TEST_VAULT/wiki/synthesis"
@@ -103,8 +103,13 @@ SECOND_VAULT="$TEST_DIR/test-vault-2"
 mkdir -p "$SECOND_VAULT/wiki"
 echo "# Custom content" > "$SECOND_VAULT/wiki/index.md"
 echo "# Log" > "$SECOND_VAULT/wiki/log.md"
+# Pre-place SCHEMA.md so the existence check doesn't block the re-run.
+# In real usage this would have been downloaded on first run.
+touch "$SECOND_VAULT/SCHEMA.md"
 STARTER_MODE=fresh bash "$ONBOARDING" "$SECOND_VAULT" 2>/dev/null || true
 assert_contains "$SECOND_VAULT/wiki/index.md" "# Custom content"
+# SCHEMA.md should not be re-downloaded and overwritten if already present
+assert_file "$SECOND_VAULT/SCHEMA.md"
 
 echo ""
 
