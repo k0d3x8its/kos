@@ -96,10 +96,11 @@ Ask:
 > "These tools extend what the LLM can do with your vault. All optional but recommended:"
 >
 > 1. **summarize** — summarize links, files, and media from the CLI
-> 2. **qmd** — local search engine for your wiki (helpful as it grows past ~100 pages)
-> 3. **agent-browser** — browser automation for web research
+> 2. **agent-browser** — browser automation for web research
 >
-> "Install all, pick specific ones (e.g. '1 and 3'), or skip?"
+> "Install all, pick specific ones (e.g. '1 and 2'), or skip?"
+
+Note: `qmd` (local markdown search) has been removed from this list — the npm package `@tobilu/qmd` is currently unreliable. It may be re-added in a future release once the package is stable. In the meantime, `grep` or `ripgrep` can serve the same purpose.
 
 ---
 
@@ -170,7 +171,6 @@ Use SCHEMA.md Section 3.9's format:
 For each tool the user selected in Step 5:
 
 - summarize: `npm i -g @steipete/summarize`
-- qmd: `npm i -g @tobilu/qmd`
 - agent-browser: `npm i -g agent-browser && agent-browser install`
 
 After each install, verify with `<tool> --version`. Report success or failure for each — installation failures should not abort the wizard, since the tools are optional.
