@@ -83,6 +83,19 @@ Contains source material the user has provided: scanned and transcribed Field No
 - `raw/assets/` — Binary files (images, scans) referenced by other raw sources.
 - `raw/<topic>/` — Free-form folders for non-Field-Notes input (e.g. `raw/podcasts/`, `raw/papers/`, `raw/clippings/`). These live directly under `raw/`, not inside the typed subdirectories.
 
+**Scanned page filename conventions.** When a Field Notes page is captured as a scanned PDF rather than a typed transcript, the filename encodes how many physical layers the scan contains. This tells the LLM how to interpret the scan and whether to wait for companion scans before ingesting.
+
+| Suffix | Meaning | LLM behavior |
+|--------|---------|--------------|
+| `page-XXX` | Bare page, no stickies | Ingest immediately as a single source |
+| `page-XXX-sticky` | Sticky note on top of page — both visible | Hold for companion scans; merge with `-under` and `-flip` if present |
+| `page-XXX-under` | Sticky removed — full page revealed | Companion to `-sticky`; merged before ingest |
+| `page-XXX-flip` | Sticky flipped over — back of sticky + page beneath visible | Companion to `-sticky`; merged before ingest |
+
+**Merge rule.** Before creating a `wiki/sources/` page, the LLM MUST collect all files sharing the same `page-XXX` base (e.g. `page-012-sticky.pdf`, `page-012-under.pdf`, `page-012-flip.pdf`) and treat them as one composite source. The resulting source page in `wiki/sources/` gets a single entry — the base name without suffix (e.g. `FR-vol-001-page-012.md`). The `raw-path:` frontmatter field lists all companion files.
+
+**Orphaned companion detection.** If a `-sticky` scan exists without a corresponding `-under` scan after 24 hours, `/kos-lint` MUST flag it as an incomplete capture. The user may have forgotten to scan the page underneath.
+
 If the user adds a new memo book folder (any of the three prefixes), the LLM MUST create a corresponding page in `wiki/books/` on the next ingest.
 
 ### 3.2 `wiki/sources/` — One summary per source
@@ -94,6 +107,14 @@ One markdown file per ingested raw source. The filename is derived from the sour
 Each source page contains: a brief summary, key takeaways, wikilinks to related entities/concepts/questions, and the original source path.
 
 **Frontmatter:** `type: source`, `raw-path`, `source-type`, `tags`, `created`, `updated`.
+
+**`source-type` values for scanned Field Notes pages:**
+
+| Value | When to use |
+|-------|------------|
+| `field-log-page` | Source came from `FL-vol-XXX` |
+| `field-research-page` | Source came from `FR-vol-XXX` |
+| `field-study-page` | Source came from `FS-vol-XXX` |
 
 ### 3.3 `wiki/books/` — One page per memo book
 
@@ -362,6 +383,7 @@ The LLM MUST report (not fix, unless explicitly approved) the following:
 - **Frontmatter violations** — pages missing required frontmatter fields per Section 4
 - **Duplicate entities** — multiple `wiki/entities/` pages that appear to refer to the same thing
 - **Stale claims** — wiki content contradicting newer raw sources
+- **Orphaned companion scans** — a `page-XXX-sticky` file in `raw/` with no corresponding `page-XXX-under` file after 24 hours (per Section 3.1 scanned page conventions)
 
 ---
 
@@ -390,6 +412,7 @@ After editing this file, run `/kos-lint` to confirm the existing wiki still conf
 |---------|------|---------|
 | 1 | 2026-05 | Initial KOS schema. Defines `raw/` (with `FL/FR/FS-vol-XXX` memo book conventions), `wiki/{sources,books,entities,concepts,synthesis,questions}/`, and `output/`. Establishes bit.ly slug convention (Section 5). Forked from NicholasSpisak/second-brain but versioned independently. |
 | 2 | 2026-05 | Reorganized `raw/` into typed subdirectories: `Field-Logs/`, `Field-Research/`, `Field-Studies/`. Updated all path references and lint rules accordingly. |
+| 3 | 2026-05 | Added scanned page filename conventions (Section 3.1): `page-XXX`, `page-XXX-sticky`, `page-XXX-under`, `page-XXX-flip`. Added merge rule, orphaned companion detection (lint), and `source-type` values for scanned pages (Section 3.2). |
 
 ---
 
