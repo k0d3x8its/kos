@@ -26,7 +26,9 @@ echo "  Mock vault: $MOCK_VAULT"
 
 # ── Build a valid mock vault structure ──────────────────────────────
 mkdir -p "$MOCK_VAULT/raw/assets"
-mkdir -p "$MOCK_VAULT/raw/FL-vol-001"
+mkdir -p "$MOCK_VAULT/raw/Field-Logs/FL-vol-001"
+mkdir -p "$MOCK_VAULT/raw/Field-Research/FR-vol-001"
+mkdir -p "$MOCK_VAULT/raw/Field-Studies/FS-vol-001"
 mkdir -p "$MOCK_VAULT/wiki/sources"
 mkdir -p "$MOCK_VAULT/wiki/entities"
 mkdir -p "$MOCK_VAULT/wiki/concepts"
@@ -42,7 +44,7 @@ echo "# Schema" > "$MOCK_VAULT/SCHEMA.md"
 echo ""
 echo "▸ Rule 1 — Required vault directories exist..."
 
-for dir in raw wiki output; do
+for dir in raw wiki output raw/Field-Logs raw/Field-Research raw/Field-Studies; do
   if [ -d "$MOCK_VAULT/$dir" ]; then
     pass "Vault has $dir/"
   else
