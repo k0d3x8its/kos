@@ -65,11 +65,11 @@ This installs five skills into your AI agent:
 3. **Install Web Clipper:** [Obsidian Web Clipper](https://chromewebstore.google.com/detail/obsidian-web-clipper/cnjifjpddelmedmihgijeibhnjfabmlf) — configure it to save to your vault's `raw/` folder
 4. **Open in Obsidian** — launch Obsidian, choose "Open folder as vault," select your vault folder
 5. **Add your first source.** For Field Notes pages, create a memo-book folder under `raw/` and drop a transcribed page in:
-    ```bash
+```bash
         mkdir -p raw/Field-Logs/FL-vol-001    # First Field Log book
         echo "your transcribed page content" > raw/Field-Logs/FL-vol-001/page-001.md
-    ```
-   Or clip an article anywhere under `raw/` (`raw/clippings/` is a common choice).
+```
+   For scanned Field Notes pages, see [docs/CAPTURE.md](docs/CAPTURE.md) for the full scanning workflow and filename conventions. Or clip an article anywhere under `raw/` (`raw/clippings/` is a common choice).
 6. **Run `/kos-ingest`** — the LLM will discuss key takeaways and build wiki pages, including a `wiki/books/FL-vol-001.md` summary the first time it sees a new memo book
 7. **Browse your wiki** in Obsidian — follow `[[wikilinks]]`, explore the graph view, check `wiki/index.md`
 8. **Keep going** — `/kos-query` to ask questions, `/kos-lint` to health-check after every ~10 ingests
@@ -105,7 +105,7 @@ your-vault/
 
 After your vault is set up and you've ingested your first sources, here's the rhythm of using KOS:
 
-**Daily.** Capture in your Field Notes memo books (Layer 0). When you're ready to digitize, transcribe pages into the matching folder under `raw/Field-Logs/`, `raw/Field-Research/`, or `raw/Field-Studies/` and run `/kos-ingest`. The LLM creates wiki pages, extracts entities and open questions, and updates the index.
+**Daily.** Capture in your Field Notes memo books (Layer 0). When you're ready to digitize, either transcribe pages manually into the matching folder under `raw/Field-Logs/`, `raw/Field-Research/`, or `raw/Field-Studies/`, or scan them using the workflow in [docs/CAPTURE.md](docs/CAPTURE.md). Then run `/kos-ingest` — the LLM creates wiki pages, extracts entities and open questions, and updates the index.
 
 **Weekly-ish.** Run `/kos-query` against your wiki to find connections, recall things, or ask what you've been thinking about. The skill cites every claim back to specific wiki pages — if it can't cite, it tells you the wiki doesn't have an answer rather than making one up.
 
