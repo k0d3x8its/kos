@@ -39,23 +39,13 @@ Accept any absolute or relative path. Resolve `~` to the user's home directory. 
 
 Do NOT proceed with scaffolding if a vault is detected.
 
-**3. How to start** — the Field Notes-aware workflow:
+### Step 3: Domain Description
 
-> Open the vault folder in Obsidian (File → Open Vault as Folder).
->
-> When you're ready to add your first sources, create a folder under `raw/` for each Field Notes book you start transcribing:
->
-> ```bash
->   mkdir -p raw/Field-Logs/FL-vol-001    # First Field Log book (daily log)
-    mkdir -p raw/Field-Research/FR-vol-001    # First Field Research book (catchall)
-    mkdir -p raw/Field-Studies/FS-vol-001    # First Field Study book (only when a subject earns one)
-> ```
->
-> Drop transcribed pages in as `page-001.md`, `page-002.md`, etc. Web clippings go anywhere under `raw/` — `raw/clippings/` is a common choice.
->
-> Then run `/kos-ingest` and the LLM will process them into your wiki, creating matching `wiki/books/` pages automatically the first time it sees a new volume folder.
->
-> **About archiving:** when a memo book is full and you place it in a Layer 3 archive envelope, mark its `wiki/books/<volume>.md` page with `status: archived` and optionally move it into `wiki/books/_archived/`. The `raw/<volume>/` folder is never moved or deleted — it stays as the immutable source. See SCHEMA.md Section 3.3 for the full archiving workflow.
+Ask:
+> "In one sentence, what is this vault for? This helps configure your AI agent."
+> Default: `Personal knowledge management and research archive system`
+
+Accept any free-text answer. This value fills `{{DOMAIN_DESCRIPTION}}` in the agent config templates and the setup log entry.
 
 ### Step 4: Agent Config
 
