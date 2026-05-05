@@ -124,17 +124,11 @@ This creates:
 
 Verify the script exits with status 0 before proceeding.
 
-### 2. Install SCHEMA.md
+### 2. SCHEMA.md is installed by the onboarding script
 
-Copy `<repo-root>/templates/SCHEMA.md` to `<vault-path>/SCHEMA.md`. This is the contract; without it, all other skills fail.
+`onboarding.sh` downloads the latest `SCHEMA.md` directly from the KOS repo on GitHub and places it at `<vault-path>/SCHEMA.md`. No action required from the wizard — this happens automatically as part of Step 1.
 
-```bash
-cp <skill-directory>/../../templates/SCHEMA.md <vault-path>/SCHEMA.md
-```
-
-(Adjust the path based on how skills resolve relative paths in the runtime environment. The `templates/` directory is at the KOS repo root, parallel to `skills/`.)
-
-Verify the file copied successfully.
+If the script reports a download failure (e.g., no internet, GitHub unreachable), stop and surface the error to the user. Do NOT continue building the vault without SCHEMA.md — it's the contract that all other skills depend on.
 
 ### 3. Generate agent config file(s)
 
