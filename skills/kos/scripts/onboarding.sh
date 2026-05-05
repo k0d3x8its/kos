@@ -117,26 +117,62 @@ check_tool() {
   local name="$1"
   local cmd="$2"
   local install_cmd="$3"
+  # Check PATH first, then check common npm global locations
   if command -v "$cmd" > /dev/null 2>&1; then
     echo "  [installed] $name" >&2
+  elif [ -x "$HOME/.npm-global/bin/$cmd" ]; then
+    echo "  [installed] $name (found at ~/.npm-global/bin/$cmd but not in PATH)" >&2
+    echo "              Add this to your shell config: export PATH=\"\$HOME/.npm-global/bin:\$PATH\"" >&2
   else
     echo "  [missing]   $name — to install: $install_cmd" >&2
   fi
 }
 
 check_tool "summarize"     "summarize"     "npm i -g @steipete/summarize"
-check_tool "qmd"           "qmd"           "npm i -g @tobilu/qmd"
 check_tool "agent-browser" "agent-browser" "npm i -g agent-browser && agent-browser install"
+# qmd is excluded from auto-check — the npm package is currently unreliable
 
-# 5. Final status
+# 5. Install SCHEMA.md (download from GitHub — works regardless of how the skill was installed)
+echo "" >&2
+echo "Installing SCHEMA.md..." >&2
+
+SCHEMA_URL="https://raw.githubusercontent.com/k0d3x8its/kos/main/templates/SCHEMA.md"
+SCHEMA_DEST="$VAULT_ROOT/SCHEMA.md"
+
+# Try curl first, then wget — most systems have at least one
+if command -v curl > /dev/null 2>&1; then
+  curl -fsSL "$SCHEMA_URL" -o "$SCHEMA_DEST" || {
+    echo "ERROR: Failed to download SCHEMA.md from $SCHEMA_URL" >&2
+    exit 3
+  }
+elif command -v wget > /dev/null 2>&1; then
+  wget -q "$SCHEMA_URL" -O "$SCHEMA_DEST" || {
+    echo "ERROR: Failed to download SCHEMA.md from $SCHEMA_URL" >&2
+    exit 3
+  }
+else
+  echo "ERROR: Neither curl nor wget is installed. Cannot download SCHEMA.md." >&2
+  echo "Install one of them and re-run, or manually copy SCHEMA.md from:" >&2
+  echo "  $SCHEMA_URL" >&2
+  exit 3
+fi
+
+# Sanity check: file should be non-empty
+if [ ! -s "$SCHEMA_DEST" ]; then
+  echo "ERROR: SCHEMA.md downloaded but is empty. Aborting." >&2
+  rm -f "$SCHEMA_DEST"
+  exit 3
+fi
+
+echo "  installed SCHEMA.md" >&2
+
+# 6. Final status
 echo "" >&2
 VAULT_ABS=$(cd "$VAULT_ROOT" && pwd)
 echo "=== Onboarding scaffold complete ===" >&2
 echo "Vault: $VAULT_ABS" >&2
 echo "" >&2
 echo "Next steps for the wizard:" >&2
-echo "  1. Copy templates/SCHEMA.md to $VAULT_ABS/SCHEMA.md" >&2
-echo "  2. Generate agent config file(s)" >&2
-echo "  3. Append the setup entry to wiki/log.md" >&2
-
+echo "  1. Generate agent config file(s)" >&2
+echo "  2. Append the setup entry to wiki/log.md" >&2
 exit 0
