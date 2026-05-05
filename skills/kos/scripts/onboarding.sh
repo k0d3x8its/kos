@@ -36,11 +36,14 @@ echo "Creating directory structure..." >&2
 
 DIRS=(
   "raw"
+  "raw/Field-Logs"
+  "raw/Field-Research"
+  "raw/Field-Studies"
   "raw/assets"
   "wiki"
   "wiki/sources"
   "wiki/books"
-  "wiki/_archived"   # stores completed/retired Field Notes books
+  "wiki/books/_archived"   # stores completed/retired Field Notes books
   "wiki/entities"
   "wiki/concepts"
   "wiki/synthesis"
@@ -60,11 +63,11 @@ done
 if [ "$STARTER_MODE" = "fresh" ]; then
   echo "" >&2
   echo "Fresh start — pre-creating first volume folders..." >&2
-  mkdir -p "$VAULT_ROOT/raw/FL-vol-001"
-  mkdir -p "$VAULT_ROOT/raw/FR-vol-001"
-  echo "  created raw/FL-vol-001/ (your first Field Log)" >&2
-  echo "  created raw/FR-vol-001/ (your first Field Research)" >&2
-  echo "  (FS-vol-001 not pre-created — Field Study books appear during Phase II)" >&2
+  mkdir -p "$VAULT_ROOT/raw/Field-Logs/FL-vol-001"
+  mkdir -p "$VAULT_ROOT/raw/Field-Research/FR-vol-001"
+  echo "  created raw/Field-Logs/FL-vol-001/ (your first Field Log)" >&2
+  echo "  created raw/Field-Research/FR-vol-001/ (your first Field Research)" >&2
+  echo "  (FS-vol-001 not pre-created — Field Study books are created during Phase II)" >&2
 fi
 
 # 2. Create wiki/index.md if it doesn't exist
