@@ -128,7 +128,6 @@ If you don't use Kodex OS, KOS still works fine as a standalone LLM Wiki tool �
 The wizard offers to install these. All optional but recommended:
 
 - **[summarize](https://github.com/steipete/summarize)** — summarize links, files, and media from the CLI
-- **[qmd](https://github.com/tobi/qmd)** — local search engine for markdown files (useful as wiki grows)
 - **[agent-browser](https://github.com/vercel-labs/agent-browser)** — browser automation for web research
 
 ## Based On
