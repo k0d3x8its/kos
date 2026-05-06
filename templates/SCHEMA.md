@@ -4,7 +4,7 @@
 > The LLM reads this file before every operation. The user owns this file — edit it to adjust the rules KOS follows in this vault.
 
 ```yaml
-schema-version: 2
+schema-version: 4
 schema-source: https://github.com/k0d3x8its/kos
 kos-vault: true
 ```
@@ -69,13 +69,61 @@ Contains source material the user has provided: scanned and transcribed Field No
 
 **Memo book conventions.** Every Field Notes memo book has a one-to-one mapping to a folder under `raw/`. All prefixes begin with `F` for Field Notes (the brand); the second letter denotes purpose. Three book types are recognized:
 
-| Prefix | Type | Purpose |
-|--------|------|---------|
-| `FL-vol-XXX` | Field Log | Daily log: what the user is doing, what's happening, observations of the day. Continuous chronological capture. |
-| `FR-vol-XXX` | Field Research | Catchall: things to learn, things to research, todos, scratch, lists, half-formed thoughts — anything that doesn't belong in the daily log. |
-| `FS-vol-XXX` | Field Study | Dedicated subject book: a single subject pulled out for focused study. Created during Phase II — Data Extraction when a subject from `FL` or `FR` earns its own book. |
+| Prefix | Type | Purpose | Entry format |
+|--------|------|---------|--------------|
+| `FL-vol-XXX` | Field Log | Daily log: what the user is doing, what's happening, observations of the day. Continuous chronological capture. | Structured header per entry (see Section 3.1.1) |
+| `FR-vol-XXX` | Field Research | Catchall: things to learn, things to research, todos, scratch, lists, half-formed thoughts — anything that doesn't belong in the daily log. | Free-form; date stamp at end of session |
+| `FS-vol-XXX` | Field Study | Dedicated subject book: a single subject pulled out for focused study. Created during Phase II — Data Extraction when a subject from `FL` or `FR` earns its own book. | Free-form; date stamp at end of session |
 
 `XXX` is the zero-padded volume number per type (e.g. `FL-vol-001`, `FR-vol-042`, `FS-vol-007`). Each prefix has its own independent volume sequence — `FL-vol-001`, `FR-vol-001`, and `FS-vol-001` are three different books.
+
+#### 3.1.1 Field Log entry format
+
+Field Log pages use a structured entry header. Each page contains **one or two
+entries** — never more. A single entry may also span multiple pages when the
+content is long.
+
+**Entry header format:**
+
+```
+[DAY]  [TEMP]°  [TIME]  [DATE M/D/YY]
+────────────────────────────────────────
+[free-form journal text]
+```
+
+- `DAY` — three-letter abbreviation: `SUN`, `MON`, `TUE`, `WED`, `THU`, `FRI`, `SAT`
+- `TEMP` — temperature in degrees (unit is Fahrenheit unless otherwise noted by
+  the user), written as a number with a degree symbol: `59°`
+- `TIME` — 12-hour clock with am/pm: `10:45am`
+- `DATE` — session date in `M/D/YY` format: `5/3/26`
+- A horizontal rule separates the header from the journal text and separates
+  consecutive entries on the same page
+
+**Multi-page entries.** When a single entry's journal text continues onto the next
+physical page, the continuation page has no header — it begins mid-sentence. The
+LLM MUST carry the most recent header's metadata forward as the canonical date,
+time, temperature, and day for the continuation content.
+
+**Two-entry pages.** When two entries appear on one page, each has its own header
+and horizontal rule. The LLM MUST extract both entries independently and store
+them as separate structured records within the source page.
+
+**Extracted fields per entry** (used in `wiki/sources/` frontmatter — see
+Section 3.2):
+
+```yaml
+entries:
+  - date: YYYY-MM-DD       # M/D/YY converted to ISO 8601
+    day: Sunday            # full day name, not abbreviation
+    temp: 59               # integer, Fahrenheit
+    time: "10:45am"        # string, preserve am/pm
+    summary: ""            # brief LLM summary of this entry's content
+  - date: YYYY-MM-DD
+    day: Tuesday
+    temp: 63
+    time: "8:08am"
+    summary: ""
+```
 
 **Folder pattern.** All memo book folders match the regex `^F[LRS]-vol-\d{3}$` and reside under their respective parent directory (`raw/Field-Logs/`, `raw/Field-Research/`, `raw/Field-Studies/`).
 
@@ -106,7 +154,9 @@ One markdown file per ingested raw source. The filename is derived from the sour
 
 Each source page contains: a brief summary, key takeaways, wikilinks to related entities/concepts/questions, and the original source path.
 
-**Frontmatter:** `type: source`, `raw-path`, `source-type`, `tags`, `created`, `updated`.
+**Frontmatter:** `type: source`, `raw-path`, `source-type`, `capture-mode`, `tags`,
+`created`, `updated`. For `source-type: field-log-page`, also include `entries:`
+per Section 3.1.1 — one list item per entry found on the page.
 
 **`source-type` values for scanned Field Notes pages:**
 
@@ -352,7 +402,11 @@ The LLM follows these rules during every operation. They are non-negotiable unle
 ### 6.2 Ingest rules
 
 1. Read the source from `raw/` without modification.
-2. Create exactly one `wiki/sources/` page per source.
+2. Create exactly one `wiki/sources/` page per source. For Field Log sources,
+   extract all entry headers (Section 3.1.1) and populate the `entries:` list
+   in frontmatter. A page with two entries produces one source page with two
+   items in `entries:`. A continuation page (no header) inherits the previous
+   page's entry metadata.
 3. Create or update the corresponding `wiki/books/` page if the source came from a memo book.
 4. Extract entities into `wiki/entities/` (one page per entity, deduped by name and aliases).
 5. Extract concepts into `wiki/concepts/`.
@@ -412,7 +466,8 @@ After editing this file, run `/kos-lint` to confirm the existing wiki still conf
 |---------|------|---------|
 | 1 | 2026-05 | Initial KOS schema. Defines `raw/` (with `FL/FR/FS-vol-XXX` memo book conventions), `wiki/{sources,books,entities,concepts,synthesis,questions}/`, and `output/`. Establishes bit.ly slug convention (Section 5). Forked from NicholasSpisak/second-brain but versioned independently. |
 | 2 | 2026-05 | Reorganized `raw/` into typed subdirectories: `Field-Logs/`, `Field-Research/`, `Field-Studies/`. Updated all path references and lint rules accordingly. |
-| 3 | 2026-05 | Added scanned page filename conventions (Section 3.1): `page-XXX`, `page-XXX-sticky`, `page-XXX-under`, `page-XXX-flip`. Added merge rule, orphaned companion detection (lint), and `source-type` values for scanned pages (Section 3.2). |
+| 3 | 2026-05 | Added scanned page filename conventions (Section 3.1)...
+| 4 | 2026-06 | Added Field Log entry format (Section 3.1.1): structured header with day, temperature, time, and date. Added `entries:` frontmatter for `field-log-page` sources. Updated Section 3.2 and Section 6.2 ingest rules accordingly. |
 
 ---
 
