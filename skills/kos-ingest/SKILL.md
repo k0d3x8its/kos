@@ -107,8 +107,12 @@ a scanned image of handwritten Field Notes. Read all pages in each companion fil
 before synthesizing the composite source.
 
 When reading, note:
-- **Dates** — the user ends each session with a date stamp in `M/DD/YY` format.
-  Extract all dates found and use the latest one as the canonical page date.
+- **Dates** — for Field Research pages (`FR-vol-XXX`), the user ends each session
+  with a date stamp in `M/D/YY` format at the bottom. Extract all dates and use
+  the latest as the canonical page date. For Field Log pages (`FL-vol-XXX`), the
+  date is in the structured entry header — see the Field Log entry headers bullet
+  below. For Field Study pages (`FS-vol-XXX`), there are no date stamps in the
+  handwriting — the ingestion timestamp in frontmatter is the date of record.
 - **Bit.ly slugs** — encoded as `<slug>` in angle brackets (see SCHEMA.md Section 5).
   Underlined letters in the handwriting indicate uppercase — transcribe accordingly.
 - **Sticky note boundaries** — in `-sticky` scans, the sticky content is visually
@@ -116,6 +120,21 @@ When reading, note:
   separately in the source summary under clearly labeled subsections.
 - **Doodles and drawings** — note their presence but do not attempt to describe
   them in detail unless they contain text or a URL slug.
+- **Field Study structure** — Field Study pages (`FS-vol-XXX`) are not
+  chronological. They are structured knowledge documents organized by subject
+  hierarchy (SCHEMA.md Section 3.1.2). When reading a Field Study scan, identify
+  which section of the skeleton the content belongs to (Origins, Key Figures,
+  Core Principles, Open Questions) or whether it is a subject-specific section.
+  Do not treat unlabeled content as a new section — map it to the most
+  appropriate existing section first.
+- **Field Log entry headers** — Field Log pages (`FL-vol-XXX`) use a structured
+  header per entry (SCHEMA.md Section 3.1.1). When reading a Field Log scan,
+  detect each entry header in this format:
+  `[DAY]  [TEMP]°  [TIME]  [DATE M/D/YY]` followed by a horizontal rule.
+  Extract day, temperature, time, and date from every header found. A page may
+  have one or two entries. A continuation page (no header present) inherits the
+  most recent header's metadata. Convert dates to ISO 8601 and day abbreviations
+  to full names before storing.
 
 ### Composite source page structure
 
@@ -201,9 +220,10 @@ runs, the composite source (all companions) is already assembled.
 
 For memo book sources (`raw/Field-Logs/FL-vol-XXX/`, `raw/Field-Research/FR-vol-XXX/`, `raw/Field-Studies/FS-vol-XXX/`), also note:
 - The book volume (e.g., `FL-vol-001`)
-- Any date stamps on the page (per Kodex OS convention, format `M/D/YY` or similar).
-  For scanned pages, the user ends each session with a date — extract all dates and
-  use the latest as the canonical page date.
+- Any date stamps on the page. Field Research pages end with a date stamp in
+  `M/D/YY` format — extract all dates and use the latest as the canonical page
+  date. Field Log pages carry the date in the entry header. Field Study pages
+  have no date stamps — use the ingestion timestamp only.
 - Cross-references to other pages in the same book
 
 ### 2. Discuss key takeaways (discussion mode only)
@@ -238,9 +258,16 @@ type: source
 raw-path: raw/Field-Logs/FL-vol-001/page-007.md   # list format for composite scans
 source-type: field-log-page    # field-log-page | field-research-page | field-study-page | article | paper | transcript | podcast
 capture-mode: bare             # bare (typed or single scan) | composite (merged companions)
+subject:                       # field-study-page only — must match wiki/books/ subject field; omit for all other source-types
+entries:                       # field-log-page only — omit for all other source-types
+  - date: YYYY-MM-DD
+    day: Sunday
+    temp: 59
+    time: "10:45am"
+    summary: ""
 tags: [tag1, tag2]
 created: 2026-05-01T14:32:00Z
-updated: 2026-05-01T14:32:00Z
+updated: 2026-05-01T14:32:00Z                      # for field-study-page: updated on every ingest; created is set once and never changed
 ---
 ```
 
@@ -273,6 +300,30 @@ Factual summary of the source content. No interpretation — save that for synth
 ## External References
 
 - [<F13LdN0t3>](https://bit.ly/F13LdN0t3) — description if known
+```
+For `field-study-page` sources, use this body structure instead of the standard
+one above. This is a living document — append and update on every ingest from
+the same FS volume:
+
+```markdown
+# FS-vol-001 — [Subject Name]
+
+## Origins
+When, where, and how the subject began. Key historical context.
+
+## Key Figures
+People, organizations, or movements central to the subject.
+
+## Core Principles
+The fundamental ideas, rules, or frameworks that define the subject.
+
+[Subject-specific sections go here, derived from raw content]
+
+## Open Questions
+What the user still wants to learn or investigate about this subject.
+
+## External References
+- [<slug>](https://bit.ly/slug) — description if known
 ```
 
 The source summary is **factual only**. Save interpretation for `wiki/concepts/` and `wiki/synthesis/`.
