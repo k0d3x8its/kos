@@ -72,6 +72,11 @@ find raw/Field-Logs raw/Field-Research raw/Field-Studies -type f -name '*.pdf'
   counterpart — they are NOT evaluated individually. If `page-007-sticky.pdf`
   exists, `page-007-under.pdf` and `page-007-flip.pdf` are companions, not
   separate sources. Only the base name is checked against `wiki/sources/`.
+- **Field Study exception.** Field Study sources (`FS-vol-XXX`) are living
+  documents — all pages from a single volume accumulate into one `wiki/sources/`
+  page per SCHEMA.md Section 3.1.2. Do NOT flag individual `FS-vol-XXX` pages
+  as unprocessed if `wiki/sources/FS-vol-XXX.md` already exists. Only flag if
+  no source page exists at all for that volume.
 
 For each raw file (or companion set), derive the expected wiki source path. If
 the wiki source page does not exist, report:
@@ -186,7 +191,7 @@ For each wiki page, verify frontmatter against SCHEMA.md Section 4 and the type-
 
 | Page directory | Required fields |
 |----------------|-----------------|
-| `wiki/sources/` | `type: source`, `raw-path`, `source-type`, `capture-mode`, `tags`, `created`, `updated` |
+| `wiki/sources/` | `type: source`, `raw-path`, `source-type`, `capture-mode`, `tags`, `created`, `updated`. Plus `entries:` if `source-type: field-log-page` (per SCHEMA.md Section 3.1.1). Plus `subject:` if `source-type: field-study-page` (per SCHEMA.md Section 3.1.2). For `field-study-page`, also verify `created` is never newer than `updated` — `created` is set once on first ingest and must not change. |
 | `wiki/books/` | `type: book`, `volume`, `book-type`, `date-start`, `date-end`, `status`, `tags`, `created`, `updated`. Plus `subject` if `book-type: field-study`. Plus `archived-on` and `envelope-number` if `status: archived` (per SCHEMA.md Section 3.3 archiving subsection) |
 | `wiki/entities/` | `type: entity`, `entity-kind`, `aliases`, `tags`, `created`, `updated` |
 | `wiki/concepts/` | `type: concept`, `aliases`, `tags`, `created`, `updated` |
