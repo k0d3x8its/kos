@@ -4,7 +4,7 @@
 > The LLM reads this file before every operation. The user owns this file — edit it to adjust the rules KOS follows in this vault.
 
 ```yaml
-schema-version: 4
+schema-version: 5
 schema-source: https://github.com/k0d3x8its/kos
 kos-vault: true
 ```
@@ -73,7 +73,7 @@ Contains source material the user has provided: scanned and transcribed Field No
 |--------|------|---------|--------------|
 | `FL-vol-XXX` | Field Log | Daily log: what the user is doing, what's happening, observations of the day. Continuous chronological capture. | Structured header per entry (see Section 3.1.1) |
 | `FR-vol-XXX` | Field Research | Catchall: things to learn, things to research, todos, scratch, lists, half-formed thoughts — anything that doesn't belong in the daily log. | Free-form; date stamp at end of session |
-| `FS-vol-XXX` | Field Study | Dedicated subject book: a single subject pulled out for focused study. Created during Phase II — Data Extraction when a subject from `FL` or `FR` earns its own book. | Free-form; date stamp at end of session |
+| `FS-vol-XXX` | Field Study | Dedicated subject book: a single subject pulled out for focused study. Created during Phase II — Data Extraction when a subject from `FL` or `FR` earns its own book. | Structured by subject hierarchy (see Section 3.1.2); no date stamps in handwriting — ingestion timestamp recorded in frontmatter |
 
 `XXX` is the zero-padded volume number per type (e.g. `FL-vol-001`, `FR-vol-042`, `FS-vol-007`). Each prefix has its own independent volume sequence — `FL-vol-001`, `FR-vol-001`, and `FS-vol-001` are three different books.
 
@@ -124,6 +124,66 @@ entries:
     time: "8:08am"
     summary: ""
 ```
+#### 3.1.2 Field Study page format
+
+Field Study pages are structured knowledge documents, not chronological logs.
+They document a single subject in depth across one or more pages. There are no
+date stamps in the handwriting — the ingestion timestamp in frontmatter serves
+as the record of when the content entered the wiki.
+
+**Required skeleton.** Every Field Study source page MUST include these sections
+in this order. The LLM MUST create them even if the raw source has no content
+for a section yet — leave the body empty and note it as unpopulated:
+
+```markdown
+## Origins
+When, where, and how the subject began. Key historical context.
+
+## Key Figures
+People, organizations, or movements central to the subject.
+
+## Core Principles
+The fundamental ideas, rules, or frameworks that define the subject.
+
+## Open Questions
+What the user still wants to learn or investigate about this subject.
+```
+
+**Subject-specific sections.** After the required skeleton, the LLM MAY add
+additional sections that fit the subject's unique structure. These are not
+templated — the LLM derives them from the raw content. Examples:
+
+- Stoicism: `## Virtues`, `## Practices`, `## Schools of Thought`
+- A.I.: `## Architectures`, `## Training Methods`, `## Key Papers`
+
+Subject-specific sections MUST appear after `## Core Principles` and before
+`## Open Questions`.
+
+**Multi-page studies.** A single Field Study subject may span many pages in the
+physical book. The LLM MUST accumulate content across all ingested pages for the
+same subject into the corresponding `wiki/sources/` page — it is a living
+document, not a one-time snapshot. Each ingest from the same FS volume appends
+and updates; it does not create a new source page per physical page.
+
+**Frontmatter for Field Study sources:**
+
+```yaml
+---
+type: source
+raw-path:
+  - raw/Field-Studies/FS-vol-001/page-001.pdf
+  - raw/Field-Studies/FS-vol-001/page-002.pdf   # accumulates as pages are ingested
+source-type: field-study-page
+capture-mode: bare                               # or composite if stickies present
+subject: Stoicism                                # must match wiki/books/ subject field
+tags: []
+created: YYYY-MM-DDTHH:MM:SSZ                   # set on first ingest, never updated
+updated: YYYY-MM-DDTHH:MM:SSZ                   # updated on every subsequent ingest
+---
+```
+
+Note that `created` is set once on first ingest and never changed. `updated`
+reflects the most recent ingest from this study.
 
 **Folder pattern.** All memo book folders match the regex `^F[LRS]-vol-\d{3}$` and reside under their respective parent directory (`raw/Field-Logs/`, `raw/Field-Research/`, `raw/Field-Studies/`).
 
@@ -156,7 +216,10 @@ Each source page contains: a brief summary, key takeaways, wikilinks to related 
 
 **Frontmatter:** `type: source`, `raw-path`, `source-type`, `capture-mode`, `tags`,
 `created`, `updated`. For `source-type: field-log-page`, also include `entries:`
-per Section 3.1.1 — one list item per entry found on the page.
+per Section 3.1.1 — one list item per entry found on the page. For
+`source-type: field-study-page`, also include `subject:` per Section 3.1.2 —
+the subject must match the `subject:` field in the corresponding `wiki/books/`
+page.
 
 **`source-type` values for scanned Field Notes pages:**
 
@@ -468,6 +531,7 @@ After editing this file, run `/kos-lint` to confirm the existing wiki still conf
 | 2 | 2026-05 | Reorganized `raw/` into typed subdirectories: `Field-Logs/`, `Field-Research/`, `Field-Studies/`. Updated all path references and lint rules accordingly. |
 | 3 | 2026-05 | Added scanned page filename conventions (Section 3.1)...
 | 4 | 2026-06 | Added Field Log entry format (Section 3.1.1): structured header with day, temperature, time, and date. Added `entries:` frontmatter for `field-log-page` sources. Updated Section 3.2 and Section 6.2 ingest rules accordingly. |
+| 5 | 2026-06 | Added Field Study page format (Section 3.1.2): required skeleton (Origins, Key Figures, Core Principles, Open Questions), subject-specific free-form sections, multi-page accumulation rule, and dedicated frontmatter. Updated Section 3.2 to require `subject:` field for `field-study-page` sources. |
 
 ---
 
