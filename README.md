@@ -69,7 +69,7 @@ This installs five skills into your AI agent:
         mkdir -p raw/Field-Logs/FL-vol-001    # First Field Log book
         echo "your transcribed page content" > raw/Field-Logs/FL-vol-001/page-001.md
 ```
-   For scanned Field Notes pages, see [docs/CAPTURE.md](docs/CAPTURE.md) for the full scanning workflow and filename conventions. Or clip an article anywhere under `raw/` (`raw/clippings/` is a common choice).
+    For scanned Field Notes pages, see [docs/CAPTURE.md](docs/CAPTURE.md) for the full scanning workflow and filename conventions. Or clip an article anywhere under `raw/` (`raw/clippings/` is a common choice).
 6. **Run `/kos-ingest`** — the LLM will discuss key takeaways and build wiki pages, including a `wiki/books/FL-vol-001.md` summary the first time it sees a new memo book
 7. **Browse your wiki** in Obsidian — follow `[[wikilinks]]`, explore the graph view, check `wiki/index.md`
 8. **Keep going** — `/kos-query` to ask questions, `/kos-lint` to health-check after every ~10 ingests
