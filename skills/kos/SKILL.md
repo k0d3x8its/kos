@@ -186,7 +186,12 @@ Show the user:
 >
 > - **Daily log pages** (Field Log) go in `raw/Field-Logs/FL-vol-001/page-001.md`, etc.
 > - **Research/catchall pages** (Field Research) go in `raw/Field-Research/FR-vol-001/`
-> - **Subject study pages** (Field Study) go in `raw/Field-Studies/FS-vol-001/`
+> - **Subject study pages** (Field Study) go in `raw/Field-Studies/FS-vol-001/` — Field
+>   Study books are dedicated to a single subject (e.g., Stoicism, A.I.). When you run
+>   `/kos-ingest` on a Field Study page for the first time, the LLM will ask you for the
+>   subject name if it isn't obvious from context. Field Study source pages are living
+>   documents — each new page you ingest from the same volume accumulates into one wiki
+>   entry rather than creating separate pages per scan.
 > - **Web clippings** go anywhere under `raw/` — `raw/clippings/` is a common choice.
 >
 > Then run `/kos-ingest` and the LLM will process them into your wiki.
