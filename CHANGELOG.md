@@ -1,6 +1,51 @@
 # Changelog
 
-## v1.0.0-rc.3 (2026-05-06)
+## v1.1.0-rc.1 (2026-05-06)
+
+- **➕:** `docs/CAPTURE.md` — new document covering the full Field Notes scanning
+  workflow: Proton Drive built-in scanner, filename suffix conventions, Rclone +
+  Proton Drive setup, systemd automation (5-minute sync timer), and troubleshooting
+- **➕:** `templates/SCHEMA.md` Section 3.1.1 — Field Log entry format: structured
+  header (`[DAY] [TEMP]° [TIME] [DATE M/D/YY]`), one-or-two-entry-per-page rule,
+  multi-page entry continuation, `entries:` frontmatter with `date`, `day`, `temp`,
+  `time`, `summary` per entry
+- **➕:** `templates/SCHEMA.md` Section 3.1.2 — Field Study page format: structured
+  knowledge document (not chronological), required skeleton (Origins, Key Figures,
+  Core Principles, Open Questions), subject-specific free-form sections, living-document
+  accumulation rule (all FS volume pages → one source page), `subject:` frontmatter,
+  ingestion timestamp as date of record
+- **➕:** `templates/SCHEMA.md` Section 3.1 — scanned PDF filename suffix convention:
+  `page-XXX`, `page-XXX-sticky`, `page-XXX-under`, `page-XXX-flip`; merge rule for
+  companion sets; orphaned companion detection rule
+- **⬆️:** `templates/SCHEMA.md` — Section 3.1 memo book table updated with Entry
+  format column; Section 3.2 frontmatter note updated with conditional `entries:`
+  (field-log-page) and `subject:` (field-study-page); Section 6.2 ingest rule 2
+  updated for Field Log entry extraction and FS living-document behavior; Section 6.4
+  orphaned companion scan lint rule added; schema-version bumped to 5
+- **⬆️:** `skills/kos-ingest` — scanned PDF suffix detection and capture mode logic;
+  companion collection and merge before ingest; orphaned companion warning; Field Log
+  entry header extraction added to Reading scanned PDFs section; Field Study structure
+  reading rules added; Step 1 date extraction logic split by book type (FL header, FR
+  bottom stamp, FS none); Step 4 frontmatter example updated with `capture-mode`,
+  `subject:`, and `entries:` fields; composite source page body structure added; Field
+  Study living-document body structure added
+- **⬆️:** `skills/kos-lint` — Check 1: `.pdf` files in memo book folders included in
+  raw sync evaluation; Field Study living-document exception added (individual FS pages
+  not flagged if volume source page exists); Check 2b (new): orphaned companion scan
+  detection for missing `-sticky`, missing `-under`, and stale incomplete captures;
+  Check 5: `wiki/sources/` frontmatter table updated with conditional `entries:` and
+  `subject:` fields; `created` immutability check added for field-study-page sources
+- **⬆️:** `skills/kos` — Post-Wizard Step 6 next steps updated to explain Field Study
+  living-document behavior and subject prompt on first ingest
+- **⬆️:** `scripts/onboarding.sh` — capture pipeline tooling check added: verifies
+  `rclone` and `fuse3` are installed; reports install instructions if missing
+- **⬆️:** `README.md` — Quick Start step 5 updated to reference `docs/CAPTURE.md`;
+  Ongoing Workflow daily section updated to reference scanning workflow; directory tree
+  updated to include `docs/CAPTURE.md`
+- **⬆️:** `tests/test_onboarding.sh` — Test 3b added: verifies capture pipeline
+  tooling check runs without error
+
+## v1.0.0-rc.3 (2026-05-05)
 
 - **🐞:** `skills/kos` — wizard had no step to collect `{{DOMAIN_DESCRIPTION}}`; agent was silently filling it with a generic default. Step 3 now explicitly asks the user for a one-sentence vault description before generating agent config files
 - **🐞:** `skills/kos` — `obsidian://open?vault=` URI fails on unregistered vaults; replaced with `obsidian://open?path=` which opens by absolute path and registers the vault automatically. Cross-platform launcher detection added for macOS, Linux, and Windows (WSL)
