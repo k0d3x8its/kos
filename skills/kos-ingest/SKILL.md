@@ -1,6 +1,6 @@
 ---
 name: kos-ingest
-description: Use this skill when the user wants to process raw sources into their Kodex OS Layer 1 LLM Wiki. Triggers include "ingest", "process my raw notes", "update the wiki", "add this to kos", or dropping new files into the vault's raw/ folder (scanned Field Notes pages, transcribed memo book pages, clipped articles, papers, transcripts). The skill reads from raw/, writes structured pages to wiki/, creates wikilinks and cross-references, expands inline bit.ly slugs, and updates wiki/index.md and wiki/log.md. Never modifies content in raw/ — that sub-layer is immutable per the KOS schema. Do not use this skill to answer questions about existing wiki content (use kos-query) or to check wiki health (use kos-lint).
+description: Use this skill when the user wants to process raw sources into their Kodex OS Layer 1 LLM Wiki. Triggers include "ingest", "process my raw notes", "update the wiki", "add this to kos", or dropping new files into the vault's raw/ folder (scanned Field Notes pages as PDFs, transcribed memo book pages, clipped articles, papers, transcripts). The skill reads from raw/, detects scanned PDF capture mode from filename suffixes (-sticky, -under, -flip), merges companion scans before ingesting, writes structured pages to wiki/, creates wikilinks and cross-references, expands inline bit.ly slugs, and updates wiki/index.md and wiki/log.md. Never modifies content in raw/ — that sub-layer is immutable per the KOS schema. Do not use this skill to answer questions about existing wiki content (use kos-query) or to check wiki health (use kos-lint).
 allowed-tools:
   - Bash
   - Read
@@ -36,14 +36,142 @@ Determine which files need ingestion:
 1. **If the user specifies a file or files**, use those.
 
 2. **If the user says "process new sources" or similar**, detect unprocessed files:
-   - Glob all files in `raw/` recursively, excluding `raw/assets/` and any binary files (`.png`, `.jpg`, `.pdf`, etc. — these are referenced by other sources, not ingested directly)
-   - For each candidate file, derive its expected wiki source filename per SCHEMA.md Section 3.2:
+   - Glob all files in `raw/` recursively, excluding `raw/assets/` and any binary files (`.png`, `.jpg`, etc. — these are referenced by other sources, not ingested directly)
+   - Include `.pdf` files found in memo book folders (`raw/Field-Logs/`, `raw/Field-Research/`, `raw/Field-Studies/`) — these are scanned Field Notes pages and ARE ingested directly
+   - Before evaluating any `.pdf` file, check for companion scans (see **Scanned PDF Capture Mode** below) and collect the full companion set first
+   - For each candidate file (or merged companion set), derive its expected wiki source filename per SCHEMA.md Section 3.2:
      - `raw/<path>/<file>.md` → `wiki/sources/<path>-<file>.md` (slashes become hyphens)
-     - Example: `raw/Field-Logs/FL-vol-001/page-007.md` → `wiki/sources/FL-vol-001-page-007.md`
-   - A file is **unprocessed** if its derived `wiki/sources/` page does not exist
+     - `raw/<path>/page-007-sticky.pdf` → base name `page-007` → `wiki/sources/<path>-page-007.md`
+     - Example: `raw/Field-Research/FR-vol-001/page-007-sticky.pdf` → `wiki/sources/FR-vol-001-page-007.md`
+   - A file (or companion set) is **unprocessed** if its derived `wiki/sources/` page does not exist
    - Do NOT rely on parsing `wiki/log.md` to detect unprocessed files — file existence is the source of truth
 
 3. **If no unprocessed files are found**, tell the user and stop.
+
+---
+
+## Scanned PDF Capture Mode
+
+When a source file in a memo book folder has a `.pdf` extension, it is a scanned
+Field Notes page. The filename suffix encodes how many physical layers the scan
+contains. The LLM MUST detect the suffix and handle accordingly before proceeding
+to ingest.
+
+### Suffix detection
+
+Strip the extension and read the trailing segment after the last hyphen-separated
+base name (`page-XXX`):
+
+| Filename pattern | Capture mode | LLM behavior |
+|-----------------|--------------|--------------|
+| `page-XXX.pdf` | Bare page | Ingest immediately as a single source |
+| `page-XXX-sticky.pdf` | Sticky on top | Collect companion scans before ingesting |
+| `page-XXX-under.pdf` | Sticky removed | Companion to `-sticky`; do not ingest alone |
+| `page-XXX-flip.pdf` | Sticky back + page | Companion to `-sticky`; do not ingest alone |
+
+### Companion collection
+
+When a `-sticky` file is detected, the LLM MUST:
+
+1. Search the same `raw/` folder for all files sharing the base name (`page-XXX`):
+```bash
+   # Example: collecting companions for page-007-sticky.pdf
+   ls raw/Field-Research/FR-vol-001/page-007*.pdf
+```
+2. Collect whichever of the following exist:
+   - `page-XXX-sticky.pdf` — sticky front + visible page text
+   - `page-XXX-under.pdf` — full page with sticky removed
+   - `page-XXX-flip.pdf` — sticky back + page beneath
+3. Treat the full companion set as **one composite source**
+4. If `-under` is missing, warn the user before proceeding:
+   > "`page-007-sticky.pdf` found but no `page-007-under.pdf`. The page text under
+   > the sticky may be incomplete. Continue anyway, or wait until the under-scan
+   > is uploaded?"
+   Wait for the user's choice. If they say continue, ingest what is available and
+   note the missing companion in `wiki/log.md`.
+
+### Orphaned companion rule
+
+A `-under` or `-flip` file found without a corresponding `-sticky` file is
+orphaned. The LLM MUST warn the user:
+
+> "`page-007-under.pdf` found but no `page-007-sticky.pdf`. This companion has no
+> primary scan. Is this file misnamed, or is the sticky scan still pending?"
+
+Do not ingest an orphaned companion alone. Wait for user confirmation.
+
+### Reading scanned PDFs
+
+The LLM reads the PDF directly — no OCR tool is required. Each page of the PDF is
+a scanned image of handwritten Field Notes. Read all pages in each companion file
+before synthesizing the composite source.
+
+When reading, note:
+- **Dates** — the user ends each session with a date stamp in `M/DD/YY` format.
+  Extract all dates found and use the latest one as the canonical page date.
+- **Bit.ly slugs** — encoded as `<slug>` in angle brackets (see SCHEMA.md Section 5).
+  Underlined letters in the handwriting indicate uppercase — transcribe accordingly.
+- **Sticky note boundaries** — in `-sticky` scans, the sticky content is visually
+  distinct (different paper color or texture). Transcribe sticky and page content
+  separately in the source summary under clearly labeled subsections.
+- **Doodles and drawings** — note their presence but do not attempt to describe
+  them in detail unless they contain text or a URL slug.
+
+### Composite source page structure
+
+When merging companions, the `wiki/sources/` page MUST reflect all layers:
+
+```yaml
+---
+type: source
+raw-path:
+  - raw/Field-Research/FR-vol-001/page-007-sticky.pdf
+  - raw/Field-Research/FR-vol-001/page-007-under.pdf
+  - raw/Field-Research/FR-vol-001/page-007-flip.pdf
+source-type: field-research-page
+capture-mode: composite          # bare | composite
+tags: []
+created: 2026-05-01T14:32:00Z
+updated: 2026-05-01T14:32:00Z
+---
+```
+
+Body structure for composite sources:
+
+```markdown
+# FR-vol-001 — Page 007
+
+## Sticky Note (front)
+Content from the sticky note front face.
+
+## Page
+Content from the full page (synthesized from -sticky visible area + -under reveal).
+
+## Sticky Note (back)
+Content from the sticky note back face (from -flip scan). Omit section if no
+-flip scan exists.
+
+## Summary
+Synthesized factual summary across all layers.
+
+## Key Claims
+...
+
+## Entities Mentioned
+...
+
+## Concepts Covered
+...
+
+## Questions Raised
+...
+
+## External References
+...
+```
+
+For bare `page-XXX.pdf` sources, use the standard source page structure from
+Step 4. Omit the sticky subsections. Set `capture-mode: bare`.
 
 ---
 
@@ -64,11 +192,18 @@ For each source file, follow this workflow:
 
 ### 1. Read the source completely
 
-Read the entire file. If it references images in `raw/assets/`, read the relevant ones if they contain important information.
+Read the entire file. If it references images in `raw/assets/`, read the relevant
+ones if they contain important information.
+
+For scanned PDF sources, companion collection and capture mode detection happen
+before this step — see **Scanned PDF Capture Mode** above. By the time Step 1
+runs, the composite source (all companions) is already assembled.
 
 For memo book sources (`raw/Field-Logs/FL-vol-XXX/`, `raw/Field-Research/FR-vol-XXX/`, `raw/Field-Studies/FS-vol-XXX/`), also note:
 - The book volume (e.g., `FL-vol-001`)
-- Any date stamps on the page (per Kodex OS convention, format `M/D/YY` or similar)
+- Any date stamps on the page (per Kodex OS convention, format `M/D/YY` or similar).
+  For scanned pages, the user ends each session with a date — extract all dates and
+  use the latest as the canonical page date.
 - Cross-references to other pages in the same book
 
 ### 2. Discuss key takeaways (discussion mode only)
@@ -100,8 +235,9 @@ Use this frontmatter (matches SCHEMA.md Section 4):
 ```yaml
 ---
 type: source
-raw-path: raw/Field-Logs/FL-vol-001/page-007.md
-source-type: field-log-page    # or article, paper, transcript, podcast, etc.
+raw-path: raw/Field-Logs/FL-vol-001/page-007.md   # list format for composite scans
+source-type: field-log-page    # field-log-page | field-research-page | field-study-page | article | paper | transcript | podcast
+capture-mode: bare             # bare (typed or single scan) | composite (merged companions)
 tags: [tag1, tag2]
 created: 2026-05-01T14:32:00Z
 updated: 2026-05-01T14:32:00Z
@@ -270,13 +406,26 @@ If Step 5b triggered an archived-book interaction (silent-add or re-open), inclu
 ## 2026-05-01 14:32 — ingest
 
 - **Operation:** ingest
-- **Source(s):** raw/Field-Logs/FL-vol-001/page-007.md (source-type: field-log-page)
+- **Source(s):** raw/Field-Logs/FL-vol-001/page-007.md (source-type: field-log-page, capture-mode: bare)
 - **Pages affected:** 1 created (sources), 1 updated (books), 2 created + 1 updated (entities), 1 created (concepts), 2 created (questions)
 - **Notes:** First ingest from FL-vol-001.
 - **Unresolved:** unresolved-slug: <F13LdN0t3> in [[FL-vol-001-page-007]]
 ```
+Omit the `Unresolved:` line if there's nothing unresolved. This applies to both bare and composite log entries.
 
-Omit the `Unresolved:` line if there's nothing unresolved.
+For composite scanned sources, the log entry lists all companion files:
+
+```markdown
+## 2026-05-01 14:32 — ingest
+
+- **Operation:** ingest
+- **Source(s):** raw/Field-Research/FR-vol-001/page-007-sticky.pdf,
+  page-007-under.pdf, page-007-flip.pdf (source-type: field-research-page,
+  capture-mode: composite)
+- **Pages affected:** 1 created (sources), 1 updated (books), 3 created (entities),
+  1 created (concepts), 2 created (questions)
+- **Notes:** Composite source — 3 companion scans merged.
+```
 
 ### 10. Update `wiki/index.md`
 
@@ -316,6 +465,10 @@ Keep this concise. The user can read the wiki for details.
 - **All filenames kebab-case, ASCII only**, per SCHEMA.md Section 6.1.
 - **Frontmatter is mandatory** on every page, per SCHEMA.md Section 6.1.
 - **`raw/` is immutable.** Never write to it. Period.
+- **Scanned PDFs are read directly.** No OCR tool needed — the LLM reads handwriting
+  from the PDF image. Companion scans are merged before any wiki page is written.
+- **Never ingest a companion alone.** A `-under` or `-flip` without its `-sticky`
+  is orphaned — warn the user and wait.
 
 ---
 
