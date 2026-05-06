@@ -132,6 +132,26 @@ check_tool "summarize"     "summarize"     "npm i -g @steipete/summarize"
 check_tool "agent-browser" "agent-browser" "npm i -g agent-browser && agent-browser install"
 # qmd is excluded from auto-check — the npm package is currently unreliable
 
+# Check capture pipeline tools (required for Field Notes scanning workflow)
+echo "" >&2
+echo "Checking capture pipeline tooling..." >&2
+
+check_capture_tool() {
+  local name="$1"
+  local cmd="$2"
+  local install_note="$3"
+  if command -v "$cmd" > /dev/null 2>&1; then
+    echo "  [installed] $name" >&2
+  else
+    echo "  [missing]   $name — $install_note" >&2
+  fi
+}
+
+check_capture_tool "rclone" "rclone" \
+  "required for Proton Drive sync — see docs/CAPTURE.md for install instructions"
+check_capture_tool "fuse3"  "fusermount3" \
+  "required by rclone — install with: sudo apt install fuse3 -y"
+
 # 5. Install SCHEMA.md (download from GitHub — works regardless of how the skill was installed)
 echo "" >&2
 SCHEMA_URL="https://raw.githubusercontent.com/k0d3x8its/kos/main/templates/SCHEMA.md"
