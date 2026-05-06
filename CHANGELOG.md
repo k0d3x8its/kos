@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.0.0-rc.3 (2026-05-06)
+
+- **🐞:** `skills/kos` — wizard had no step to collect `{{DOMAIN_DESCRIPTION}}`; agent was silently filling it with a generic default. Step 3 now explicitly asks the user for a one-sentence vault description before generating agent config files
+- **🐞:** `skills/kos` — `obsidian://open?vault=` URI fails on unregistered vaults; replaced with `obsidian://open?path=` which opens by absolute path and registers the vault automatically. Cross-platform launcher detection added for macOS, Linux, and Windows (WSL)
+- **🐞:** `scripts/onboarding.sh` — SCHEMA.md was never actually copied during onboarding; the script only printed it as an instruction for the wizard to handle manually. SCHEMA.md is now downloaded directly from GitHub at vault creation time, eliminating all path resolution logic and working for all install methods (`npx skills add`, local clone, etc.)
+- **🐞:** `scripts/onboarding.sh` — SCHEMA.md download is skipped if the file already exists, making the script safe to re-run without overwriting a user-edited schema
+- **🐞:** `tests/test_onboarding.sh` — Test 1 was asserting `wiki/_archived` but the script creates `wiki/books/_archived`; corrected to match actual directory structure
+- **🐞:** `tests/test_onboarding.sh` — Test 4 mock vault was missing `raw/Field-Logs/` and `raw/Field-Research/` directories; fixed to match the structure a real first-run vault produces
+- **➕:** `tests/test_onboarding.sh` — Test 1 now asserts `SCHEMA.md` exists in the vault root after onboarding, verifying the GitHub download step completed successfully
+- **➕:** `tests/test_onboarding.sh` — Test 4 now pre-places `SCHEMA.md` in the second vault before re-running the script, correctly isolating the idempotency check for wiki files from the SCHEMA.md existence guard; also asserts SCHEMA.md is not overwritten on re-run
+- **♻️:** `scripts/onboarding.sh` — `check_tool` now detects binaries installed to `~/.npm-global/bin/` that are absent from the active PATH, and prints a specific shell config fix instead of a misleading "missing" status
+- **❌:** `scripts/onboarding.sh` — `qmd` removed from tool check; `@tobilu/qmd` is currently unavailable or broken on npm. `grep` or `ripgrep` recommended as alternatives. May be re-added in a future release
+- **❌:** `skills/kos` — `qmd` removed from Step 5 optional tool list and Post-Wizard Step 5 install instructions
+- **❌:** `skills/kos` — misplaced duplicate "How to start" block removed from between Steps 2 and 4; content already exists in Post-Wizard Step 6
+- **❌:** `skills/kos` — Post-Wizard "Next steps" echo reduced from 3 items to 2; SCHEMA.md install is now handled automatically by the script and no longer needs to be listed as a manual step
+
 ## v1.0.0-rc.2 (2026-05-04)
 
 - **♻️:** `raw/` reorganized — FL/FR/FS volumes now live under typed subdirectories (`raw/Field-Logs/`, `raw/Field-Research/`, `raw/Field-Studies/`) instead of directly under `raw/`
