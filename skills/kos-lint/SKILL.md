@@ -49,14 +49,32 @@ For every finding, capture: `severity`, `check`, `path`, `line` (if applicable),
 
 ### Check 1: Raw → wiki/sources/ sync (Error)
 
-Every file under `raw/` (excluding `raw/assets/` and binary files) must have a corresponding page in `wiki/sources/` per SCHEMA.md Section 3.2's filename derivation rule (`raw/<path>/<file>.md` → `wiki/sources/<path>-<file>.md`).
+Every file under `raw/` (excluding `raw/assets/` and binary files) must have a
+corresponding page in `wiki/sources/` per SCHEMA.md Section 3.2's filename
+derivation rule.
 
 ```bash
-# List raw sources, excluding assets and binaries
+# List raw .md sources, excluding assets
 find raw -type f -name '*.md' ! -path 'raw/assets/*'
+
+# List raw .pdf sources in memo book folders only
+find raw/Field-Logs raw/Field-Research raw/Field-Studies -type f -name '*.pdf'
 ```
 
-For each raw file, derive the expected wiki source path. If the wiki source page does not exist, report:
+**Derivation rules:**
+
+- `.md` files: `raw/<path>/<file>.md` → `wiki/sources/<path>-<file>.md`
+- `.pdf` files (scanned pages): strip the capture suffix (`-sticky`, `-under`,
+  `-flip`) to get the base name, then derive:
+  `raw/<path>/page-007-sticky.pdf` → base `page-007` →
+  `wiki/sources/<path>-page-007.md`
+- Companion scans (`-under`, `-flip`) share a derived path with their `-sticky`
+  counterpart — they are NOT evaluated individually. If `page-007-sticky.pdf`
+  exists, `page-007-under.pdf` and `page-007-flip.pdf` are companions, not
+  separate sources. Only the base name is checked against `wiki/sources/`.
+
+For each raw file (or companion set), derive the expected wiki source path. If
+the wiki source page does not exist, report:
 
 - **Severity:** Error
 - **Message:** `Unprocessed source: <raw-path> has no wiki/sources/ page`
@@ -98,6 +116,36 @@ For any book page under `wiki/books/` (top level, not `_archived/`):
 
 - If `status: archived` is set → **Error**: an archived book should be in `wiki/books/_archived/`, not the top level. Fix: move the file to `_archived/`, OR change `status:` back to `active` if archiving was a mistake.
 
+### Check 2b: Orphaned companion scans (Warning)
+
+Per SCHEMA.md Section 3.1, a `-under` or `-flip` scan without a corresponding
+`-sticky` scan is orphaned and cannot be ingested alone.
+
+```bash
+# Find all companion scans in memo book folders
+find raw/Field-Logs raw/Field-Research raw/Field-Studies \
+  -type f \( -name '*-under.pdf' -o -name '*-flip.pdf' \)
+```
+
+For each `-under` or `-flip` file found, derive the expected `-sticky` companion:
+- `page-007-under.pdf` → expects `page-007-sticky.pdf` in the same folder
+- `page-007-flip.pdf` → expects `page-007-sticky.pdf` in the same folder
+
+If the `-sticky` file does not exist in the same folder, report:
+
+- **Severity:** Warning
+- **Message:** `Orphaned companion scan: <path> has no corresponding -sticky scan`
+- **Fix:** Upload the missing `-sticky` scan, or rename this file if it was
+  misnamed
+
+Also check the inverse — a `-sticky` scan with no `-under` companion after the
+vault's last-modified timestamp is more than 24 hours old:
+
+- **Severity:** Warning
+- **Message:** `Incomplete capture: <path>-sticky.pdf has no -under companion`
+- **Fix:** Scan the page without the sticky and upload as `<path>-under.pdf`, or
+  run `/kos-ingest` now if the sticky content is sufficient
+
 ### Check 3: Broken wikilinks (Error)
 
 Scan all wiki pages for `[[wikilink]]` references and verify each target exists. Handle display aliases.
@@ -138,7 +186,7 @@ For each wiki page, verify frontmatter against SCHEMA.md Section 4 and the type-
 
 | Page directory | Required fields |
 |----------------|-----------------|
-| `wiki/sources/` | `type: source`, `raw-path`, `source-type`, `tags`, `created`, `updated` |
+| `wiki/sources/` | `type: source`, `raw-path`, `source-type`, `capture-mode`, `tags`, `created`, `updated` |
 | `wiki/books/` | `type: book`, `volume`, `book-type`, `date-start`, `date-end`, `status`, `tags`, `created`, `updated`. Plus `subject` if `book-type: field-study`. Plus `archived-on` and `envelope-number` if `status: archived` (per SCHEMA.md Section 3.3 archiving subsection) |
 | `wiki/entities/` | `type: entity`, `entity-kind`, `aliases`, `tags`, `created`, `updated` |
 | `wiki/concepts/` | `type: concept`, `aliases`, `tags`, `created`, `updated` |
@@ -280,7 +328,7 @@ Append to `wiki/log.md` per SCHEMA.md Section 3.9 format:
 - **Pages scanned:** 247 sources, 12 books, 89 entities, 34 concepts, 18 synthesis, 56 questions
 - **Findings:** 5 errors, 3 warnings, 2 info
 - **Fixes applied:** 2 (re-ingested raw/Field-Logs/FL-vol-003/page-012.md, raw/clippings/2026-04-20-article.md)
-- **Notes:** 3 errors deferred per user
+- **Notes:** 3 errors deferred per user. Companion scan warnings: 0.
 ```
 
 ---
