@@ -201,7 +201,7 @@ echo "  2. Append the setup entry to wiki/log.md" >&2
 
 # 7. Open vault
 # Open vault in Obsidian using path URI (works on unregistered vaults)
-ENCODED_PATH=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$VAULT_ABS'))")
+ENCODED_PATH=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$VAULT_ABS/wiki/index.md'))")
 OBSIDIAN_URI="obsidian://open?path=$ENCODED_PATH"
 
 if command -v open > /dev/null 2>&1; then
