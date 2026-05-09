@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.2.0 (2026-06)
+
+- **➕:** `templates/frontmatter-templates.md` — all YAML frontmatter blocks for every wiki page type (source, book, entity, concept, synthesis, question) extracted from `SCHEMA.md`; read on demand by skills when creating or updating wiki pages
+- **➕:** `templates/field-notes-formats.md` — Field Log entry format (Section 3.1.1) and Field Study page format (Section 3.1.2) extracted from `SCHEMA.md`; read on demand by skills when ingesting FL or FS sources
+- **➕:** `references/schema-changelog.md` — version history extracted from `SCHEMA.md` Section 8; read by `/kos-lint` during schema-version mismatch checks only
+- **➕:** `references/log-examples.md` — new shared log entry reference covering all four operation types: ingest (bare, composite, missing companion, silent-add, re-open), query (yes/partial/no), lint, and archive; all five skills point to this file
+- **➕:** `references/lint-report-example.md` — full lint report format example extracted from `kos-lint`; read on demand when writing findings reports
+- **♻️:** `references/CAPTURE.md` — moved from `docs/`; reclassified as LLM operational reference (defines capture interpretation rules used during ingest)
+- **⬆️:** `templates/SCHEMA.md` — now a rules-only document; all YAML frontmatter blocks, format specs, and version history delegated to new `templates/` and `references/` files and replaced with `> Read` directives; critical rules from delegated sections preserved as inline bullet summaries; directory structure diagram updated to include `templates/` and `references/`; token cost ~4,000 → ~2,100 (~47% reduction)
+- **⬆️:** `skills/kos-ingest` — all frontmatter and body template blocks replaced with `> Read` directives; composite and Field Study body structures condensed; log entry examples delegated to `references/log-examples.md`; token cost ~4,000 → ~2,400 (~40% reduction)
+- **⬆️:** `skills/kos-lint` — prefix → book-type table replaced with `> Read` directive; frontmatter required fields table replaced with `> Read` directive plus inline validation rules; report format and log entry delegated to `references/`; token cost ~2,700 → ~1,900 (~30% reduction)
+- **⬆️:** `skills/kos-query` — synthesis frontmatter block replaced with `> Read` directive; query log entry delegated to `references/log-examples.md`; archive lookup added as explicit query classification type; token cost ~1,900 → ~1,550 (~18% reduction)
+- **⬆️:** `skills/kos-archive` — log entry delegated to `references/log-examples.md`; token cost ~2,000 → ~1,750 (~13% reduction)
+
 ## v1.1.0-rc.1 (2026-05-06)
 
 - **➕:** `docs/CAPTURE.md` — new document covering the full Field Notes scanning
