@@ -48,3 +48,9 @@ Memo books are physical Field Notes notebooks with a 1:1 mapping to `raw/` folde
 - `raw/Field-Studies/FS-vol-XXX/` — Field Study (dedicated subject, created in Phase II)
 
 Each active book has a corresponding `wiki/books/<volume>.md`. Archived books have `wiki/books/_archived/<volume>.md` with `status: archived`, `archived-on:`, and `envelope-number:` in frontmatter.
+
+## Session management
+
+Start a **new Codex session** for each KOS operation (`/kos-ingest`, `/kos-lint`, `/kos-query`, `/kos-archive`). Do NOT resume previous sessions — carried context from prior operations consumes the context window before the current operation begins, inflating token cost and increasing the risk of hitting limits mid-operation.
+
+One session. One operation. Done.
