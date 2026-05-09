@@ -1,6 +1,6 @@
-# Ingest Log Entry Examples
+# Log Entry Examples
 
-> Referenced by `kos-ingest` Step 9. The LLM reads this file when writing a `wiki/log.md` entry.
+> Referenced by `kos-ingest`, `kos-lint`, `kos-query`, and `kos-archive`. The LLM reads this file when writing a `wiki/log.md` entry.
 > Format is defined in SCHEMA.md Section 3.9. `wiki/log.md` is append-only — never rewrite or compact it.
 
 ---
@@ -127,4 +127,33 @@
 - **Source(s):** raw/Field-Logs/FL-vol-001/page-042.md (source-type: field-log-page, capture-mode: bare)
 - **Pages affected:** 1 created (sources), 1 updated (books)
 - **Notes:** Re-opened archive: FL-vol-001 returned to active status. Moved from wiki/books/_archived/ to wiki/books/.
+```
+
+---
+
+## Archive Entry
+
+```markdown
+## 2026-05-01 14:32 — archive
+
+- **Operation:** archive
+- **Volume:** FL-vol-001
+- **Archived-on:** 2026-04-02
+- **Envelope:** 7
+- **Page moved:** wiki/books/_archived/FL-vol-001.md (was wiki/books/FL-vol-001.md)
+- **Lint findings before archive:** 0 errors, 1 warning (unresolved slug accepted by user)
+- **Notes:** [free text or omit]
+```
+
+## Archive Entry — Page Not Moved
+
+```markdown
+## 2026-05-01 14:32 — archive
+
+- **Operation:** archive
+- **Volume:** FR-vol-003
+- **Archived-on:** 2026-04-02
+- **Envelope:** 8
+- **Page moved:** no (kept at wiki/books/FR-vol-003.md)
+- **Lint findings before archive:** 0 errors, 0 warnings
 ```
