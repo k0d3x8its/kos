@@ -16,14 +16,7 @@ Process raw source documents into structured, interlinked wiki pages.
 
 ## Before You Begin: Read the Contract
 
-**Always read `<vault-root>/SCHEMA.md` first.** It is the contract for this vault. The user may have edited it to override defaults. SCHEMA.md defines:
-
-- The directory structure (Section 3)
-- Page format requirements (Section 4)
-- Inline conventions like the bit.ly slug expansion (Section 5)
-- Operation rules you must follow (Section 6)
-
-If anything in this skill conflicts with SCHEMA.md, **SCHEMA.md wins**. Tell the user about the conflict.
+**Always read `<vault-root>/SCHEMA.md` first.** It is the contract for this vault. The user may have edited it to override defaults. If anything in this skill conflicts with SCHEMA.md, **SCHEMA.md wins** — tell the user about the conflict.
 
 If `SCHEMA.md` does not exist at the vault root, stop and tell the user the vault is not initialized. Suggest they run `/kos`.
 
@@ -33,18 +26,17 @@ If `SCHEMA.md` does not exist at the vault root, stop and tell the user the vaul
 
 Determine which files need ingestion:
 
-1. **If the user specifies a file or files**, use those.
+1. **If the user specifies files**, use those.
 
 2. **If the user says "process new sources" or similar**, detect unprocessed files:
-   - Glob all files in `raw/` recursively, excluding `raw/assets/` and any binary files (`.png`, `.jpg`, etc. — these are referenced by other sources, not ingested directly)
-   - Include `.pdf` files found in memo book folders (`raw/Field-Logs/`, `raw/Field-Research/`, `raw/Field-Studies/`) — these are scanned Field Notes pages and ARE ingested directly
-   - Before evaluating any `.pdf` file, check for companion scans (see **Scanned PDF Capture Mode** below) and collect the full companion set first
-   - For each candidate file (or merged companion set), derive its expected wiki source filename per SCHEMA.md Section 3.2:
+   - Glob all files in `raw/` recursively, excluding `raw/assets/` and binary files (`.png`, `.jpg`, etc.)
+   - Include `.pdf` files found in memo book folders — these are scanned Field Notes pages and ARE ingested directly
+   - Before evaluating any `.pdf`, check for companion scans (see **Scanned PDF Capture Mode** below) and collect the full companion set first
+   - For each candidate file (or merged companion set), derive its expected `wiki/sources/` filename per SCHEMA.md Section 3.2:
      - `raw/<path>/<file>.md` → `wiki/sources/<path>-<file>.md` (slashes become hyphens)
      - `raw/<path>/page-007-sticky.pdf` → base name `page-007` → `wiki/sources/<path>-page-007.md`
-     - Example: `raw/Field-Research/FR-vol-001/page-007-sticky.pdf` → `wiki/sources/FR-vol-001-page-007.md`
    - A file (or companion set) is **unprocessed** if its derived `wiki/sources/` page does not exist
-   - Do NOT rely on parsing `wiki/log.md` to detect unprocessed files — file existence is the source of truth
+   - Do NOT rely on `wiki/log.md` to detect unprocessed files — file existence is the source of truth
 
 3. **If no unprocessed files are found**, tell the user and stop.
 
@@ -52,15 +44,9 @@ Determine which files need ingestion:
 
 ## Scanned PDF Capture Mode
 
-When a source file in a memo book folder has a `.pdf` extension, it is a scanned
-Field Notes page. The filename suffix encodes how many physical layers the scan
-contains. The LLM MUST detect the suffix and handle accordingly before proceeding
-to ingest.
+When a source file in a memo book folder has a `.pdf` extension, it is a scanned Field Notes page. Detect the suffix and handle accordingly before ingesting.
 
 ### Suffix detection
-
-Strip the extension and read the trailing segment after the last hyphen-separated
-base name (`page-XXX`):
 
 | Filename pattern | Capture mode | LLM behavior |
 |-----------------|--------------|--------------|
@@ -71,91 +57,123 @@ base name (`page-XXX`):
 
 ### Companion collection
 
-When a `-sticky` file is detected, the LLM MUST:
+When a `-sticky` file is detected:
 
 1. Search the same `raw/` folder for all files sharing the base name (`page-XXX`):
 ```bash
-   # Example: collecting companions for page-007-sticky.pdf
-   ls raw/Field-Research/FR-vol-001/page-007*.pdf
+ls raw/Field-Research/FR-vol-001/page-007*.pdf
 ```
-2. Collect whichever of the following exist:
-   - `page-XXX-sticky.pdf` — sticky front + visible page text
-   - `page-XXX-under.pdf` — full page with sticky removed
-   - `page-XXX-flip.pdf` — sticky back + page beneath
+2. Collect whichever of the following exist: `-sticky`, `-under`, `-flip`
 3. Treat the full companion set as **one composite source**
 4. If `-under` is missing, warn the user before proceeding:
-   > "`page-007-sticky.pdf` found but no `page-007-under.pdf`. The page text under
-   > the sticky may be incomplete. Continue anyway, or wait until the under-scan
-   > is uploaded?"
-   Wait for the user's choice. If they say continue, ingest what is available and
-   note the missing companion in `wiki/log.md`.
+   > "`page-007-sticky.pdf` found but no `page-007-under.pdf`. The page text under the sticky may be incomplete. Continue anyway, or wait until the under-scan is uploaded?"
+
+   Wait for the user's choice. If they say continue, ingest what is available and note the missing companion in `wiki/log.md`.
 
 ### Orphaned companion rule
 
-A `-under` or `-flip` file found without a corresponding `-sticky` file is
-orphaned. The LLM MUST warn the user:
+A `-under` or `-flip` found without a corresponding `-sticky` is orphaned. Warn the user:
 
-> "`page-007-under.pdf` found but no `page-007-sticky.pdf`. This companion has no
-> primary scan. Is this file misnamed, or is the sticky scan still pending?"
+> "`page-007-under.pdf` found but no `page-007-sticky.pdf`. This companion has no primary scan. Is this file misnamed, or is the sticky scan still pending?"
 
 Do not ingest an orphaned companion alone. Wait for user confirmation.
 
 ### Reading scanned PDFs
 
-The LLM reads the PDF directly — no OCR tool is required. Each page of the PDF is
-a scanned image of handwritten Field Notes. Read all pages in each companion file
-before synthesizing the composite source.
+The LLM reads the PDF directly — no OCR tool required. Read all pages in each companion file before synthesizing. When reading, note:
 
-When reading, note:
-- **Dates** — for Field Research pages (`FR-vol-XXX`), the user ends each session
-  with a date stamp in `M/D/YY` format at the bottom. Extract all dates and use
-  the latest as the canonical page date. For Field Log pages (`FL-vol-XXX`), the
-  date is in the structured entry header — see the Field Log entry headers bullet
-  below. For Field Study pages (`FS-vol-XXX`), there are no date stamps in the
-  handwriting — the ingestion timestamp in frontmatter is the date of record.
-- **Bit.ly slugs** — encoded as `<slug>` in angle brackets (see SCHEMA.md Section 5).
-  Underlined letters in the handwriting indicate uppercase — transcribe accordingly.
-- **Sticky note boundaries** — in `-sticky` scans, the sticky content is visually
-  distinct (different paper color or texture). Transcribe sticky and page content
-  separately in the source summary under clearly labeled subsections.
-- **Doodles and drawings** — note their presence but do not attempt to describe
-  them in detail unless they contain text or a URL slug.
-- **Field Study structure** — Field Study pages (`FS-vol-XXX`) are not
-  chronological. They are structured knowledge documents organized by subject
-  hierarchy (SCHEMA.md Section 3.1.2). When reading a Field Study scan, identify
-  which section of the skeleton the content belongs to (Origins, Key Figures,
-  Core Principles, Open Questions) or whether it is a subject-specific section.
-  Do not treat unlabeled content as a new section — map it to the most
-  appropriate existing section first.
-- **Field Log entry headers** — Field Log pages (`FL-vol-XXX`) use a structured
-  header per entry (SCHEMA.md Section 3.1.1). When reading a Field Log scan,
-  detect each entry header in this format:
-  `[DAY]  [TEMP]°  [TIME]  [DATE M/D/YY]` followed by a horizontal rule.
-  Extract day, temperature, time, and date from every header found. A page may
-  have one or two entries. A continuation page (no header present) inherits the
-  most recent header's metadata. Convert dates to ISO 8601 and day abbreviations
-  to full names before storing.
+- **Dates** — FR pages: date stamp in `M/D/YY` at bottom; use latest as canonical. FL pages: date is in the entry header. FS pages: no date stamps — use ingestion timestamp only.
+- **Bit.ly slugs** — `<slug>` in angle brackets (SCHEMA.md Section 5). Underlined letters = uppercase.
+- **Sticky note boundaries** — in `-sticky` scans, transcribe sticky and page content separately under clearly labeled subsections.
+- **Doodles and drawings** — note their presence; describe only if they contain text or a URL slug.
+- **Field Study structure** — FS pages are structured knowledge documents, not chronological. Map content to the appropriate skeleton section (Origins, Key Figures, Core Principles, Open Questions) or a subject-specific section. Do not treat unlabeled content as a new section. Read `./templates/field-notes-formats.md#field-study` before ingesting any FS source.
+- **Field Log entry headers** — FL pages use a structured header per entry. Detect each header in format `[DAY]  [TEMP]°  [TIME]  [DATE M/D/YY]` followed by a horizontal rule. A page may have one or two entries. A continuation page (no header) inherits the most recent header's metadata. Read `./templates/field-notes-formats.md#field-log` before ingesting any FL source.
 
-### Composite source page structure
-
-When merging companions, the `wiki/sources/` page MUST reflect all layers:
-
-```yaml
 ---
-type: source
-raw-path:
-  - raw/Field-Research/FR-vol-001/page-007-sticky.pdf
-  - raw/Field-Research/FR-vol-001/page-007-under.pdf
-  - raw/Field-Research/FR-vol-001/page-007-flip.pdf
-source-type: field-research-page
-capture-mode: composite          # bare | composite
-tags: []
-created: 2026-05-01T14:32:00Z
-updated: 2026-05-01T14:32:00Z
+
+## Choose Ingest Mode
+
+Ask the user which mode to use, unless already specified:
+
+- **Quick mode** — ingest each source without checking in. Use for batches or when the user says "just ingest everything."
+- **Discussion mode** — share key takeaways and confirm before writing each source. Use when the user wants to curate.
+
+Default to discussion mode for the first source. If the user signals they want to keep going, switch to quick mode for the rest of the batch.
+
 ---
+
+## Process Each Source
+
+For each source file, follow this workflow in order.
+
+### 1. Read the source completely
+
+Read the entire file. If it references images in `raw/assets/`, read relevant ones if they contain important information.
+
+For scanned PDF sources, companion collection and capture mode detection happen before this step — by the time Step 1 runs, the composite source is already assembled.
+
+For memo book sources, also note:
+- The book volume (e.g., `FL-vol-001`)
+- Date stamps: FR pages end with `M/D/YY` — use latest as canonical. FL pages carry the date in the entry header. FS pages have no date stamps — use ingestion timestamp only.
+- Cross-references to other pages in the same book
+
+### 2. Discuss key takeaways (discussion mode only)
+
+Share the 3–5 most important takeaways. Ask the user if they want to emphasize or skip anything. Wait for confirmation before proceeding. Skip in quick mode.
+
+### 3. Expand inline URL slugs (per SCHEMA.md Section 5)
+
+Scan for `<[A-Za-z0-9]+>` matches at word boundaries.
+
+For each match:
+- Construct the URL: `https://bit.ly/{slug}` (preserve case exactly — bit.ly is case-sensitive)
+- Check surrounding context for a user-written description
+- If web access is available and no description is present, follow the redirect to determine the target
+- Hold expanded URLs to embed in Step 4 and cross-reference in Step 5 if they identify entities
+
+If a slug cannot be resolved, note it for the log entry in Step 9 as `unresolved-slug: <{slug}>`.
+
+**Do NOT expand:** angle-bracket spans with non-alphanumeric characters (`<3`, `<see note>`, `<TODO>`). These are literal user notation.
+
+### 4. Create the source summary page
+
+Create the file at the deterministic path per SCHEMA.md Section 3.2.
+
+> Read `./templates/frontmatter-templates.md` for the complete frontmatter block before creating this page.
+
+**Key frontmatter rules for this step:**
+- `source-type`: `field-log-page` | `field-research-page` | `field-study-page` | `article` | `paper` | `transcript` | `podcast`
+- `capture-mode`: `bare` (typed or single scan) | `composite` (merged companions)
+- `subject`: field-study-page only — must match `wiki/books/` subject field; omit for all other source-types
+- `entries`: field-log-page only — one list item per entry found on the page; omit for all other source-types
+- For field-study-page: `created` is set once on first ingest and never changed; `updated` reflects every subsequent ingest
+- For composite scans, `raw-path` is a list of all companion files
+
+**Standard source body structure:**
+
+```markdown
+# Source Title
+
+## Summary
+Factual summary of the source content. No interpretation — save that for synthesis pages.
+
+## Key Claims
+- Claim 1
+
+## Entities Mentioned
+- [[entity-name]] — brief context
+
+## Concepts Covered
+- [[concept-name]] — brief context
+
+## Questions Raised
+- [[why-does-x-happen]]
+
+## External References
+- [<F13LdN0t3>](https://bit.ly/F13LdN0t3) — description if known
 ```
 
-Body structure for composite sources:
+**For composite scanned sources**, use this body structure instead:
 
 ```markdown
 # FR-vol-001 — Page 007
@@ -167,330 +185,103 @@ Content from the sticky note front face.
 Content from the full page (synthesized from -sticky visible area + -under reveal).
 
 ## Sticky Note (back)
-Content from the sticky note back face (from -flip scan). Omit section if no
--flip scan exists.
+Content from the sticky note back face (from -flip scan). Omit if no -flip scan exists.
 
 ## Summary
 Synthesized factual summary across all layers.
 
-## Key Claims
-...
-
-## Entities Mentioned
-...
-
-## Concepts Covered
-...
-
-## Questions Raised
-...
-
-## External References
-...
+## Key Claims / Entities Mentioned / Concepts Covered / Questions Raised / External References
 ```
 
-For bare `page-XXX.pdf` sources, use the standard source page structure from
-Step 4. Omit the sticky subsections. Set `capture-mode: bare`.
-
----
-
-## Choose Ingest Mode
-
-Ask the user which mode to use, unless they've already specified:
-
-- **Quick mode** — ingest each source without checking in. Use when processing many sources at once or when the user has said "just ingest everything."
-- **Discussion mode** — for each source, share key takeaways and confirm before writing. Use when the user wants to curate, especially for important sources or first-time ingests.
-
-Default to discussion mode for the first source. If the user signals they want to keep going without checking in, switch to quick mode for the rest of the batch.
-
----
-
-## Process Each Source
-
-For each source file, follow this workflow:
-
-### 1. Read the source completely
-
-Read the entire file. If it references images in `raw/assets/`, read the relevant
-ones if they contain important information.
-
-For scanned PDF sources, companion collection and capture mode detection happen
-before this step — see **Scanned PDF Capture Mode** above. By the time Step 1
-runs, the composite source (all companions) is already assembled.
-
-For memo book sources (`raw/Field-Logs/FL-vol-XXX/`, `raw/Field-Research/FR-vol-XXX/`, `raw/Field-Studies/FS-vol-XXX/`), also note:
-- The book volume (e.g., `FL-vol-001`)
-- Any date stamps on the page. Field Research pages end with a date stamp in
-  `M/D/YY` format — extract all dates and use the latest as the canonical page
-  date. Field Log pages carry the date in the entry header. Field Study pages
-  have no date stamps — use the ingestion timestamp only.
-- Cross-references to other pages in the same book
-
-### 2. Discuss key takeaways (discussion mode only)
-
-Share the 3–5 most important takeaways. Ask the user if they want to emphasize anything or skip topics. Wait for confirmation before proceeding.
-
-In quick mode, skip this step.
-
-### 3. Expand inline URL slugs (per SCHEMA.md Section 5)
-
-Scan the source for any `<{slug}>` matches using the pattern `<[A-Za-z0-9]+>` at word boundaries.
-
-For each match:
-- Construct the URL: `https://bit.ly/{slug}` (preserve case exactly — bit.ly is case-sensitive)
-- Look at surrounding context for a description the user wrote near the slug
-- If you have web access and no description is present, follow the redirect to determine the target
-- Hold these expanded URLs to embed in the source page (step 4) and cross-reference if they identify entities (step 5)
-
-If a slug cannot be resolved (no description, no web access, or the redirect fails), **note it for the log entry in step 9** as `unresolved-slug: <{slug}>`.
-
-**Do NOT expand:** angle-bracket spans containing non-alphanumeric characters (`<3`, `<see note>`, `<TODO>`). These are literal user notation, not URL slugs.
-
-### 4. Create the source summary page
-
-Create the file at the deterministic path per SCHEMA.md Section 3.2.
-
-Use this frontmatter (matches SCHEMA.md Section 4):
-
-```yaml
----
-type: source
-raw-path: raw/Field-Logs/FL-vol-001/page-007.md   # list format for composite scans
-source-type: field-log-page    # field-log-page | field-research-page | field-study-page | article | paper | transcript | podcast
-capture-mode: bare             # bare (typed or single scan) | composite (merged companions)
-subject:                       # field-study-page only — must match wiki/books/ subject field; omit for all other source-types
-entries:                       # field-log-page only — omit for all other source-types
-  - date: YYYY-MM-DD
-    day: Sunday
-    temp: 59
-    time: "10:45am"
-    summary: ""
-tags: [tag1, tag2]
-created: 2026-05-01T14:32:00Z
-updated: 2026-05-01T14:32:00Z                      # for field-study-page: updated on every ingest; created is set once and never changed
----
-```
-
-Body structure:
-
-```markdown
-# Source Title
-
-## Summary
-
-Factual summary of the source content. No interpretation — save that for synthesis pages.
-
-## Key Claims
-
-- Claim 1
-- Claim 2
-
-## Entities Mentioned
-
-- [[entity-name]] — brief context
-
-## Concepts Covered
-
-- [[concept-name]] — brief context
-
-## Questions Raised
-
-- [[why-does-x-happen]]
-
-## External References
-
-- [<F13LdN0t3>](https://bit.ly/F13LdN0t3) — description if known
-```
-For `field-study-page` sources, use this body structure instead of the standard
-one above. This is a living document — append and update on every ingest from
-the same FS volume:
-
-```markdown
-# FS-vol-001 — [Subject Name]
-
-## Origins
-When, where, and how the subject began. Key historical context.
-
-## Key Figures
-People, organizations, or movements central to the subject.
-
-## Core Principles
-The fundamental ideas, rules, or frameworks that define the subject.
-
-[Subject-specific sections go here, derived from raw content]
-
-## Open Questions
-What the user still wants to learn or investigate about this subject.
-
-## External References
-- [<slug>](https://bit.ly/slug) — description if known
-```
+**For field-study-page sources**, use the living document structure from `./templates/field-notes-formats.md#field-study`. Append and update on every ingest from the same FS volume — do NOT create a new source page per physical page.
 
 The source summary is **factual only**. Save interpretation for `wiki/concepts/` and `wiki/synthesis/`.
 
 ### 5. Create or update the book page (memo book sources only)
 
-If the source came from a folder matching `^F[LRS]-vol-\d{3}$` under `raw/Field-Logs/`, `raw/Field-Research/`, or `raw/Field-Studies/`, the book has a corresponding page in `wiki/books/`. Per SCHEMA.md Section 3.3, archived books may live at `wiki/books/_archived/<volume>.md` instead of `wiki/books/<volume>.md`.
-
-**Step 5a: Find the book page (recursive lookup).**
-
-Search for the book page in both possible locations:
+If the source came from a folder matching `^F[LRS]-vol-\d{3}$` under `raw/Field-Logs/`, `raw/Field-Research/`, or `raw/Field-Studies/`, find the book page:
 
 ```bash
-# Returns the path if the book page exists in either location
 find wiki/books -name "<volume>.md" -type f
 ```
 
-Possible outcomes:
-- One match at `wiki/books/<volume>.md` → active book
-- One match at `wiki/books/_archived/<volume>.md` → archived book
-- No matches → first ingest from this book
-
-**Step 5b: Handle the three cases.**
-
 **Case 1: Active book page exists** (`wiki/books/<volume>.md`)
-
-- Append a wikilink to the new source page under the source list
-- Update `date-end` in frontmatter if this page extends the book's date range
-- Update the `updated:` timestamp
-- **Preserve all other frontmatter fields exactly as they are** — never rewrite frontmatter from scratch; merge changes into existing fields
+- Append a wikilink to the new source under the source list
+- Update `date-end` if this page extends the book's date range
+- Update `updated:` timestamp
+- **Preserve all other frontmatter fields exactly as found** — never rewrite from scratch; merge only changed fields
 
 **Case 2: Archived book page exists** (`wiki/books/_archived/<volume>.md`)
 
-This is unusual — adding pages to an archived book typically signals one of:
-- A late-arriving page from a book the user thought was complete
-- A scanning/transcription mistake (page got dropped into the wrong volume folder)
-- The user is intentionally re-opening the archive
-
-**Stop and ask the user before proceeding:**
+Stop and ask the user before proceeding:
 
 > "FL-vol-001 is marked as archived (envelope 7, archived 2026-04-02). I found a new page being ingested for it. What would you like to do?
 >
-> 1. **Add silently** — keep the book archived; just add this page to its source list and update `date-end`. (Use this for late-arriving transcriptions.)
-> 2. **Re-open the archive** — set `status: active`, clear `archived-on` and `envelope-number`, move the book page back to `wiki/books/<volume>.md`. (Use this if you're genuinely extending the book.)
-> 3. **Cancel ingest** — this page might be in the wrong volume folder; let me check before adding it."
+> 1. **Add silently** — keep archived; add this page to its source list and update `date-end`.
+> 2. **Re-open the archive** — set `status: active`, clear `archived-on` and `envelope-number`, move back to `wiki/books/<volume>.md`.
+> 3. **Cancel ingest** — this page might be in the wrong volume folder."
 
-Wait for the user's choice. If they pick:
-
-- **Add silently** → update the archived page in place at `wiki/books/_archived/<volume>.md`. Append the source wikilink, update `date-end` and `updated:`. Preserve `status: archived`, `archived-on:`, and `envelope-number:` exactly as they are.
-- **Re-open the archive** → move the file from `wiki/books/_archived/<volume>.md` to `wiki/books/<volume>.md`. Update frontmatter: `status: active`, remove `archived-on:` and `envelope-number:` lines entirely. Then proceed as Case 1. Note the re-open in step 9's log entry.
-- **Cancel ingest** → skip this source. Tell the user the source file is unchanged in `raw/` and they can re-run ingest after confirming the volume.
+Wait for the user's choice:
+- **Add silently** → update in place at `wiki/books/_archived/<volume>.md`. Preserve `status: archived`, `archived-on:`, and `envelope-number:` exactly.
+- **Re-open** → move file to `wiki/books/<volume>.md`. Set `status: active`, remove `archived-on:` and `envelope-number:` entirely. Note the re-open in Step 9's log entry.
+- **Cancel** → skip this source. Tell the user the source file is unchanged in `raw/`.
 
 **Case 3: No book page exists** (first ingest from this book)
 
-- Create `wiki/books/<volume>.md` (new books are always created at the active path, not in `_archived/`)
-- Use this frontmatter, with `book-type` mapped from the prefix per SCHEMA.md Section 3.3:
+Create `wiki/books/<volume>.md`. For `FS-vol-XXX` books, ask the user for the subject if not obvious from context.
 
-```yaml
----
-type: book
-volume: FL-vol-001
-book-type: field-log    # field-log | field-research | field-study
-subject:                # required for field-study; omit for others
-date-start: 2026-01-15
-date-end: 2026-01-15
-status: active
-tags: []
-created: 2026-05-01T14:32:00Z
-updated: 2026-05-01T14:32:00Z
----
-```
+> Read `./templates/frontmatter-templates.md` for the complete book page frontmatter block.
 
-For `FS-vol-XXX` (field-study) books, ask the user for the subject if it isn't obvious from context.
-
-**Frontmatter merge rule (applies to all cases that update an existing book page):** Read the existing frontmatter. Update only the fields that need to change (`date-end`, `updated`, source list, and — for Case 2 re-open — `status`, `archived-on`, `envelope-number`). Leave every other field exactly as found. Do not "normalize" or reorder fields. Do not strip fields you don't recognize — they may be user customizations.
+**Frontmatter merge rule (all cases that update an existing page):** Read existing frontmatter. Update only fields that need to change. Leave every other field exactly as found. Do not normalize, reorder, or strip fields — they may be user customizations.
 
 ### 6. Update entity and concept pages
 
-For each entity (person, organization, product, tool, place) and concept (idea, framework, theory, pattern) mentioned:
+For each entity (person, org, product, tool, place) and concept (idea, framework, theory, pattern) mentioned:
 
-**If a wiki page exists:**
-- Read it, add new information from this source
-- Update the `updated:` timestamp
-- If new information contradicts existing content, update the page AND note the contradiction with both sources cited
+**Page exists** → read it, add new information, update `updated:` timestamp. If new information contradicts existing content, update AND note the contradiction with both sources cited.
 
-**If no wiki page exists:**
-- Create one in the appropriate subdirectory (`wiki/entities/` or `wiki/concepts/`)
-- Use kebab-case filenames (`anthropic.md`, `dependency-direction.md`)
-- Include SCHEMA.md-compliant frontmatter
+**No page exists** → create one in `wiki/entities/` or `wiki/concepts/` with kebab-case filename.
 
-**Prefer updating existing pages over creating new ones.** Only create a new page when the topic is genuinely distinct.
+> Read `./templates/frontmatter-templates.md` for the complete entity and concept frontmatter blocks.
+
+**Prefer updating over creating.** Only create a new page when the topic is genuinely distinct.
 
 ### 7. Extract questions
 
 Per SCHEMA.md Section 3.7, extract a question to `wiki/questions/` when:
+- The user explicitly writes a question (ends in `?`)
+- The user writes `TODO:`, `look into:`, `investigate:`, `?:`, `how to`, `learn more`, or similar follow-up markers
+- A claim is unsupported and worth verifying
 
-- The user explicitly writes a question (sentence ending in `?`)
-- The user writes "TODO:", "look into:", "investigate:", "?:", "how to", "learn more", or similar follow-up markers
-- A claim in the raw source is unsupported and worth verifying
+Filename: kebab-case truncation of the question. If the question already exists, add this source to its `sources:` list.
 
-For each extracted question:
-- Filename: kebab-case truncation of the question (`why-does-bit-ly-strip-trailing-slashes.md`)
-- If the question already exists, add this source to its `sources:` list
-- Set `status: open`
-
-Frontmatter:
-
-```yaml
----
-type: question
-status: open
-sources: [[FL-vol-001-page-007]]
-answer-link:           # optional wikilink to a synthesis page
-tags: []
-created: 2026-05-01T14:32:00Z
-updated: 2026-05-01T14:32:00Z
----
-```
+> Read `./templates/frontmatter-templates.md` for the complete question frontmatter block.
 
 ### 8. Cross-link with wikilinks
 
-Ensure all related pages link to each other using `[[wikilink]]` syntax. Every mention of an entity, concept, question, or book that has its own page should be linked. Use markdown `[text](url)` only for external URLs.
+Every mention of an entity, concept, question, or book that has its own page MUST be linked using `[[wikilink]]` syntax. Use markdown `[text](url)` only for external URLs.
 
 ### 9. Update `wiki/log.md`
 
-Append (per SCHEMA.md Section 3.9 — append-only, never rewrite):
+Append only — never rewrite. If Step 5 Case 2 triggered an archived-book interaction, include a `**Notes:**` line recording what happened (e.g., `Late-arriving page added to archived book FL-vol-001` or `Re-opened archive: FL-vol-001 returned to active status`).
 
-If Step 5b triggered an archived-book interaction (silent-add or re-open), include a `**Notes:**` line that records what happened, e.g., `Late-arriving page added to archived book FL-vol-001` or `Re-opened archive: FL-vol-001 returned to active status`. This keeps log.md as a complete audit trail of state changes.
+> Read `./references/ingest-log-examples.md` for the exact log entry format and examples.
 
-```markdown
-## 2026-05-01 14:32 — ingest
-
-- **Operation:** ingest
-- **Source(s):** raw/Field-Logs/FL-vol-001/page-007.md (source-type: field-log-page, capture-mode: bare)
-- **Pages affected:** 1 created (sources), 1 updated (books), 2 created + 1 updated (entities), 1 created (concepts), 2 created (questions)
-- **Notes:** First ingest from FL-vol-001.
-- **Unresolved:** unresolved-slug: <F13LdN0t3> in [[FL-vol-001-page-007]]
-```
-Omit the `Unresolved:` line if there's nothing unresolved. This applies to both bare and composite log entries.
-
-For composite scanned sources, the log entry lists all companion files:
-
-```markdown
-## 2026-05-01 14:32 — ingest
-
-- **Operation:** ingest
-- **Source(s):** raw/Field-Research/FR-vol-001/page-007-sticky.pdf,
-  page-007-under.pdf, page-007-flip.pdf (source-type: field-research-page,
-  capture-mode: composite)
-- **Pages affected:** 1 created (sources), 1 updated (books), 3 created (entities),
-  1 created (concepts), 2 created (questions)
-- **Notes:** Composite source — 3 companion scans merged.
-```
+Omit the `Unresolved:` line if there is nothing unresolved.
 
 ### 10. Update `wiki/index.md`
 
-Add an entry for each new page created, under the matching section header. The six section headers per SCHEMA.md Section 3.8 are:
+Add an entry for each new page under the matching section header. Section headers per SCHEMA.md Section 3.8:
 
-- `## Books` — for active books (any with `status: active`)
-- `## Archived Books` — for books with `status: archived`. Include the envelope number in the entry, e.g., `[[FL-vol-001]] — Daily log, Jan–Mar 2026 (envelope 7)`
+- `## Books` — active books (`status: active`)
+- `## Archived Books` — books with `status: archived`; include envelope number, e.g., `[[FL-vol-001]] — Daily log, Jan–Mar 2026 (envelope 7)`
 - `## Sources`
 - `## Entities`
 - `## Concepts`
 - `## Synthesis`
-- `## Questions (open)` — only entries with `status: open`. Closed/dismissed questions are not indexed.
+- `## Questions (open)` — `status: open` only; closed/dismissed questions are not indexed
 
-**On status change for a book** (Case 2 re-open in Step 5b, or future archiving via a separate workflow): move the book's index entry between `## Books` and `## Archived Books` sections to match the new status. The entry text stays the same; only the section it sits under changes.
+On book status change (Case 2 re-open in Step 5): move the book's index entry between `## Books` and `## Archived Books` to match the new status.
 
 Update the `_Last updated:_` timestamp at the top of the file.
 
@@ -513,20 +304,16 @@ Keep this concise. The user can read the wiki for details.
 - A single source typically touches **5–15 wiki pages**. This is normal.
 - **Prefer updating over creating.** New pages only when genuinely distinct.
 - **Wikilinks for internal references**, never raw file paths.
-- **All filenames kebab-case, ASCII only**, per SCHEMA.md Section 6.1.
-- **Frontmatter is mandatory** on every page, per SCHEMA.md Section 6.1.
+- **All filenames kebab-case, ASCII only** per SCHEMA.md Section 6.1.
+- **Frontmatter is mandatory** on every page per SCHEMA.md Section 6.1.
 - **`raw/` is immutable.** Never write to it. Period.
-- **Scanned PDFs are read directly.** No OCR tool needed — the LLM reads handwriting
-  from the PDF image. Companion scans are merged before any wiki page is written.
-- **Never ingest a companion alone.** A `-under` or `-flip` without its `-sticky`
-  is orphaned — warn the user and wait.
+- **Scanned PDFs are read directly.** No OCR tool needed. Companion scans are merged before any wiki page is written.
+- **Never ingest a companion alone.** A `-under` or `-flip` without its `-sticky` is orphaned — warn the user and wait.
 
 ---
 
 ## What's Next
 
-After ingesting:
-
-- **Ask questions** with `/kos-query` to explore what was ingested
-- **Ingest more sources** — `/kos-ingest` again
-- **Health-check** with `/kos-lint` after every ~10 ingests to catch gaps
+- **Ask questions** with `/kos-query`
+- **Ingest more sources** with `/kos-ingest`
+- **Health-check** with `/kos-lint` after every ~10 ingests
