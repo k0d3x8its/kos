@@ -51,3 +51,9 @@ This vault uses typed Field Notes memo books. Each maps 1:1 to a folder under it
 | `FS-vol-XXX` | Field Study | `raw/Field-Studies/` — Dedicated subject — created in Phase II when a subject earns its own book |
 
 All memo book folders match `^F[LRS]-vol-\d{3}$` and live under `raw/Field-Logs/`, `raw/Field-Research/`, or `raw/Field-Studies/` respectively. Each has a corresponding page in `wiki/books/` (or `wiki/books/_archived/` if archived).
+
+## Session management
+
+Start a **new Claude Code session** for each KOS operation (`/kos-ingest`, `/kos-lint`, `/kos-query`, `/kos-archive`). Do NOT resume previous sessions — carried context from prior operations consumes the context window before the current operation begins, inflating token cost and increasing the risk of hitting limits mid-operation.
+
+One session. One operation. Done.
