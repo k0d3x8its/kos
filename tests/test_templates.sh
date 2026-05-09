@@ -72,6 +72,37 @@ if [ "$template_count" -eq 0 ]; then
   fail "No .md files found in templates/"
 fi
 
+# --- Check required template files exist ---
+echo ""
+echo "▸ Checking required template files..."
+
+for tpl in SCHEMA.md frontmatter-templates.md field-notes-formats.md; do
+  if [ -f "$TEMPLATES_DIR/$tpl" ]; then
+    pass "$tpl exists"
+  else
+    fail "$tpl missing from templates/"
+  fi
+done
+
+# --- Check required references files exist ---
+echo ""
+echo "▸ Checking required references files..."
+
+REFERENCES_DIR="$REPO_ROOT/references"
+
+if [ ! -d "$REFERENCES_DIR" ]; then
+  fail "references/ directory missing"
+else
+  pass "references/ directory exists"
+  for ref in schema-changelog.md ingest-log-examples.md lint-report-example.md; do
+    if [ -f "$REFERENCES_DIR/$ref" ]; then
+      pass "$ref exists"
+    else
+      fail "$ref missing from references/"
+    fi
+  done
+fi
+
 # --- Summary ---
 echo ""
 echo "───────────────────────────────────────"
