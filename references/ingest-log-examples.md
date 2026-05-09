@@ -64,6 +64,45 @@
 - **Notes:** Late-arriving page added to archived book FL-vol-001. Book remains archived (envelope 7).
 ```
 
+## Query Entry
+
+```markdown
+## 2026-05-01 14:32 — query
+
+- **Operation:** query
+- **Question:** "What note-taking systems have I researched?"
+- **Pages read:** [[zettelkasten]], [[para-method]], [[karpathy-llm-wiki]] (3 pages)
+- **Answered from wiki:** yes
+- **Synthesis saved:** [[note-taking-systems-compared]]
+- **Notes:** Wiki had partial coverage; gap noted on digital implementations.
+```
+
+## Query Entry — Partial Answer
+
+```markdown
+## 2026-05-01 14:32 — query
+
+- **Operation:** query
+- **Question:** "What do my notes say about transformer architectures?"
+- **Pages read:** [[attention-mechanism]], [[gpt-architecture]] (2 pages)
+- **Answered from wiki:** partial
+- **Notes:** Wiki covers attention but has no notes on positional encoding. Suggested ingesting a source on this topic.
+```
+
+## Query Entry — Not in Wiki
+
+```markdown
+## 2026-05-01 14:32 — query
+
+- **Operation:** query
+- **Question:** "What is my take on active recall?"
+- **Pages read:** [[spaced-repetition]] (1 page)
+- **Answered from wiki:** no
+- **Notes:** No wiki pages found on active recall. Closest match was [[spaced-repetition]]. User offered web search or ingest.
+```
+
+---
+
 ## Lint Pass Entry
 
 ```markdown
