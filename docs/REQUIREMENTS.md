@@ -79,7 +79,7 @@ correction, and contrast enhancement before saving as PDF. This makes it
 device-agnostic — Android and iPhone both work identically. Scanned PDFs follow
 a filename suffix convention that encodes physical page layers
 (`page-XXX`, `page-XXX-sticky`, `page-XXX-under`, `page-XXX-flip`) so the LLM
-knows how to read and merge them. See [docs/CAPTURE.md](docs/CAPTURE.md) for the
+knows how to read and merge them. See [references/CAPTURE.md](references/CAPTURE.md) for the
 full scanning workflow including Rclone + Proton Drive sync setup.
 
 ---
