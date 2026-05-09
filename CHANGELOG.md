@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.2.1 (2026-06)
+
+- **⬆️:** `skills/kos-lint/SKILL.md` — default scope changed from full to quick audit; quick audit now runs Checks 1, 2, 3, 7 only; Check 2b (orphaned companion scans) and Check 8 (orphan pages) moved to full and deep audit only; Check 6 rewritten to grep `wiki/log.md` instead of reading it in full; grep-before-read and fresh-session-per-operation convention rules added
+- **⬆️:** `skills/kos/references/agent-configs/CLAUDE.md` — session management section added
+- **⬆️:** `skills/kos/references/agent-configs/AGENTS.md` — session management section added
+- **⬆️:** `skills/kos/references/agent-configs/gemini.md` — session management section added
+- **🐞🛠️:** `skills/kos/references/agent-configs/cursor.md` — broken `{{WIKI_SCHEMA}}` placeholder removed (`references/wiki-schema.md` was deprecated in v0.5.0b); `{{DOMAIN_TAGS}}` placeholder removed; template body rewritten to match CLAUDE.md/AGENTS.md/gemini.md pattern; truncated sentence at end of file fixed; session management section added
+- **⬆️:** `skills/kos/SKILL.md` — Post-Wizard Step 4 inline log entry block replaced with `> Read ./references/ingest-log-examples.md` directive
+- **⬆️:** `references/ingest-log-examples.md` — setup log entry format and example added
+- **🛠️:** `docs/REQUIREMENTS.md` — `docs/CAPTURE.md` path reference corrected to `references/CAPTURE.md`
+- **⬆️:** `tests/test_structure.sh` — `references/` added to required directories check
+- **⬆️:** `tests/test_templates.sh` — required template files check added (`SCHEMA.md`, `frontmatter-templates.md`, `field-notes-formats.md`); required references files check added (`schema-changelog.md`, `ingest-log-examples.md`, `lint-report-example.md`)
+
 ## v1.2.0 (2026-06)
 
 - **➕:** `templates/frontmatter-templates.md` — all YAML frontmatter blocks for every wiki page type (source, book, entity, concept, synthesis, question) extracted from `SCHEMA.md`; read on demand by skills when creating or updating wiki pages
