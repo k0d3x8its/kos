@@ -144,17 +144,9 @@ For Cursor specifically: ensure `<vault>/.cursor/rules/` exists before writing.
 
 ### 4. Append the setup entry to `wiki/log.md`
 
-Use SCHEMA.md Section 3.9's format:
+> Read `./references/log-examples.md` for the log entry format before writing.
 
-```markdown
-## YYYY-MM-DD HH:MM — setup
-
-- **Operation:** setup
-- **Vault:** {{VAULT_NAME}}
-- **Schema version:** 1
-- **Agent configs:** CLAUDE.md, AGENTS.md (etc.)
-- **Notes:** Vault initialized for {{DOMAIN_DESCRIPTION}}.
-```
+The setup entry must include: operation (`setup`), vault name, schema version, agent configs generated, and the domain description as a note.
 
 ### 5. Install CLI tools (if selected)
 
