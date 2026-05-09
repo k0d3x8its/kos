@@ -22,7 +22,7 @@ echo "════════════════════════�
 echo ""
 echo "▸ Checking required directories..."
 
-for dir in skills templates docs tests; do
+for dir in skills templates docs tests references; do
   if [ -d "$REPO_ROOT/$dir" ]; then
     pass "Directory exists: $dir/"
   else
