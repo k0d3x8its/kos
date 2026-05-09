@@ -51,3 +51,9 @@ Physical Field Notes books map 1:1 to folders under their typed subdirectory in 
 
 Active books: `wiki/books/<volume>.md` (`status: active`)
 Archived books: `wiki/books/_archived/<volume>.md` (`status: archived`, `archived-on:`, `envelope-number:`)
+
+## Session management
+
+Start a **new Gemini CLI session** for each KOS operation (`/kos-ingest`, `/kos-lint`, `/kos-query`, `/kos-archive`). Do NOT resume previous sessions — carried context from prior operations consumes the context window before the current operation begins, inflating token cost and increasing the risk of hitting limits mid-operation.
+
+One session. One operation. Done.
