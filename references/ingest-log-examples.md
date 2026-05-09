@@ -157,3 +157,17 @@
 - **Page moved:** no (kept at wiki/books/FR-vol-003.md)
 - **Lint findings before archive:** 0 errors, 0 warnings
 ```
+
+---
+
+## Setup Entry
+
+```markdown
+## 2026-05-01 14:32 — setup
+
+- **Operation:** setup
+- **Vault:** my-kos-vault
+- **Schema version:** 5
+- **Agent configs:** CLAUDE.md
+- **Notes:** Vault initialized for Personal knowledge management and research archive system.
+```
