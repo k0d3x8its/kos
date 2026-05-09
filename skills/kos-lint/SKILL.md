@@ -28,12 +28,12 @@ Note the `schema-version` from SCHEMA.md's YAML header — you'll use it in Chec
 
 Ask the user, unless already specified:
 
-- **Full audit** (default) — all checks against the entire vault
-- **Quick audit** — Checks 1, 2, 3, 7, 8 only (structural integrity; skips slow checks)
+- **Full audit** — all checks against the entire vault
+- **Quick audit** (default) — Checks 1, 2, 3, 7 only (structural integrity; skips slow checks - excludes check 2b and check 8)
 - **Scoped audit** — limited to a directory, time window, or specific book
 - **Deep audit** — full audit plus Checks 9 and 10 (contradiction and stale-claim checks — slow, produces false positives; only run on explicit request)
 
-Default to **full audit** if the user just says "lint."
+Default to **quick audit** if the user just says "lint." Reserve full audit for explicit requests ("full lint", "audit everything").
 
 ---
 
@@ -88,7 +88,7 @@ For each memo book folder:
 For pages under `wiki/books/` (top level):
 - `status: archived` is set → **Error**: archived books belong in `_archived/`. Fix: move the file OR revert `status:` to `active`.
 
-### Check 2b: Orphaned companion scans (Warning)
+### Check 2b (full and deep audit only): Orphaned companion scans (Warning)
 
 ```bash
 find raw/Field-Logs raw/Field-Research raw/Field-Studies \
@@ -146,7 +146,12 @@ Each violation: **Error**, naming the specific missing or malformed field.
 
 ### Check 6: Unresolved bit.ly slugs (Warning)
 
-Scan `wiki/log.md` for `unresolved-slug:` entries per SCHEMA.md Section 5.3:
+Grep `wiki/log.md` for `unresolved-slug:` entries — never read the full file:
+
+```bash
+grep 'unresolved-slug:' wiki/log.md
+```
+
 - **Warning**: `Unresolved bit.ly slug: <slug> in <source-page>` — Fix: visit `https://bit.ly/<slug>` to determine target, add description in source page, then re-ingest
 
 Cross-vault consistency per SCHEMA.md Section 5.4: if the same slug appears across multiple `wiki/sources/` pages with different descriptions or URLs:
@@ -160,7 +165,7 @@ Compare `schema-version` in the vault's SCHEMA.md against the canonical version 
 - Vault version > canonical → **Info**: vault is ahead of the install (user may have edited locally)
 - Versions match → no finding
 
-### Check 8: Orphan pages (Warning)
+### Check 8 (full and deep audit only): Orphan pages (Warning)
 
 A page is an orphan if no other page links to it via `[[wikilink]]`.
 
@@ -233,6 +238,8 @@ Append to `wiki/log.md` — append-only, never rewrite.
 - **Errors map to SCHEMA.md MUST violations.** Warnings are likely problems. Info is advisory.
 - **Don't auto-migrate schemas.** Report out-of-date schemas; let the user review the diff manually.
 - **Bash paths are relative to vault root.** `cd` there before running grep/find commands.
+- **Grep before read.** Never read a file to check if it's relevant. Use grep/find to identify candidates first, then read only confirmed matches. Never load `wiki/log.md` in full — always grep it.
+- **Start a fresh session for each operation.** Resumed sessions carry prior context that bloats the window before the operation begins.
 
 ---
 
