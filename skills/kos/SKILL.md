@@ -144,7 +144,7 @@ For Cursor specifically: ensure `<vault>/.cursor/rules/` exists before writing.
 
 ### 4. Append the setup entry to `wiki/log.md`
 
-> Read `./references/log-examples.md` for the log entry format before writing.
+> Read `./references/ingest-log-examples.md` for the log entry format before writing.
 
 The setup entry must include: operation (`setup`), vault name, schema version, agent configs generated, and the domain description as a note.
 
