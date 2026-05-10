@@ -78,7 +78,7 @@ If **Fresh**: the scaffolding script will pre-create `raw/FL-vol-001/` and `raw/
 
 If **Archived**: the scaffolding script will not pre-create any volume folders. The user already knows their volume numbers (e.g., they may be starting at `FL-vol-047`) and will create folders matching their existing books.
 
-Pass the answer to `onboarding.sh` as a `--starter-mode=fresh` or `--starter-mode=archived` flag.
+Pass the answer to `onboarding.sh` as the `STARTER_MODE` environment variable: `STARTER_MODE=fresh bash onboarding.sh <vault-path>` or `STARTER_MODE=archived bash onboarding.sh <vault-path>`.
 
 ### Step 5: Optional CLI Tools
 
