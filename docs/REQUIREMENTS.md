@@ -97,10 +97,7 @@ config file (`CLAUDE.md`, `AGENTS.md`, etc.) tailored to the user's agent. Refus
 to overwrite an existing vault.
 
 **`/kos-ingest` — Ingest.** Processes a raw source into wiki pages. Reads from
-`raw/` without modification. For scanned PDFs, detects the filename suffix
-(`-sticky`, `-under`, `-flip`), collects companion scans, and merges them into one
-composite source before writing. Reads handwriting directly from scanned PDFs — no
-OCR tool required. Extracts structured entry headers from Field Log pages (day,
+`raw/` without modification. For scanned PDFs, detects the filename suffix (`-sticky`, `-under`, `-flip`), collects companion scans, and merges them into one composite source before writing. `-sticky` captures the front of the sticky and visible page text around it; `-under` captures the page text beneath the sticky (peeled back, not removed); `-flip` captures the back of the sticky only. Reads handwriting directly from scanned PDFs — no OCR tool required. Extracts structured entry headers from Field Log pages (day,
 temperature, time, date). Treats Field Study sources as living documents,
 accumulating all pages from one FS volume into a single source page with a required
 skeleton (Origins, Key Figures, Core Principles, Open Questions). Creates a summary
