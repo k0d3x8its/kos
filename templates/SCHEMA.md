@@ -107,9 +107,9 @@ Key rules the LLM MUST apply without re-reading the template:
 | Suffix | Meaning | LLM behavior |
 |--------|---------|--------------|
 | `page-XXX` | Bare page, no stickies | Ingest immediately |
-| `page-XXX-sticky` | Sticky on top of page | Hold; merge with `-under` and `-flip` if present |
-| `page-XXX-under` | Sticky removed — full page revealed | Companion to `-sticky`; merge before ingest |
-| `page-XXX-flip` | Sticky flipped — back of sticky + page beneath | Companion to `-sticky`; merge before ingest |
+| `page-XXX-sticky` | Sticky on top of page — front of sticky + visible page text around it | Hold; merge with `-under` and `-flip` if present |
+| `page-XXX-under` | Sticky peeled back (not removed) — reveals page text hidden beneath it | Companion to `-sticky`; merge before ingest |
+| `page-XXX-flip` | Back of the sticky only — captured while peeled back | Companion to `-sticky`; merge before ingest |
 
 **Merge rule.** Collect all files sharing the same `page-XXX` base and treat as one composite source. The resulting `wiki/sources/` page uses the base name (e.g. `FR-vol-001-page-012.md`). The `raw-path:` frontmatter field lists all companion files.
 
