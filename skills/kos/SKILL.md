@@ -157,6 +157,18 @@ For each tool the user selected in Step 5:
 
 After each install, verify with `<tool> --version`. Report success or failure for each — installation failures should not abort the wizard, since the tools are optional.
 
+### 5.5 Verify vault integrity before saving memory
+
+Before printing the summary or saving any memory entry, confirm the vault is intact:
+
+```bash
+test -f <vault-path>/SCHEMA.md && echo "OK" || echo "MISSING"
+```
+
+If SCHEMA.md is missing: stop, report the failure, do NOT write a memory entry, do NOT print a success summary. Tell the user to re-run `/kos`.
+
+Only proceed to Step 6 and save the memory entry after this check passes.
+
 ### 6. Print summary and next steps
 
 Show the user:
