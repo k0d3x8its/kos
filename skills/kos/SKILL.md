@@ -196,7 +196,8 @@ Show the user:
 >   subject name if it isn't obvious from context. Field Study source pages are living
 >   documents — each new page you ingest from the same volume accumulates into one wiki
 >   entry rather than creating separate pages per scan.
-> - **Web clippings** go anywhere under `raw/` — `raw/clippings/` is a common choice.
+> - **Web clippings** go in `raw/clippings/` — save them directly using the Obsidian Web Clipper configured to this folder.
+> - **Meeting transcripts** go in `raw/meetings/` — Proton Meet transcripts.
 >
 > Then run `/kos-ingest` and the LLM will process them into your wiki.
 
