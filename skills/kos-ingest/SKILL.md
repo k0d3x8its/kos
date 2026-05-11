@@ -51,9 +51,9 @@ When a source file in a memo book folder has a `.pdf` extension, it is a scanned
 | Filename pattern | Capture mode | LLM behavior |
 |-----------------|--------------|--------------|
 | `page-XXX.pdf` | Bare page | Ingest immediately as a single source |
-| `page-XXX-sticky.pdf` | Sticky on top | Collect companion scans before ingesting |
-| `page-XXX-under.pdf` | Sticky removed | Companion to `-sticky`; do not ingest alone |
-| `page-XXX-flip.pdf` | Sticky back + page | Companion to `-sticky`; do not ingest alone |
+| `page-XXX-sticky.pdf` | Front of sticky + visible page text around it | Collect companion scans before ingesting |
+| `page-XXX-under.pdf` | Page text beneath the sticky (sticky peeled back, not removed) | Companion to `-sticky`; do not ingest alone |
+| `page-XXX-flip.pdf` | Back of the sticky only — captured while peeled back | Companion to `-sticky`; do not ingest alone |
 
 ### Companion collection
 
