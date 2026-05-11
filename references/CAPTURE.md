@@ -46,16 +46,16 @@ file in Proton Drive using this convention:
 |--------|-------------|
 | `page-XXX.pdf` | Bare page — no stickies, nothing obscuring the page |
 | `page-XXX-sticky.pdf` | Sticky note sitting on top of the page — scan shows the sticky front and whatever page text is visible around it |
-| `page-XXX-under.pdf` | Same page with the sticky removed — reveals text hidden underneath |
-| `page-XXX-flip.pdf` | Sticky flipped over — shows the back of the sticky and the page beneath it |
+| `page-XXX-under.pdf` | Sticky peeled back (not removed) — reveals the page text hidden beneath it |
+| `page-XXX-flip.pdf` | Back of the sticky only — captured while peeled back |
 
 **Example.** A page with a sticky note that has writing on both sides requires three
 scans:
 
 ```
 page-007-sticky.pdf    ← sticky front visible, partial page text
-page-007-under.pdf     ← full page text with sticky removed
-page-007-flip.pdf      ← sticky back + page beneath
+page-007-under.pdf     ← page text beneath the sticky (sticky peeled back, not removed)
+page-007-flip.pdf      ← back of the sticky only
 ```
 
 The LLM merges all three into one source page: `wiki/sources/FR-vol-001-page-007.md`.
