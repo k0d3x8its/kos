@@ -200,6 +200,11 @@ echo "  1. Generate agent config file(s)" >&2
 echo "  2. Append the setup entry to wiki/log.md" >&2
 
 # 7. Open vault
+if command -v obsidian > /dev/null 2>&1; then
+  obsidian &                                    # launch Obsidian in background
+elif command -v xdg-open > /dev/null 2>&1; then
+  xdg-open "obsidian://" &                      # fallback — open via URI handler
+fi
 echo "  Open Obsidian → Open Vault as Folder → $VAULT_ABS" >&2
 
 exit 0
