@@ -152,40 +152,20 @@ check_capture_tool "rclone" "rclone" \
 check_capture_tool "fuse3"  "fusermount3" \
   "required by rclone — install with: sudo apt install fuse3 -y"
 
-# 5. Install SCHEMA.md (download from GitHub — works regardless of how the skill was installed)
+# 5. Install SCHEMA.md — copy from bundled template
 echo "" >&2
-SCHEMA_URL="https://raw.githubusercontent.com/k0d3x8its/kos/main/templates/SCHEMA.md"
 SCHEMA_DEST="$VAULT_ROOT/SCHEMA.md"
+BUNDLED_SCHEMA="$(cd "$(dirname "$0")/../.." && pwd)/templates/SCHEMA.md"
 
 if [ -f "$SCHEMA_DEST" ]; then
-  echo "  SCHEMA.md already exists, skipping download" >&2
+  echo "  SCHEMA.md already exists, skipping" >&2
 else
   echo "Installing SCHEMA.md..." >&2
-  # Try curl first, then wget — most systems have at least one
-  if command -v curl > /dev/null 2>&1; then
-    curl -fsSL "$SCHEMA_URL" -o "$SCHEMA_DEST" || {
-      echo "ERROR: Failed to download SCHEMA.md from $SCHEMA_URL" >&2
-      exit 3
-    }
-  elif command -v wget > /dev/null 2>&1; then
-    wget -q "$SCHEMA_URL" -O "$SCHEMA_DEST" || {
-      echo "ERROR: Failed to download SCHEMA.md from $SCHEMA_URL" >&2
-      exit 3
-    }
-  else
-    echo "ERROR: Neither curl nor wget is installed. Cannot download SCHEMA.md." >&2
-    echo "Install one of them and re-run, or manually copy SCHEMA.md from:" >&2
-    echo "  $SCHEMA_URL" >&2
+  if [ ! -f "$BUNDLED_SCHEMA" ]; then
+    echo "ERROR: Bundled SCHEMA.md not found at $BUNDLED_SCHEMA" >&2
     exit 3
   fi
-
-  # Sanity check: file should be non-empty
-  if [ ! -s "$SCHEMA_DEST" ]; then
-    echo "ERROR: SCHEMA.md downloaded but is empty. Aborting." >&2
-    rm -f "$SCHEMA_DEST"
-    exit 3
-  fi
-
+  cp "$BUNDLED_SCHEMA" "$SCHEMA_DEST"
   echo "  installed SCHEMA.md" >&2
 fi
 
