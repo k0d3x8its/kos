@@ -100,7 +100,9 @@ Key rules the LLM MUST apply without re-reading the template:
 
 **Other subdirectories:**
 - `raw/assets/` — Binary files (images, scans) referenced by other raw sources
-- `raw/<topic>/` — Free-form folders for non-Field-Notes input (e.g. `raw/podcasts/`, `raw/clippings/`)
+- `raw/clippings/` — Web articles saved via Obsidian Web Clipper (configure the clipper to point here)
+- `raw/meetings/` — Proton Meet transcripts
+- `raw/<topic>/` — Free-form folders for any other non-Field-Notes input (e.g. `raw/podcasts/`)
 
 **Scanned page filename conventions.**
 
