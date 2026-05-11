@@ -99,7 +99,7 @@ For each `-under` or `-flip` found, check for a corresponding `-sticky` in the s
 - No `-sticky` → **Warning**: `Orphaned companion scan: <path> has no corresponding -sticky scan` — Fix: upload missing `-sticky`, or rename if misnamed
 
 Also check: a `-sticky` with no `-under` companion where the vault's last-modified timestamp is more than 24 hours old:
-- **Warning**: `Incomplete capture: <path>-sticky.pdf has no -under companion` — Fix: scan the page without the sticky and upload as `<path>-under.pdf`, or ingest now if sticky content is sufficient
+- **Warning**: `Incomplete capture: <path>-sticky.pdf has no -under companion` — Fix: peel the sticky back and scan the page text beneath it, upload as `<path>-under.pdf`, or ingest now if sticky content is sufficient
 
 ### Check 3: Broken wikilinks (Error)
 
