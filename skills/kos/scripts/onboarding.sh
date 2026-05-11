@@ -200,18 +200,6 @@ echo "  1. Generate agent config file(s)" >&2
 echo "  2. Append the setup entry to wiki/log.md" >&2
 
 # 7. Open vault
-# Open vault in Obsidian using path URI (works on unregistered vaults)
-ENCODED_PATH=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$VAULT_ABS/wiki/index.md', safe='/'))")
-OBSIDIAN_URI="obsidian://open?path=$ENCODED_PATH"
-
-if command -v open > /dev/null 2>&1; then
-  open "$OBSIDIAN_URI"                          # macOS
-elif command -v xdg-open > /dev/null 2>&1; then
-  xdg-open "$OBSIDIAN_URI"                      # Linux
-elif command -v explorer.exe > /dev/null 2>&1; then
-  explorer.exe "$OBSIDIAN_URI"                  # Windows (WSL)
-else
-  echo "  Vault ready. Open Obsidian and select: $VAULT_ABS" >&2
-fi
+echo "  Open Obsidian → Open Vault as Folder → $VAULT_ABS" >&2
 
 exit 0
