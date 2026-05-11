@@ -62,7 +62,7 @@ This installs five skills into your AI agent:
 
 1. **Install the skills** (see above)
 2. **Run the wizard:** type `/kos` in your AI agent — it walks you through naming, location, and tooling, and installs `SCHEMA.md` from the KOS default template
-3. **Install Web Clipper:** [Obsidian Web Clipper](https://chromewebstore.google.com/detail/obsidian-web-clipper/cnjifjpddelmedmihgijeibhnjfabmlf) — configure it to save to your vault's `raw/` folder
+3. **Install Web Clipper:** [Obsidian Web Clipper](https://chromewebstore.google.com/detail/obsidian-web-clipper/cnjifjpddelmedmihgijeibhnjfabmlf) — configure it to save to your vault's `raw/clippings/` folder
 4. **Open in Obsidian** — launch Obsidian, choose "Open folder as vault," select your vault folder
 5. **Add your first source.** For Field Notes pages, create a memo-book folder under `raw/` and drop a transcribed page in:
 
@@ -86,7 +86,9 @@ your-vault/
 │   │   └── FR-vol-XXX/     
 │   ├── Field-Studies/      # Field Study memo books
 │   │   └── FS-vol-XXX/
-│   └── assets/             # Images and attachments
+│   ├── assets/             # Images and attachments
+│   ├── clippings/          # Web articles saved via Obsidian Web Clipper
+│   └── meetings/           # Proton Meet transcripts
 ├── wiki/                   # LLM-maintained (do not edit by hand)
 │   ├── sources/            # One summary per ingested source
 │   ├── books/              # One page per active memo book
