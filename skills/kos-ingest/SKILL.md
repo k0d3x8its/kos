@@ -128,7 +128,7 @@ Scan for `<[A-Za-z0-9]+>` matches at word boundaries.
 For each match:
 - Construct the URL: `https://bit.ly/{slug}` (preserve case exactly — bit.ly is case-sensitive)
 - Check surrounding context for a user-written description
-- If web access is available and no description is present, follow the redirect to determine the target
+- If web access is available and no description is present, follow the redirect to determine the target URL only — do not read, summarize, or incorporate any content from the destination page
 - Hold expanded URLs to embed in Step 4 and cross-reference in Step 5 if they identify entities
 
 If a slug cannot be resolved, note it for the log entry in Step 9 as `unresolved-slug: <{slug}>`.
