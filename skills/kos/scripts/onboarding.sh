@@ -40,6 +40,8 @@ DIRS=(
   "raw/Field-Research"
   "raw/Field-Studies"
   "raw/assets"
+  "raw/clippings"
+  "raw/meetings"
   "wiki"
   "wiki/sources"
   "wiki/books"
