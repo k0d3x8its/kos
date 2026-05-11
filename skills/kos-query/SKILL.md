@@ -73,7 +73,7 @@ Use for wikis larger than ~100 pages where index-scanning becomes inefficient.
 ### 3. Fall back to grep
 
 ```bash
-grep -rli "query terms" wiki/ | xargs -I{} sh -c 'echo "$(grep -ic "query terms" {}) {}"' | sort -rn
+grep -rli "query terms" wiki/ | xargs grep -ic "query terms" | sort -t: -k2 -rn
 ```
 
 Read the top 5–10 most relevant pages.
