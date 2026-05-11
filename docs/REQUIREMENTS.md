@@ -71,7 +71,7 @@ maintains everything. Any Agent Skills-compatible agent works:
 - Gemini CLI → `GEMINI.md`
 
 **[Obsidian Web Clipper](https://chromewebstore.google.com/detail/obsidian-web-clipper/cnjifjpddelmedmihgijeibhnjfabmlf)**
-— for web sources. Saves clipped articles as clean markdown directly into `raw/`.
+— for web sources. Saves clipped articles as clean markdown directly into `raw/clippings/`. Configure the Web Clipper to point to this folder specifically.
 
 **A scanner or scanning app** — for Field Notes pages. The recommended workflow
 uses the Proton Drive built-in scanner, which applies edge detection, perspective
