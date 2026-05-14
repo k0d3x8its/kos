@@ -1,6 +1,14 @@
 # Changelog
 
-## v1.2.1 (2026-06)
+## v1.2.2 (2026-05-12)
+
+- **🛠️:** `references/CAPTURE.md` — suffix table corrected: `page-XXX-under` description changed from "same page with the sticky removed" to "sticky peeled back (not removed) — reveals the page text hidden beneath it"; `page-XXX-flip` description changed from "sticky flipped over — shows the back of the sticky and the page beneath it" to "back of the sticky only — captured while peeled back"; inline example comments updated to match
+- **🛠️:** `templates/SCHEMA.md` — Section 3.1 scanned page filename conventions table corrected: `sticky` row expanded with full description; `sticky-under` description changed from "sticky removed — full page revealed" to "sticky peeled back (not removed) — reveals page text hidden beneath it"; `sticky-flip` description changed from "sticky flipped — back of sticky + page beneath" to "back of the sticky only — captured while peeled back"
+- **🛠️:** `skills/kos-ingest/SKILL.md` — suffix detection table corrected: `sticky-under` changed from "sticky removed" to "page text beneath the sticky (sticky peeled back, not removed)"; `sticky-flip` changed from "sticky back + page" to "back of the sticky only — captured while peeled back"; `sticky` row updated with full description for consistency
+- **🛠️:** `skills/kos-lint/SKILL.md` — Check 2b fix suggestion reworded from "scan the page without the sticky" to "peel the sticky back and scan the page text beneath it, upload as `<path>-under.pdf`"
+- **🛠️:** `docs/REQUIREMENTS.md` — `/kos-ingest` description in Five Operations section updated to include inline descriptions of all three suffix types: `-sticky` captures the front of the sticky and visible page text around it; `-under` captures the page text beneath the sticky (peeled back, not removed); `-flip` captures the back of the sticky only
+
+## v1.2.1 (2026-05-09)
 
 - **⬆️:** `skills/kos-lint/SKILL.md` — default scope changed from full to quick audit; quick audit now runs Checks 1, 2, 3, 7 only; Check 2b (orphaned companion scans) and Check 8 (orphan pages) moved to full and deep audit only; Check 6 rewritten to grep `wiki/log.md` instead of reading it in full; grep-before-read and fresh-session-per-operation convention rules added
 - **⬆️:** `skills/kos/references/agent-configs/CLAUDE.md` — session management section added
@@ -13,7 +21,7 @@
 - **⬆️:** `tests/test_structure.sh` — `references/` added to required directories check
 - **⬆️:** `tests/test_templates.sh` — required template files check added (`SCHEMA.md`, `frontmatter-templates.md`, `field-notes-formats.md`); required references files check added (`schema-changelog.md`, `ingest-log-examples.md`, `lint-report-example.md`)
 
-## v1.2.0 (2026-06)
+## v1.2.0 (2026-05-08)
 
 - **➕:** `templates/frontmatter-templates.md` — all YAML frontmatter blocks for every wiki page type (source, book, entity, concept, synthesis, question) extracted from `SCHEMA.md`; read on demand by skills when creating or updating wiki pages
 - **➕:** `templates/field-notes-formats.md` — Field Log entry format (Section 3.1.1) and Field Study page format (Section 3.1.2) extracted from `SCHEMA.md`; read on demand by skills when ingesting FL or FS sources
