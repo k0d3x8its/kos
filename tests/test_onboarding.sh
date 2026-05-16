@@ -62,6 +62,10 @@ assert_dir "$TEST_VAULT/raw"
 assert_dir "$TEST_VAULT/raw/assets"
 assert_dir "$TEST_VAULT/raw/Field-Logs/FL-vol-001"     # created in fresh mode
 assert_dir "$TEST_VAULT/raw/Field-Research/FR-vol-001" # created in fresh mode
+assert_dir "$TEST_VAULT/raw/transcripts"
+assert_dir "$TEST_VAULT/raw/transcripts/meetings"
+assert_dir "$TEST_VAULT/raw/transcripts/youtube"
+assert_dir "$TEST_VAULT/raw/transcripts/podcasts"
 assert_dir "$TEST_VAULT/wiki"
 assert_dir "$TEST_VAULT/wiki/sources"
 assert_dir "$TEST_VAULT/wiki/books"
