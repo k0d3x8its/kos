@@ -88,7 +88,10 @@ your-vault/
 │   │   └── FS-vol-XXX/
 │   ├── assets/             # Images and attachments
 │   ├── clippings/          # Web articles saved via Obsidian Web Clipper
-│   └── meetings/           # Proton Meet transcripts
+│   └── transcripts/        # Audio/video transcripts
+│       ├── meetings/       # Proton Meet transcripts
+│       ├── youtube/        # YouTube video transcripts
+│       └── podcasts/       # Podcast episode transcripts
 ├── wiki/                   # LLM-maintained (do not edit by hand)
 │   ├── sources/            # One summary per ingested source
 │   ├── books/              # One page per active memo book
