@@ -197,7 +197,11 @@ Show the user:
 >   documents — each new page you ingest from the same volume accumulates into one wiki
 >   entry rather than creating separate pages per scan.
 > - **Web clippings** go in `raw/clippings/` — save them directly using the Obsidian Web Clipper configured to this folder.
-> - **Meeting transcripts** go in `raw/meetings/` — Proton Meet transcripts.
+> - **Transcripts** go in `raw/transcripts/` — organized by source type:
+>   - Proton Meet recordings → `raw/transcripts/meetings/`
+>   - YouTube videos → `raw/transcripts/youtube/`
+>   - Podcasts → `raw/transcripts/podcasts/`
+>   - Use KOS Capture or Whisper + yt-dlp to generate transcripts before ingesting.
 >
 > Then run `/kos-ingest` and the LLM will process them into your wiki.
 
