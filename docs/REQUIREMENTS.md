@@ -82,6 +82,14 @@ a filename suffix convention that encodes physical page layers
 knows how to read and merge them. See [references/CAPTURE.md](references/CAPTURE.md) for the
 full scanning workflow including Rclone + Proton Drive sync setup.
 
+**[faster-whisper](https://github.com/SYSTRAN/faster-whisper)** — local speech-to-text for generating transcripts from audio and video files. Used by KOS Capture to transcribe Proton Meet recordings, YouTube videos, and podcast episodes into markdown before ingest. Outputs directly to `raw/transcripts/` subdirectories.
+
+> `pip install faster-whisper`
+
+**[yt-dlp](https://github.com/yt-dlp/yt-dlp)** — downloads audio from YouTube URLs, podcast RSS feeds, and hundreds of other sources. Used by KOS Capture as the audio extraction step before faster-whisper transcription.
+
+> `pip install yt-dlp`
+
 ---
 
 ## FIVE OPERATIONS
