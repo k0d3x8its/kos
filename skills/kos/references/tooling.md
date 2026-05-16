@@ -40,3 +40,21 @@ Browser automation CLI for AI agents. Fast native Rust CLI. Use for web research
 - **Verify:** `agent-browser --version`
 - **Usage:** `agent-browser --help` for full feature list
 - **When to use:** Web research tasks where built-in tools fail or return incomplete results
+
+### faster-whisper
+
+Local speech-to-text engine for transcribing audio and video files to markdown. Runs entirely on-device — no API key or internet connection required. Used by KOS Capture to transcribe Proton Meet recordings, YouTube videos, and podcast episodes before ingest.
+
+- **Install:** `pip install faster-whisper`
+- **Verify:** `python -c "import faster_whisper; print('ok')"`
+- **Usage:** handled automatically by KOS Capture; can also be used directly from Python
+- **When to use:** generating transcripts from any audio or video file before dropping into `raw/transcripts/`
+
+### yt-dlp
+
+Downloads audio and video from YouTube, podcast RSS feeds, and hundreds of other sources. Used by KOS Capture as the extraction step before faster-whisper transcription.
+
+- **Install:** `pip install yt-dlp`
+- **Verify:** `yt-dlp --version`
+- **Usage:** `yt-dlp --help` for full feature list
+- **When to use:** pulling audio from a YouTube URL or podcast feed before transcription
