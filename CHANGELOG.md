@@ -1,8 +1,19 @@
 # Changelog
 
-## v1.2.2 (2026-05-12)
+## v1.2.3 (2026-05-15)
 
-## v1.2.2 (2026-05)
+- **♻️:** `raw/meetings/` replaced by `raw/transcripts/` tree — `raw/transcripts/meetings/`, `raw/transcripts/youtube/`, and `raw/transcripts/podcasts/` are now the canonical subdirectories for all audio/video transcript sources
+- **⬆️:** `scripts/onboarding.sh` — `raw/meetings` replaced with `raw/transcripts`, `raw/transcripts/meetings`, `raw/transcripts/youtube`, `raw/transcripts/podcasts` in DIRS array
+- **⬆️:** `templates/SCHEMA.md` — Section 3.1 "Other subdirectories" updated: `raw/meetings/` replaced with `raw/transcripts/` tree and its three children; `raw/podcasts/` example removed from `raw/<topic>/` entry
+- **⬆️:** `README.md` — directory tree updated: `meetings/` replaced with `transcripts/` parent and three children
+- **⬆️:** `skills/kos/SKILL.md` — Post-Wizard Step 6 updated: single `raw/meetings/` bullet replaced with `raw/transcripts/` tree covering meetings, YouTube, and podcasts; KOS Capture reference added
+- **⬆️:** `skills/kos-ingest/SKILL.md` — glob step updated: `raw/meetings/` replaced with `raw/transcripts/meetings/`, `raw/transcripts/youtube/`, `raw/transcripts/podcasts/`
+- **⬆️:** `tests/test_onboarding.sh` — Test 1 assertions updated: `raw/transcripts`, `raw/transcripts/meetings`, `raw/transcripts/youtube`, `raw/transcripts/podcasts` added
+- **⬆️:** `tests/test_lint_rules.sh` — mock vault setup updated: `raw/transcripts` tree created in place of `raw/meetings`
+- **➕:** `docs/REQUIREMENTS.md` — `faster-whisper` and `yt-dlp` added as optional tools in "WHAT YOU NEED" section
+- **➕:** `skills/kos/references/tooling.md` — `faster-whisper` and `yt-dlp` entries added under Optional tools
+
+## v1.2.2 (2026-05-12)
 
 - **🛡️:** `skills/kos/scripts/onboarding.sh` — SCHEMA.md install method changed from runtime GitHub download (curl/wget) to local bundled copy; eliminates W011 (indirect prompt injection via remote authoritative file) and W012 (required runtime dependency on unverifiable URL) Snyk flags
 - **🛡️:** `skills/kos/SKILL.md` — Post-Wizard Step 2 description updated to reflect bundled copy install; stale "downloads the latest SCHEMA.md directly from the KOS repo on GitHub" language removed; eliminates residual W011/W012 scanner hits from SKILL.md text
