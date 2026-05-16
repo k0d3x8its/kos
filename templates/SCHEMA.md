@@ -36,6 +36,12 @@ This file defines:
 │   │   └── FR-vol-XXX/     # Field Research: catchall research memo books
 │   ├── Field-Studies/      # Contains FS-vol-XXX memo book folders
 │   │   └── FS-vol-XXX/     # Field Study: dedicated subject memo books
+│   ├── assets/             # Images and attachments
+│   ├── clippings/          # Web articles saved via Obsidian Web Clipper
+│   └── transcripts/        # Audio/video transcripts
+│       ├── meetings/       # Proton Meet transcripts
+│       ├── youtube/        # YouTube video transcripts
+│       └── podcasts/       # Podcast episode transcripts
 │
 ├── wiki/                   # LLM-owned, LLM-maintained
 │   ├── sources/            # One summary page per ingested raw source
@@ -101,8 +107,11 @@ Key rules the LLM MUST apply without re-reading the template:
 **Other subdirectories:**
 - `raw/assets/` — Binary files (images, scans) referenced by other raw sources
 - `raw/clippings/` — Web articles saved via Obsidian Web Clipper (configure the clipper to point here)
-- `raw/meetings/` — Proton Meet transcripts
-- `raw/<topic>/` — Free-form folders for any other non-Field-Notes input (e.g. `raw/podcasts/`)
+- `raw/transcripts/` — All audio/video transcripts, organized by source type
+  - `raw/transcripts/meetings/` — Proton Meet transcripts
+  - `raw/transcripts/youtube/` — YouTube video transcripts (Whisper-generated or manual)
+  - `raw/transcripts/podcasts/` — Podcast episode transcripts (Whisper-generated or manual)
+- `raw/<topic>/` — Free-form folders for any other non-Field-Notes input
 
 **Scanned page filename conventions.**
 
