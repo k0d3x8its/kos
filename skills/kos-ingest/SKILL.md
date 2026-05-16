@@ -29,7 +29,7 @@ Determine which files need ingestion:
 1. **If the user specifies files**, use those.
 
 2. **If the user says "process new sources" or similar**, detect unprocessed files:
-- Glob all files in `raw/` recursively, excluding `raw/assets/` and binary files (`.png`, `.jpg`, etc.) — this includes `raw/clippings/`, `raw/meetings/`, and any other subdirectories
+- Glob all files in `raw/` recursively, excluding `raw/assets/` and binary files (`.png`, `.jpg`, etc.) — this includes `raw/clippings/`, `raw/transcripts/meetings/`, `raw/transcripts/youtube/`, `raw/transcripts/podcasts/`, and any other subdirectories
    - Include `.pdf` files found in memo book folders — these are scanned Field Notes pages and ARE ingested directly
    - Before evaluating any `.pdf`, check for companion scans (see **Scanned PDF Capture Mode** below) and collect the full companion set first
    - For each candidate file (or merged companion set), derive its expected `wiki/sources/` filename per SCHEMA.md Section 3.2:
