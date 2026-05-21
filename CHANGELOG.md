@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.2.4 (2026-05-21)
+
+- **➕:** `skills/kos/references/agent-configs/deepseek.md` — DeepSeek agent config template added; wizard generates `DEEPSEEK.md` at vault root when DeepSeek is selected
+- **⬆️:** `skills/kos/SKILL.md` — Step 4 agent options updated: DeepSeek added to multi-agent selection prompt; template mapping table updated; Reference Files section updated
+- **⬆️:** `docs/REQUIREMENTS.md` — DeepSeek added to supported agent list with `DEEPSEEK.md` config file mapping
+- **⬆️:** `README.md` — DeepSeek badge added; DeepSeek added to Prerequisites agent list
+- **⬆️:** `.typos.toml` — `deepseek` added to `extend-words` to prevent spellcheck false positive in CI
+
 ## v1.2.3 (2026-05-15)
 
 - **♻️:** `raw/meetings/` replaced by `raw/transcripts/` tree — `raw/transcripts/meetings/`, `raw/transcripts/youtube/`, and `raw/transcripts/podcasts/` are now the canonical subdirectories for all audio/video transcript sources
@@ -210,5 +218,5 @@
 **IMPROVED** = 🚀 **|**
 **CHANGED** = ♻️ **|**
 **SECURITY** = 🛡️ **|**
-**DEPRECIATED** = ⚠️ **|**
+**DEPRECATED** = ⚠️ **|**
 **UPDATED** = ⬆️
