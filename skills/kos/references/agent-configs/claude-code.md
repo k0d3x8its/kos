@@ -42,7 +42,7 @@ Use these skills for all vault operations. Do not freelance outside them.
 
 ## Memo book conventions
 
-This vault uses typed Field Notes memo books. Each maps 1:1 to a folder under its typed subdirectory`raw/`:
+This vault uses typed Field Notes memo books. Each maps 1:1 to a folder under its typed subdirectory in `raw/`:
 
 | Prefix | Type | Purpose |
 |--------|------|---------|
