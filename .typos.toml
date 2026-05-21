@@ -17,6 +17,7 @@ LLMs      = "LLMs"       # plural
 frontmatter = "frontmatter" # YAML frontmatter (one word in this context)
 karpathy  = "karpathy"   # Andrej Karpathy (referenced in README)
 obsidian  = "obsidian"   # Obsidian app
+deepseek  = "deepseek"   # DeepSeek AI model provider
 
 [files]
 # Never spellcheck generated or binary files
