@@ -63,7 +63,7 @@ State it clearly:
 > "I'm running in **[Agent Name]**, so I'll generate a **[config file]** for this vault."
 
 Then ask:
-> "Do you use any other AI agents you'd like config files for? Options: Claude Code, Codex, Cursor, Gemini CLI — or skip."
+> "Do you use any other AI agents you'd like config files for? Options: Claude Code, Codex, Cursor, Gemini CLI, DeepSeek — or skip."
 
 Skip the agent that was auto-detected. Generate configs for all selected agents.
 
@@ -131,6 +131,7 @@ For each selected agent, read the corresponding template from `<skill-directory>
 | Codex | `codex.md` | `AGENTS.md` | Vault root |
 | Cursor | `cursor.md` | `kos.mdc` | `<vault>/.cursor/rules/` |
 | Gemini CLI | `gemini.md` | `GEMINI.md` | Vault root |
+| DeepSeek | `deepseek.md` | `DEEPSEEK.md` | Vault root |
 
 Replace these placeholders in each template:
 
@@ -216,6 +217,7 @@ These files are bundled with this skill at `<skill-directory>/`:
 - `references/agent-configs/codex.md` — AGENTS.md template
 - `references/agent-configs/cursor.md` — Cursor rules template
 - `references/agent-configs/gemini.md` — GEMINI.md template
+- `references/agent-configs/deepseek.md` — DEEPSEEK.md template
 
 Note: SCHEMA.md is NOT in this skill's references — it's at the repo root in `templates/SCHEMA.md`. There is one canonical schema, and it lives in `templates/`. The wizard copies it into each new vault during scaffolding (Post-Wizard Step 2).
 
