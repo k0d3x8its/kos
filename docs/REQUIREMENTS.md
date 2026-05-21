@@ -69,6 +69,7 @@ maintains everything. Any Agent Skills-compatible agent works:
 - OpenAI Codex → `AGENTS.md`
 - Cursor → `.cursor/rules/*.mdc`
 - Gemini CLI → `GEMINI.md`
+- DeepSeek → `DEEPSEEK.md`
 
 **[Obsidian Web Clipper](https://chromewebstore.google.com/detail/obsidian-web-clipper/cnjifjpddelmedmihgijeibhnjfabmlf)**
 — for web sources. Saves clipped articles as clean markdown directly into `raw/clippings/`. Configure the Web Clipper to point to this folder specifically.
@@ -251,11 +252,6 @@ wiki grows.
 **summarize** — summarize links, files, and media from the CLI or Chrome Side Panel.
 
 > `npm i -g @steipete/summarize`
-
-**qmd** — local search engine for markdown files with hybrid BM25/vector search and
-LLM re-ranking, all on-device. Becomes important as the wiki grows past ~100 pages.
-
-> `npm i -g @tobilu/qmd`
 
 **agent-browser** — browser automation CLI for AI agents. Use for web research when
 native `web_search` or `web_fetch` fail.
