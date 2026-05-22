@@ -8,27 +8,27 @@
 <img alt="TARS" src="https://img.shields.io/badge/TARS-dev-%23E84142.svg?logo=data:image/png;base64,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">
 
 <a href="https://fieldnotesbrand.com" target="_blank">
-  <img alt="Field Notes" src="https://img.shields.io/badge/Field_Notes-Supported-FFD700?labelColor=555555">
+  <img alt="Field Notes" src="https://img.shields.io/badge/Field_Notes-Compatible-FFD700?labelColor=555555">
 </a>
 
 <a href="https://claude.ai/code" target="_blank">
-  <img alt="Claude" src="https://img.shields.io/badge/Claude_Code-Supported-FFA500?labelColor=555555&logo=anthropic&logoColor=white">
+  <img alt="Claude" src="https://img.shields.io/badge/Claude_Code-Compatible-FFA500?labelColor=555555&logo=anthropic&logoColor=white">
 </a>
 
 <a href="https://openai.com/codex" target="_blank">
-  <img alt="Codex" src="https://img.shields.io/badge/Codex-Supported-FFFFFF?labelColor=555555&logo=openai&logoColor=white">
+  <img alt="Codex" src="https://img.shields.io/badge/Codex-Compatible-FFFFFF?labelColor=555555&logo=openai&logoColor=white">
 </a>
 
 <a href="https://github.com/google-gemini/gemini-cli" target="_blank">
-  <img alt="Gemini" src="https://img.shields.io/badge/Gemini-Supported-4DA6FF?labelColor=555555&logo=googlegemini&logoColor=white">
+  <img alt="Gemini" src="https://img.shields.io/badge/Gemini-Compatible-4DA6FF?labelColor=555555&logo=googlegemini&logoColor=white">
 </a>
 
 <a href="https://cursor.com" target="_blank">
-  <img alt="Cursor" src="https://img.shields.io/badge/Cursor-Supported-FFFFFF?labelColor=555555&logo=cursor&logoColor=white">
+  <img alt="Cursor" src="https://img.shields.io/badge/Cursor-Compatible-FFFFFF?labelColor=555555&logo=cursor&logoColor=white">
 </a>
 
 <a href="https://platform.deepseek.com" target="_blank">
-  <img alt="DeepSeek" src="https://img.shields.io/badge/DeepSeek-Supported-0099FF?labelColor=555555&logo=deepseek&logoColor=white">
+  <img alt="DeepSeek" src="https://img.shields.io/badge/DeepSeek-Compatible-0099FF?labelColor=555555&logo=deepseek&logoColor=white">
 </a>
 
 </div></br>
