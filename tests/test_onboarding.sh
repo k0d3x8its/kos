@@ -78,6 +78,32 @@ assert_dir "$TEST_VAULT/output"
 
 echo ""
 
+# Test 1b: Archived vault scaffolding (ensures starter volume folders are not pre-created)
+echo "Test 1b: Archived vault scaffolding"
+TEST_VAULT_ARCHIVED="$TEST_DIR/test-vault-archived"
+STARTER_MODE=archived bash "$ONBOARDING" "$TEST_VAULT_ARCHIVED" 2>/dev/null
+
+assert_dir "$TEST_VAULT_ARCHIVED/raw"
+assert_dir "$TEST_VAULT_ARCHIVED/raw/assets"
+
+if [ ! -d "$TEST_VAULT_ARCHIVED/raw/Field-Logs/FL-vol-001" ]; then
+  echo "  PASS: FL-vol-001 directory not created in archived mode"
+  PASS=$((PASS + 1))
+else
+  echo "  FAIL: FL-vol-001 directory created in archived mode"
+  FAIL=$((FAIL + 1))
+fi
+
+if [ ! -d "$TEST_VAULT_ARCHIVED/raw/Field-Research/FR-vol-001" ]; then
+  echo "  PASS: FR-vol-001 directory not created in archived mode"
+  PASS=$((PASS + 1))
+else
+  echo "  FAIL: FR-vol-001 directory created in archived mode"
+  FAIL=$((FAIL + 1))
+fi
+
+echo ""
+
 # Test 2: wiki/index.md created with correct scaffolding
 # Checks all sections defined in the heredoc inside onboarding.sh
 echo "Test 2: wiki/index.md content"
