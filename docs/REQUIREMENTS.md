@@ -263,6 +263,11 @@ synthesis pages, query results, or source summaries for sharing or printing.
 
 > `npm i -g md-to-pdf`
 
+**ripgrep** — fast recursive text search. Faster than grep for large vaults; used
+by the LLM to search across `wiki/` during queries and lint passes.
+
+> `brew install ripgrep` (macOS) or `sudo apt install ripgrep` (Linux)
+
 ---
 
 ## THE ARCHIVING WORKFLOW

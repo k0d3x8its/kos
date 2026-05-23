@@ -88,6 +88,7 @@ Ask:
 > 1. **summarize** — summarize links, files, and media from the CLI
 > 2. **agent-browser** — browser automation for web research
 > 3. **md-to-pdf** — convert wiki pages and synthesis docs to PDF for sharing or printing
+> 4. **ripgrep** — fast recursive search across the wiki; faster than grep for large vaults
 >
 > "Install all, pick specific ones (e.g. '1 and 3'), or skip?"
 
@@ -157,6 +158,7 @@ For each tool the user selected in Step 5:
 - summarize: `npm i -g @steipete/summarize`
 - agent-browser: `npm i -g agent-browser && agent-browser install`
 - md-to-pdf: `npm i -g md-to-pdf`
+- ripgrep: `brew install ripgrep` (macOS) or `sudo apt install ripgrep` (Linux)
 
 After each install, verify with `<tool> --version`. Report success or failure for each — installation failures should not abort the wizard, since the tools are optional.
 

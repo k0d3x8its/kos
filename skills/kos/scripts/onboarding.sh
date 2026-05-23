@@ -136,6 +136,8 @@ check_tool() {
 check_tool "summarize"     "summarize"     "npm i -g @steipete/summarize"
 check_tool "agent-browser" "agent-browser" "npm i -g agent-browser && agent-browser install"
 check_tool "md-to-pdf"     "md-to-pdf"     "npm i -g md-to-pdf"
+check_capture_tool "ripgrep" "rg" \
+  "fast wiki search — brew install ripgrep  OR  sudo apt install ripgrep"
 # qmd is excluded from auto-check — the npm package is currently unreliable
 
 # Check capture pipeline tools (required for Field Notes scanning workflow)
