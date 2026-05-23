@@ -133,17 +133,6 @@ check_tool() {
   fi
 }
 
-check_tool "summarize"     "summarize"     "npm i -g @steipete/summarize"
-check_tool "agent-browser" "agent-browser" "npm i -g agent-browser && agent-browser install"
-check_tool "md-to-pdf"     "md-to-pdf"     "npm i -g md-to-pdf"
-check_capture_tool "ripgrep" "rg" \
-  "fast wiki search — brew install ripgrep  OR  sudo apt install ripgrep"
-# qmd is excluded from auto-check — the npm package is currently unreliable
-
-# Check capture pipeline tools (required for Field Notes scanning workflow)
-echo "" >&2
-echo "Checking capture pipeline tooling..." >&2
-
 check_capture_tool() {
   local name="$1"
   local cmd="$2"
@@ -155,6 +144,17 @@ check_capture_tool() {
   fi
 }
 
+check_tool "summarize"     "summarize"     "npm i -g @steipete/summarize"
+check_tool "agent-browser" "agent-browser" "npm i -g agent-browser && agent-browser install"
+check_tool "md-to-pdf"     "md-to-pdf"     "npm i -g md-to-pdf"
+check_capture_tool "ripgrep" "rg" \
+  "fast wiki search — brew install ripgrep  OR  sudo apt install ripgrep"
+# qmd is excluded from auto-check — the npm package is currently unreliable
+
+# Check capture pipeline tools (required for Field Notes scanning workflow)
+echo "" >&2
+echo "Checking capture pipeline tooling..." >&2
+
 check_capture_tool "rclone" "rclone" \
   "required for Proton Drive sync — see docs/CAPTURE.md for install instructions"
 check_capture_tool "fuse3"  "fusermount3" \
@@ -163,18 +163,35 @@ check_capture_tool "fuse3"  "fusermount3" \
 # 5. Install SCHEMA.md — copy from bundled template
 echo "" >&2
 SCHEMA_DEST="$VAULT_ROOT/SCHEMA.md"
-BUNDLED_SCHEMA="$(cd "$(dirname "$0")/../.." && pwd)/templates/SCHEMA.md"
+
+# Look for SCHEMA.md in several possible locations relative to this script
+POSSIBLE_SCHEMAS=(
+  "$(cd "$(dirname "$0")/../../.." 2>/dev/null && pwd)/templates/SCHEMA.md"
+  "$(cd "$(dirname "$0")/../../../.." 2>/dev/null && pwd)/templates/SCHEMA.md"
+  "$(cd "$(dirname "$0")/../.." 2>/dev/null && pwd)/templates/SCHEMA.md"
+  "$(cd "$(dirname "$0")/.." 2>/dev/null && pwd)/templates/SCHEMA.md"
+  "$(cd "$(dirname "$0")" 2>/dev/null && pwd)/templates/SCHEMA.md"
+  "$(cd "$(dirname "$0")/../templates" 2>/dev/null && pwd)/SCHEMA.md"
+)
+
+BUNDLED_SCHEMA=""
+for path in "${POSSIBLE_SCHEMAS[@]}"; do
+  if [ -f "$path" ]; then
+    BUNDLED_SCHEMA="$path"
+    break
+  fi
+done
 
 if [ -f "$SCHEMA_DEST" ]; then
   echo "  SCHEMA.md already exists, skipping" >&2
 else
   echo "Installing SCHEMA.md..." >&2
-  if [ ! -f "$BUNDLED_SCHEMA" ]; then
-    echo "ERROR: Bundled SCHEMA.md not found at $BUNDLED_SCHEMA" >&2
+  if [ -z "$BUNDLED_SCHEMA" ] || [ ! -f "$BUNDLED_SCHEMA" ]; then
+    echo "ERROR: Bundled SCHEMA.md not found" >&2
     exit 3
   fi
   cp "$BUNDLED_SCHEMA" "$SCHEMA_DEST"
-  echo "  installed SCHEMA.md" >&2
+  echo "  installed SCHEMA.md from $BUNDLED_SCHEMA" >&2
 fi
 
 # 6. Final status
