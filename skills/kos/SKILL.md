@@ -87,8 +87,9 @@ Ask:
 >
 > 1. **summarize** — summarize links, files, and media from the CLI
 > 2. **agent-browser** — browser automation for web research
+> 3. **md-to-pdf** — convert wiki pages and synthesis docs to PDF for sharing or printing
 >
-> "Install all, pick specific ones (e.g. '1 and 2'), or skip?"
+> "Install all, pick specific ones (e.g. '1 and 3'), or skip?"
 
 Note: `qmd` (local markdown search) has been removed from this list — the npm package `@tobilu/qmd` is currently unreliable. It may be re-added in a future release once the package is stable. In the meantime, `grep` or `ripgrep` can serve the same purpose.
 
@@ -155,6 +156,7 @@ For each tool the user selected in Step 5:
 
 - summarize: `npm i -g @steipete/summarize`
 - agent-browser: `npm i -g agent-browser && agent-browser install`
+- md-to-pdf: `npm i -g md-to-pdf`
 
 After each install, verify with `<tool> --version`. Report success or failure for each — installation failures should not abort the wizard, since the tools are optional.
 

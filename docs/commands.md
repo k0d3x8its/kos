@@ -19,7 +19,7 @@ Walks you through a five-step guided wizard to create the complete directory str
 | 3 | One-sentence description of what the vault is for | `Personal knowledge management and research archive system` |
 | 4 | Which AI agent(s) to generate config files for | Auto-detected |
 | 4.5 | Fresh start vs. existing archive with established volume numbers | Fresh |
-| 5 | Optional CLI tools to install (`summarize`, `agent-browser`) | All recommended |
+| 5 | Optional CLI tools to install (`summarize`, `agent-browser`, `md-to-pdf`) | All recommended |
 
 ### What Gets Created
 

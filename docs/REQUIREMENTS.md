@@ -258,6 +258,11 @@ native `web_search` or `web_fetch` fail.
 
 > `npm i -g agent-browser && agent-browser install`
 
+**md-to-pdf** — convert markdown files to PDF from the CLI. Use for exporting wiki
+synthesis pages, query results, or source summaries for sharing or printing.
+
+> `npm i -g md-to-pdf`
+
 ---
 
 ## THE ARCHIVING WORKFLOW

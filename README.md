@@ -149,6 +149,7 @@ The wizard offers to install these. All optional but recommended:
 
 - **[summarize](https://github.com/steipete/summarize)** — summarize links, files, and media from the CLI
 - **[agent-browser](https://github.com/vercel-labs/agent-browser)** — browser automation for web research
+- **[md-to-pdf](https://github.com/simonhaenisch/md-to-pdf)** — convert wiki pages and synthesis docs to PDF for sharing or printing
 
 ## Based On
 
