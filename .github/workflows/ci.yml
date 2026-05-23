@@ -34,20 +34,26 @@ jobs:
             fi
           done
 
-      - name: "Test 1/5 — Repository Structure 🗃️"
+      - name: "Test 1/7 — Repository Structure 🗃️"
         run: ./tests/test_structure.sh
 
-      - name: "Test 2/5 — Skill File Compliance 🥷"
+      - name: "Test 2/7 — Skill File Compliance 🥷"
         run: ./tests/test_skills.sh
 
-      - name: "Test 3/5 — Template Integrity 🗂️"
+      - name: "Test 3/7 — Template Integrity 🗂️"
         run: ./tests/test_templates.sh
 
-      - name: "Test 4/5 — Schema Contract 📃"
+      - name: "Test 4/7 — Schema Contract 📃"
         run: ./tests/test_schema_contract.sh
 
-      - name: "Test 5/5 — Lint Rules Dry Run 🏃‍➡️"
+      - name: "Test 5/7 — Lint Rules Dry Run 🏃‍➡️"
         run: ./tests/test_lint_rules.sh
+
+      - name: "Test 6/7 — Onboarding Scaffolding 🛠️"
+        run: ./tests/test_onboarding.sh
+
+      - name: "Test 7/7 — Agent Configurations Integrity 🤖"
+        run: ./tests/test_agent_configs.sh
 
   spellcheck:
     name: Spellcheck 🔤
