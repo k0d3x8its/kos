@@ -50,7 +50,7 @@ Two special files help the LLM (and you) navigate the wiki as it grows. They ser
 
 ## Optional: CLI tools
 
-At some point you may want to build small tools that help the LLM operate on the wiki more efficiently. A search engine over the wiki pages is the most obvious one — at small scale the index file is enough, but as the wiki grows you want proper search. [qmd](https://github.com/tobi/qmd) is a good option: it's a local search engine for markdown files with hybrid BM25/vector search and LLM re-ranking, all on-device. It has both a CLI (so the LLM can shell out to it) and an MCP server (so the LLM can use it as a native tool). You could also build something simpler yourself — the LLM can help you vibe-code a naive search script as the need arises.
+At some point you may want to build small tools that help the LLM operate on the wiki more efficiently. A search engine over the wiki pages is the most obvious one — at small scale the index file is enough, but as the wiki grows you want proper search. [ripgrep](https://github.com/BurntSushi/ripgrep) (`rg`) is the recommended option: it's a fast recursive search tool that works well for keyword and pattern matching across large markdown vaults. You could also build something simpler yourself — the LLM can help you vibe-code a naive search script as the need arises.
 
 ## Tips and tricks
 
