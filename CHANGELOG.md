@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.2.5 (2026-05-24)
+
+- **❌:** `skills/kos/references/tooling.md` — `qmd` entry removed; `@tobilu/qmd` is unavailable on npm and was already excluded from onboarding in v1.0.0-rc.3
+- **⬆️:** `skills/kos-query/SKILL.md` — Search step 2 updated: `qmd` replaced with `ripgrep` (`rg`); falls back to grep if `rg` is not installed
+- **⬆️:** `docs/commands.md` — `/kos-query` Search Strategy step 2 updated to reference `ripgrep` instead of `qmd`
+- **⬆️:** `docs/llm-wiki.md` — Optional CLI tools section updated: `qmd` recommendation replaced with `ripgrep` (`rg`)
+- **❌:** `templates/SCHEMA.md` — vault directory tree corrected: `templates/` and `references/` removed; these are repo-level dirs, never created by onboarding
+- **❌:** `skills/kos/SKILL.md` — Step 3 placeholder list corrected: `{{SCHEMA_PATH}}` removed; no agent config template uses this placeholder
+
 ## v1.2.4 (2026-05-21)
 
 - **➕:** `skills/kos/references/agent-configs/deepseek.md` — DeepSeek agent config template added; wizard generates `DEEPSEEK.md` at vault root when DeepSeek is selected
