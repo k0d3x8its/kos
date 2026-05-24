@@ -83,14 +83,14 @@ Read `wiki/index.md`. Scan all section headers for entries matching the query:
 
 The index is the cheapest source of structured signal. For time-scoped or archive queries, `## Archived Books` is often where the answer lives.
 
-### 2. Use qmd if available
+### 2. Use ripgrep if available
 
 ```bash
-command -v qmd   # check if installed
-qmd search "query terms" --path wiki/
+command -v rg   # check if installed
+rg -li "query terms" wiki/ | xargs rg -ic "query terms" | sort -t: -k2 -rn
 ```
 
-Use for wikis larger than ~100 pages where index-scanning becomes inefficient.
+Use for wikis larger than ~100 pages where index-scanning becomes inefficient. Falls back to grep (step 3) if `rg` is not installed.
 
 ### 3. Fall back to grep
 
