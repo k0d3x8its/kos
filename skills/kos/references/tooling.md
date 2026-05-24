@@ -23,15 +23,6 @@ Summarize turns links, files, and media into sharp summaries with a real extract
 - **Usage:** `summarize --help` for full feature list
 - **When to use:** Summarizing web pages, PDFs, videos, or any media before or during ingestion
 
-### qmd
-
-QMD (Query Markup Documents) is a local search engine for markdown files with hybrid BM25/vector search and LLM re-ranking, all on-device.
-
-- **Install:** `npm i -g @tobilu/qmd`
-- **Verify:** `qmd --version`
-- **Usage:** `qmd --help` for full feature list
-- **When to use:** When the wiki grows beyond what `wiki/index.md` can efficiently navigate (~100+ pages)
-
 ### agent-browser
 
 Browser automation CLI for AI agents. Fast native Rust CLI. Use for web research and scraping when native web_search, web_fetch, or computer use tools fail.
