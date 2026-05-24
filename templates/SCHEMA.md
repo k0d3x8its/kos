@@ -54,8 +54,6 @@ This file defines:
 │   └── log.md              # Chronological record of every operation
 │
 ├── output/                 # Generated reports, query results, exports
-├── templates/              # Frontmatter templates and capture format specs
-├── references/             # Schema changelog and lookup tables
 └── SCHEMA.md               # This file
 ```
 
