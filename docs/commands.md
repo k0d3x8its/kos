@@ -139,7 +139,7 @@ Searches across all wiki directories, follows wikilinks, and synthesizes a cited
 ### Search Strategy (in order)
 
 1. Reads `wiki/index.md` for fast structured signal
-2. Uses `qmd` for semantic search (if installed)
+2. Uses `ripgrep` (`rg`) for fast recursive search (if installed)
 3. Falls back to `grep` for keyword matching
 4. Reads up to ~20 directly relevant pages before asking you whether to keep searching
 5. Follows `[[wikilinks]]` one hop only — does not recurse, which would explode in a well-linked wiki
