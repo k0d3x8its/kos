@@ -139,7 +139,6 @@ Replace these placeholders in each template:
 
 - `{{VAULT_NAME}}` → vault name from Step 1
 - `{{DOMAIN_DESCRIPTION}}` → one-line description from Step 3
-- `{{SCHEMA_PATH}}` → `./SCHEMA.md` (relative path from vault root)
 
 The agent config templates must NOT embed SCHEMA.md's contents. They should reference it: "Read `./SCHEMA.md` for the full schema and operation rules." This keeps SCHEMA.md as the single source of truth — if the user edits SCHEMA.md, the agent picks up the change without the config drifting.
 
