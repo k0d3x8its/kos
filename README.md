@@ -43,7 +43,7 @@ Forked from [NicholasSpisak/second-brain](https://github.com/NicholasSpisak/seco
 
 ## How It Works
 
-You feed raw material into a `raw/` folder — scanned or mere photographed Field Notes pages, transcribed memo book entries, clipped articles, papers, transcripts. The LLM reads everything, writes structured wiki pages into `wiki/`, creates cross-references, and maintains an index. You browse the results in Obsidian — following links, exploring the graph view, and asking questions.
+You feed raw material into a `raw/` folder — scanned or photographed Field Notes pages, transcribed memo book entries, clipped articles, papers, and transcripts delivered by KOS Capture. The LLM reads everything, writes structured wiki pages into `wiki/`, creates cross-references, and maintains an index. You browse the results in Obsidian — following links, exploring the graph view, and asking questions.
 
 The LLM is the librarian. You're the curator. `raw/` is immutable. `wiki/` is owned by the LLM. The contract between you and the LLM lives in `SCHEMA.md` at the vault root.
 
@@ -125,7 +125,7 @@ your-vault/
 
 After your vault is set up and you've ingested your first sources, here's the rhythm of using KOS:
 
-**Daily.** Capture in your Field Notes memo books (Layer 0). When you're ready to digitize, either transcribe pages manually into the matching folder under `raw/Field-Logs/`, `raw/Field-Research/`, or `raw/Field-Studies/`, or scan them using the workflow in [references/CAPTURE.md](references/CAPTURE.md). Then run `/kos-ingest` — the LLM creates wiki pages, extracts entities and open questions, and updates the index.
+**Daily.** Capture in your Field Notes memo books (Layer 0). When you're ready to digitize, either transcribe pages manually into the matching folder under `raw/Field-Logs/`, `raw/Field-Research/`, or `raw/Field-Studies/`, or scan them using the workflow in [references/CAPTURE.md](references/CAPTURE.md). Then run `/kos-ingest` — the LLM creates wiki pages, extracts entities and open questions, and updates the index. Transcripts delivered by KOS Capture to `raw/transcripts/` (meetings, YouTube videos, podcast episodes) are ingested the same way — run `/kos-ingest` and the LLM structures them into topic-segmented wiki pages.
 
 **Weekly-ish.** Run `/kos-query` against your wiki to find connections, recall things, or ask what you've been thinking about. The skill cites every claim back to specific wiki pages — if it can't cite, it tells you the wiki doesn't have an answer rather than making one up.
 
