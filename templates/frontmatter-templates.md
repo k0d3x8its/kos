@@ -46,6 +46,9 @@ updated: YYYY-MM-DDTHH:MM:SSZ
 | `field-log-page` | Source came from `FL-vol-XXX` |
 | `field-research-page` | Source came from `FR-vol-XXX` |
 | `field-study-page` | Source came from `FS-vol-XXX` |
+| `transcript-youtube` | YouTube video from `raw/transcripts/youtube/` |
+| `transcript-podcast` | Podcast episode from `raw/transcripts/podcasts/` |
+| `transcript-meeting` | Proton Meet recording from `raw/transcripts/meetings/` |
 
 **For `field-log-page` sources**, also include `entries:` (one item per entry on the page):
 
@@ -77,6 +80,57 @@ subject: Stoicism
 tags: []
 created: YYYY-MM-DDTHH:MM:SSZ                   # set on first ingest, never updated
 updated: YYYY-MM-DDTHH:MM:SSZ                   # updated on every subsequent ingest
+---
+```
+
+**For `transcript-youtube` sources:**
+
+```yaml
+---
+type: source
+source-type: transcript-youtube
+transcript-origin: whisper              # or youtube-captions or manual
+source-url:                             # required — YouTube URL; leave blank if unknown
+duration:                               # MM:SS from last timestamp in raw file
+speaker:                                # channel or host name — prompt user at ingest
+raw-path: raw/transcripts/youtube/<Title-YYYY-MM-DD>.md
+tags: []
+created: YYYY-MM-DDTHH:MM:SSZ
+updated: YYYY-MM-DDTHH:MM:SSZ
+---
+```
+
+**For `transcript-podcast` sources:**
+
+```yaml
+---
+type: source
+source-type: transcript-podcast
+transcript-origin: whisper              # or manual
+source-url:                             # required — episode URL; leave blank if unknown
+duration:                               # MM:SS from last timestamp in raw file
+speaker:                                # host name(s) or "multiple" — prompt user at ingest
+episode-title:                          # required — read from # Title heading in raw file
+raw-path: raw/transcripts/podcasts/<Title-YYYY-MM-DD>.md
+tags: []
+created: YYYY-MM-DDTHH:MM:SSZ
+updated: YYYY-MM-DDTHH:MM:SSZ
+---
+```
+
+**For `transcript-meeting` sources:**
+
+```yaml
+---
+type: source
+source-type: transcript-meeting
+transcript-origin: whisper              # or manual
+duration:                               # MM:SS from last timestamp in raw file
+speaker:                                # attendee name(s) or "multiple" — prompt user at ingest
+raw-path: raw/transcripts/meetings/<Title-YYYY-MM-DD>.md
+tags: []
+created: YYYY-MM-DDTHH:MM:SSZ
+updated: YYYY-MM-DDTHH:MM:SSZ
 ---
 ```
 
