@@ -29,7 +29,7 @@ Note the `schema-version` from SCHEMA.md's YAML header — you'll use it in Chec
 Ask the user, unless already specified:
 
 - **Full audit** — all checks against the entire vault
-- **Quick audit** (default) — Checks 1, 2, 3, 7 only (structural integrity; skips slow checks - excludes check 2b and check 8)
+- **Quick audit** (default) — Checks 1, 1c, 1d, 2, 3, 7 only (structural integrity; skips slow checks - excludes check 2b and check 8)
 - **Scoped audit** — limited to a directory, time window, or specific book
 - **Deep audit** — full audit plus Checks 9 and 10 (contradiction and stale-claim checks — slow, produces false positives; only run on explicit request)
 
@@ -63,6 +63,24 @@ find raw/Field-Logs raw/Field-Research raw/Field-Studies -type f -name '*.pdf'
 - **Field Study exception:** all pages from one `FS-vol-XXX` accumulate into one source page. Only flag if no source page exists at all for that volume.
 
 Finding: **Error** — `Unprocessed source: <raw-path> has no wiki/sources/ page` — Fix: run `/kos-ingest`
+
+### Check 1c: Transcript source pages have topic segments (Error)
+
+For every page in `wiki/sources/` where `source-type` is `transcript-youtube`, `transcript-podcast`, or `transcript-meeting`:
+
+```bash
+grep -rl 'source-type: transcript-' wiki/sources/
+```
+
+For each match, verify at least one `## [` segment header exists in the page body.
+
+Finding: **Error** — `Transcript source page has no topic segments: <path>` — Fix: re-run `/kos-ingest` on the raw source.
+
+### Check 1d: YouTube and podcast transcripts have `source-url` (Warning)
+
+For every page in `wiki/sources/` where `source-type` is `transcript-youtube` or `transcript-podcast`, verify `source-url` is present and non-empty in frontmatter. `transcript-meeting` sources are exempt.
+
+Finding: **Warning** — `Transcript source missing source-url: <path>` — Fix: add `source-url:` to frontmatter manually or re-ingest with URL provided.
 
 ### Check 2: Memo book → wiki/books/ sync (Error)
 
