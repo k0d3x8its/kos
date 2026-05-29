@@ -14,7 +14,7 @@
 **Pages scanned:** 247 sources, 12 books, 89 entities, 34 concepts, 18 synthesis, 56 questions
 **Schema version:** v5 (current)
 
-## Errors (5)
+## Errors (6)
 
 ### Check 1: Raw → wiki/sources/ sync
 - `raw/Field-Logs/FL-vol-003/page-012.md` — no wiki/sources/ page
@@ -30,15 +30,23 @@
 - `wiki/entities/anthropic.md` — missing required field: `entity-kind`
   Fix: add `entity-kind: organization` to frontmatter
 
+### Check 1c: Transcript segment structure
+- `wiki/sources/transcripts-youtube-The-Economics-of-Attention-2026-05-20.md` — no topic segments found
+  Fix: re-run `/kos-ingest` on raw/transcripts/youtube/The-Economics-of-Attention-2026-05-20.md
+
 ### Check 7: Schema version
 - Vault is on schema v3, KOS ships v5
   Fix: review diff in `templates/SCHEMA.md` upstream and update vault SCHEMA.md manually
 
-## Warnings (3)
+## Warnings (4)
 
 ### Check 2b: Orphaned companion scans
 - `raw/Field-Research/FR-vol-001/page-012-under.pdf` — no corresponding -sticky scan
   Fix: upload `page-012-sticky.pdf`, or rename this file if misnamed
+
+### Check 1d: Transcript source-url
+- `wiki/sources/transcripts-podcasts-Founders-Journey-Episode-42-2026-05-18.md` — missing source-url
+  Fix: add source-url to frontmatter manually or re-ingest with URL provided
 
 ### Check 6: Unresolved bit.ly slugs
 - `unresolved-slug: <F13LdN0t3>` in [[FR-vol-001-page-007]]
@@ -56,7 +64,7 @@
 
 ## Summary
 
-- 5 errors require fixing
-- 3 warnings should be reviewed
+- 6 errors require fixing
+- 4 warnings should be reviewed
 - 1 info item for consideration
 ```
