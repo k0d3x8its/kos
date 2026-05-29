@@ -76,7 +76,7 @@ fi
 echo ""
 echo "▸ Checking required template files..."
 
-for tpl in SCHEMA.md frontmatter-templates.md field-notes-formats.md; do
+for tpl in SCHEMA.md frontmatter-templates.md field-notes-formats.md transcript-formats.md; do
   if [ -f "$TEMPLATES_DIR/$tpl" ]; then
     pass "$tpl exists"
   else
