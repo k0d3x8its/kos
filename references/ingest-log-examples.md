@@ -160,6 +160,48 @@
 
 ---
 
+## YouTube Transcript Ingest
+
+```markdown
+## 2026-05-26 14:32 — ingest
+
+- **Operation:** ingest
+- **Source(s):** raw/transcripts/youtube/The-Economics-of-Attention-2026-05-20.md
+  (source-type: transcript-youtube, transcript-origin: whisper)
+- **Pages affected:** 1 created (sources), 3 created (entities),
+  2 created (concepts), 1 created (questions)
+- **Notes:** 7 topic segments identified. 1 sponsored segment excluded (14:45–17:05).
+```
+
+## Podcast Transcript with Missing Source URL
+
+```markdown
+## 2026-05-26 14:32 — ingest
+
+- **Operation:** ingest
+- **Source(s):** raw/transcripts/podcasts/Founders-Journey-Episode-42-2026-05-18.md
+  (source-type: transcript-podcast, transcript-origin: whisper)
+- **Pages affected:** 1 created (sources), 2 created (entities),
+  1 created (concepts)
+- **Notes:** No sponsored segments detected.
+- **Unresolved:** missing source-url — episode URL not provided at ingest time.
+```
+
+## Meeting Transcript Ingest
+
+```markdown
+## 2026-05-26 14:32 — ingest
+
+- **Operation:** ingest
+- **Source(s):** raw/transcripts/meetings/Sprint-Planning-Q2-2026-05-15.md
+  (source-type: transcript-meeting, transcript-origin: whisper)
+- **Pages affected:** 1 created (sources), 2 created (entities),
+  3 created (questions)
+- **Notes:** 4 topic segments identified. Ad detection skipped — meeting source.
+```
+
+---
+
 ## Setup Entry
 
 ```markdown
