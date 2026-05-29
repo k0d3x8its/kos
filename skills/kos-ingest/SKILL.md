@@ -1,6 +1,6 @@
 ---
 name: kos-ingest
-description: Use this skill when the user wants to process raw sources into their Kodex OS Layer 1 LLM Wiki. Triggers include "ingest", "process my raw notes", "update the wiki", "add this to kos", or dropping new files into the vault's raw/ folder (scanned Field Notes pages as PDFs, transcribed memo book pages, clipped articles, papers, transcripts). The skill reads from raw/, detects scanned PDF capture mode from filename suffixes (-sticky, -under, -flip), merges companion scans before ingesting, writes structured pages to wiki/, creates wikilinks and cross-references, expands inline bit.ly slugs, and updates wiki/index.md and wiki/log.md. Never modifies content in raw/ — that sub-layer is immutable per the KOS schema. Do not use this skill to answer questions about existing wiki content (use kos-query) or to check wiki health (use kos-lint).
+description: Use this skill when the user wants to process raw sources into their Kodex OS Layer 1 LLM Wiki. Triggers include "ingest", "process my raw notes", "update the wiki", "add this to kos", or dropping new files into the vault's raw/ folder (scanned Field Notes pages as PDFs, transcribed memo book pages, clipped articles, papers, transcripts). The skill reads from raw/, processes audio/video transcripts from raw/transcripts/ into topic-segmented wiki pages, detects scanned PDF capture mode from filename suffixes (-sticky, -under, -flip), merges companion scans before ingesting, writes structured pages to wiki/, creates wikilinks and cross-references, expands inline bit.ly slugs, and updates wiki/index.md and wiki/log.md. Never modifies content in raw/ — that sub-layer is immutable per the KOS schema. Do not use this skill to answer questions about existing wiki content (use kos-query) or to check wiki health (use kos-lint).
 allowed-tools:
   - Bash
   - Read
@@ -142,7 +142,7 @@ Create the file at the deterministic path per SCHEMA.md Section 3.2.
 > Read `./templates/frontmatter-templates.md` for the complete frontmatter block before creating this page.
 
 **Key frontmatter rules for this step:**
-- `source-type`: `field-log-page` | `field-research-page` | `field-study-page` | `article` | `paper` | `transcript` | `podcast`
+- `source-type`: `field-log-page` | `field-research-page` | `field-study-page` | `article` | `paper` | `transcript-youtube` | `transcript-podcast` | `transcript-meeting`
 - `capture-mode`: `bare` (typed or single scan) | `composite` (merged companions)
 - `subject`: field-study-page only — must match `wiki/books/` subject field; omit for all other source-types
 - `entries`: field-log-page only — one list item per entry found on the page; omit for all other source-types
@@ -195,9 +195,55 @@ Synthesized factual summary across all layers.
 
 **For field-study-page sources**, use the living document structure from `./templates/field-notes-formats.md#field-study`. Append and update on every ingest from the same FS volume — do NOT create a new source page per physical page.
 
+**For `transcript-youtube`, `transcript-podcast`, and `transcript-meeting` sources**, read `./templates/transcript-formats.md` before processing. Then:
+
+- Determine subtype from the source path: `raw/transcripts/youtube/` → `transcript-youtube`, `raw/transcripts/podcasts/` → `transcript-podcast`, `raw/transcripts/meetings/` → `transcript-meeting`
+- Run ad phrase detection per `./templates/transcript-formats.md` — skip for `transcript-meeting`
+- Prompt the user for `speaker` before writing frontmatter
+- Populate remaining frontmatter fields:
+  - `transcript-origin`: default to `whisper`; update if user specifies `youtube-captions` or `manual`
+  - `duration`: read the last `[MM:SS]` timestamp in the raw file and use as the duration value
+  - `source-url`: leave blank — Check 1d will surface it as a Warning; user fills in manually
+  - `episode-title` (`transcript-podcast` only): read the `# Title` heading from the raw file
+
+Use this body structure — do **not** use the standard source body structure for transcript sources:
+
+```markdown
+# [Title] — [YYYY-MM-DD]
+
+## Summary
+5–7 sentences covering the full content of the transcript.
+
+---
+
+## [MM:SS – MM:SS] Topic Title
+3–5 sentence summary of what this segment covers.
+
+### Transcript
+Verbatim transcript content for this segment, broken into readable paragraphs
+at natural speaking pauses and topic shifts.
+
+---
+
+## [MM:SS – MM:SS] Next Topic Title
+...
+
+---
+
+## Full Transcript
+
+[00:00] Opening paragraph...
+
+[Sponsored segment excluded — 14:45–17:05]
+
+[17:06] Content resumes...
+```
+
 The source summary is **factual only**. Save interpretation for `wiki/concepts/` and `wiki/synthesis/`.
 
 ### 5. Create or update the book page (memo book sources only)
+
+**Transcript sources (`transcript-youtube`, `transcript-podcast`, `transcript-meeting`) skip this step entirely — they are not part of a memo book.**
 
 If the source came from a folder matching `^F[LRS]-vol-\d{3}$` under `raw/Field-Logs/`, `raw/Field-Research/`, or `raw/Field-Studies/`, find the book page:
 
