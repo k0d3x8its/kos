@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.3.0 (2026-05-28)
+
+- **➕:** `templates/transcript-formats.md` — new transcript format rules: output structure (topic-segmented summary + Full Transcript), ad detection phrases and behavior, paragraph chunking rules, segment boundary rules, meeting ad-detection exemption, MM:SS timestamp convention
+- **⬆️:** `templates/frontmatter-templates.md` — `transcript-youtube`, `transcript-podcast`, `transcript-meeting` added to source-type table; three frontmatter blocks added with `transcript-origin`, `source-url`, `duration`, `speaker`, and `episode-title` fields
+- **⬆️:** `skills/kos-ingest/SKILL.md` — transcript conditional branch added to Step 4: subtype detection by path, ad phrase scanning, population rules for all transcript fields (speaker prompted, duration derived from last timestamp, source-url left blank, transcript-origin defaults to whisper), topic-segmented body structure; Step 5 skip rule added for transcript sources; description string updated to mention transcript processing
+- **⬆️:** `skills/kos-lint/SKILL.md` — Check 1c added (transcript source pages must have at least one topic segment — Error); Check 1d added (YouTube and podcast sources must have source-url — Warning); quick audit scope updated to include 1c and 1d
+- **⬆️:** `references/ingest-log-examples.md` — three transcript log entry examples added: YouTube ingest with sponsored segment exclusion, podcast ingest with missing source-url, meeting ingest with ad detection skipped
+- **⬆️:** `references/lint-report-example.md` — Check 1c firing example added under Errors; Check 1d firing example added under Warnings; error and warning counts updated
+- **⬆️:** `README.md` — How It Works updated to name KOS Capture as source of transcripts; Ongoing Workflow updated to include transcript ingest alongside Field Notes workflow
+- **❌:** `docs/REQUIREMENTS.md` — `faster-whisper` and `yt-dlp` entries removed; these are KOS Capture tools documented in the wrong repo (v1.2.3 error)
+- **❌:** `skills/kos/references/tooling.md` — `faster-whisper` and `yt-dlp` sections removed; same reason
+- **⬆️:** `tests/test_templates.sh` — `transcript-formats.md` added to required template files check
+
 ## v1.2.5 (2026-05-24)
 
 - **❌:** `skills/kos/references/tooling.md` — `qmd` entry removed; `@tobilu/qmd` is unavailable on npm and was already excluded from onboarding in v1.0.0-rc.3
