@@ -1,5 +1,7 @@
 # Changelog
 
+## [Unreleased]
+
 ## v1.3.0 (2026-05-28)
 
 - **➕:** `templates/transcript-formats.md` — new transcript format rules: output structure (topic-segmented summary + Full Transcript), ad detection phrases and behavior, paragraph chunking rules, segment boundary rules, meeting ad-detection exemption, MM:SS timestamp convention
