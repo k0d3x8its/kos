@@ -55,6 +55,7 @@ DIRS=(
   "wiki/questions"
   "output"
   "templates"
+  "references"
 )
 
 for dir in "${DIRS[@]}"; do
@@ -213,6 +214,28 @@ for tpl in frontmatter-templates.md transcript-formats.md field-notes-formats.md
     echo "  installed templates/$tpl" >&2
   else
     echo "  WARNING: bundled template not found: $tpl — copy manually to $DEST" >&2
+  fi
+done
+
+# 5c. Install vault references — copy from bundled references directory
+echo "" >&2
+echo "Installing vault references..." >&2
+
+BUNDLED_REFS_DIR=""
+if [ -n "$BUNDLED_TEMPLATES_DIR" ]; then
+  CANDIDATE="$(dirname "$BUNDLED_TEMPLATES_DIR")/references"
+  [ -d "$CANDIDATE" ] && BUNDLED_REFS_DIR="$CANDIDATE"
+fi
+
+for ref in ingest-log-examples.md lint-report-example.md schema-changelog.md; do
+  DEST="$VAULT_ROOT/references/$ref"
+  if [ -f "$DEST" ]; then
+    echo "  references/$ref already exists, skipping" >&2
+  elif [ -n "$BUNDLED_REFS_DIR" ] && [ -f "$BUNDLED_REFS_DIR/$ref" ]; then
+    cp "$BUNDLED_REFS_DIR/$ref" "$DEST"
+    echo "  installed references/$ref" >&2
+  else
+    echo "  WARNING: bundled reference not found: $ref — copy manually to $DEST" >&2
   fi
 done
 
