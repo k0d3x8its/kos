@@ -54,6 +54,7 @@ DIRS=(
   "wiki/synthesis"
   "wiki/questions"
   "output"
+  "templates"
 )
 
 for dir in "${DIRS[@]}"; do
@@ -193,6 +194,27 @@ else
   cp "$BUNDLED_SCHEMA" "$SCHEMA_DEST"
   echo "  installed SCHEMA.md from $BUNDLED_SCHEMA" >&2
 fi
+
+# 5b. Install vault templates — copy from bundled templates directory
+echo "" >&2
+echo "Installing vault templates..." >&2
+
+BUNDLED_TEMPLATES_DIR=""
+if [ -n "$BUNDLED_SCHEMA" ] && [ -f "$BUNDLED_SCHEMA" ]; then
+  BUNDLED_TEMPLATES_DIR="$(dirname "$BUNDLED_SCHEMA")"
+fi
+
+for tpl in frontmatter-templates.md transcript-formats.md field-notes-formats.md; do
+  DEST="$VAULT_ROOT/templates/$tpl"
+  if [ -f "$DEST" ]; then
+    echo "  templates/$tpl already exists, skipping" >&2
+  elif [ -n "$BUNDLED_TEMPLATES_DIR" ] && [ -f "$BUNDLED_TEMPLATES_DIR/$tpl" ]; then
+    cp "$BUNDLED_TEMPLATES_DIR/$tpl" "$DEST"
+    echo "  installed templates/$tpl" >&2
+  else
+    echo "  WARNING: bundled template not found: $tpl — copy manually to $DEST" >&2
+  fi
+done
 
 # 6. Final status
 echo "" >&2
