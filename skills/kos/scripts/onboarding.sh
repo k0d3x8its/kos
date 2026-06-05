@@ -41,6 +41,7 @@ DIRS=(
   "raw/Field-Studies"
   "raw/assets"
   "raw/clippings"
+  "raw/papers"
   "raw/transcripts"
   "raw/transcripts/meetings"
   "raw/transcripts/youtube"
