@@ -103,6 +103,47 @@ else
   done
 fi
 
+# --- Check transcript frontmatter fields ---
+echo ""
+echo "▸ Checking transcript frontmatter fields in frontmatter-templates.md..."
+
+FRONTMATTER_TMPL="$TEMPLATES_DIR/frontmatter-templates.md"
+
+if [ ! -f "$FRONTMATTER_TMPL" ]; then
+  fail "frontmatter-templates.md missing — skipping transcript field checks"
+else
+  # Extract each source-type section by scanning between headers.
+  # awk: start printing at the section header, stop when the next one appears.
+  youtube_section=$(awk '/\*\*For `transcript-youtube`/{found=1} found && /\*\*For `transcript-podcast`/{exit} found{print}' "$FRONTMATTER_TMPL")
+  podcast_section=$(awk '/\*\*For `transcript-podcast`/{found=1} found && /\*\*For `transcript-meeting`/{exit} found{print}' "$FRONTMATTER_TMPL")
+  meeting_section=$(awk '/\*\*For `transcript-meeting`/{found=1} found && /^## /{exit} found{print}' "$FRONTMATTER_TMPL")
+
+  for src_type in "transcript-youtube" "transcript-podcast" "transcript-meeting"; do
+    case "$src_type" in
+      transcript-youtube)  section="$youtube_section" ;;
+      transcript-podcast)  section="$podcast_section" ;;
+      transcript-meeting)  section="$meeting_section" ;;
+    esac
+
+    for field in "transcript-origin" "duration"; do
+      if echo "$section" | grep -q "${field}:"; then
+        pass "${src_type} contains ${field}:"
+      else
+        fail "${src_type} missing ${field}:"
+      fi
+    done
+
+    # source-url required for youtube and podcast; meeting transcripts have no external URL
+    if [ "$src_type" != "transcript-meeting" ]; then
+      if echo "$section" | grep -q "source-url:"; then
+        pass "${src_type} contains source-url:"
+      else
+        fail "${src_type} missing source-url:"
+      fi
+    fi
+  done
+fi
+
 # --- Summary ---
 echo ""
 echo "───────────────────────────────────────"
