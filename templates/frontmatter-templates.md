@@ -49,6 +49,8 @@ updated: YYYY-MM-DDTHH:MM:SSZ
 | `transcript-youtube` | YouTube video from `raw/transcripts/youtube/` |
 | `transcript-podcast` | Podcast episode from `raw/transcripts/podcasts/` |
 | `transcript-meeting` | Proton Meet recording from `raw/transcripts/meetings/` |
+| `article` | Web article clipped via Obsidian Web Clipper from `raw/clippings/` |
+| `paper` | Academic paper from `raw/papers/` |
 
 **For `field-log-page` sources**, also include `entries:` (one item per entry on the page):
 
@@ -128,6 +130,38 @@ transcript-origin: whisper              # or manual
 duration:                               # MM:SS from last timestamp in raw file
 speaker:                                # attendee name(s) or "multiple" — prompt user at ingest
 raw-path: raw/transcripts/meetings/<Title-YYYY-MM-DD>.md
+tags: []
+created: YYYY-MM-DDTHH:MM:SSZ
+updated: YYYY-MM-DDTHH:MM:SSZ
+---
+```
+
+**For `article` sources:**
+
+```yaml
+---
+type: source
+source-type: article
+source-url:                             # required — original article URL; leave blank if unknown
+author:                                 # author name(s) or publication — prompt user if absent
+publication:                            # site or outlet name — prompt user if absent
+raw-path: raw/clippings/<Title-YYYY-MM-DD>.md
+tags: []
+created: YYYY-MM-DDTHH:MM:SSZ
+updated: YYYY-MM-DDTHH:MM:SSZ
+---
+```
+
+**For `paper` sources:**
+
+```yaml
+---
+type: source
+source-type: paper
+source-url:                             # DOI, arXiv link, or URL; leave blank if unknown
+author:                                 # author name(s) — prompt user if absent from file
+publication:                            # journal or conference name — prompt user if absent
+raw-path: raw/papers/<filename>.md      # or .pdf
 tags: []
 created: YYYY-MM-DDTHH:MM:SSZ
 updated: YYYY-MM-DDTHH:MM:SSZ
