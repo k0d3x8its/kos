@@ -38,6 +38,7 @@ This file defines:
 │   │   └── FS-vol-XXX/     # Field Study: dedicated subject memo books
 │   ├── assets/             # Images and attachments
 │   ├── clippings/          # Web articles saved via Obsidian Web Clipper
+│   ├── papers/             # Academic papers (PDFs or markdown)
 │   └── transcripts/        # Audio/video transcripts
 │       ├── meetings/       # Proton Meet transcripts
 │       ├── youtube/        # YouTube video transcripts
@@ -105,6 +106,7 @@ Key rules the LLM MUST apply without re-reading the template:
 **Other subdirectories:**
 - `raw/assets/` — Binary files (images, scans) referenced by other raw sources
 - `raw/clippings/` — Web articles saved via Obsidian Web Clipper (configure the clipper to point here)
+- `raw/papers/` — Academic papers (PDFs or markdown files dropped manually)
 - `raw/transcripts/` — All audio/video transcripts, organized by source type
   - `raw/transcripts/meetings/` — Proton Meet transcripts
   - `raw/transcripts/youtube/` — YouTube video transcripts (Whisper-generated or manual)
