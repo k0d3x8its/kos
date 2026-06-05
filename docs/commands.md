@@ -79,10 +79,10 @@ Reads source files from `raw/`, synthesizes them into interlinked wiki pages in 
 | Field Research pages | `raw/Field-Research/FR-vol-XXX/` | Research and catchall pages |
 | Field Study pages | `raw/Field-Studies/FS-vol-XXX/` | Single-subject knowledge docs; accumulate into one wiki page per volume |
 | Web clippings | `raw/clippings/` | Saved via Obsidian Web Clipper |
+| Academic papers | `raw/papers/` | PDFs or markdown files dropped manually |
 | Meeting transcripts | `raw/transcripts/meetings/` | From Proton Meet or similar |
 | YouTube transcripts | `raw/transcripts/youtube/` | Generated with yt-dlp or similar |
 | Podcast transcripts | `raw/transcripts/podcasts/` | Generated with Whisper or similar |
-| Papers and articles | `raw/` subdirectories | Any `.md` file in `raw/` |
 
 ### PDF Capture Modes (Scanned Field Notes)
 
